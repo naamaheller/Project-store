@@ -1,20 +1,17 @@
-"use client";
+'use client';
 
-import { Button } from "./components/ui/Button";
+import { Button } from './components/ui/Button';
 
 export default function Home() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
 
-        {/* בדיקת הכפתור */}
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <Button onClick={() => alert("עובד✅")}>בדיקת כפתור</Button>
-          <Button variant="outline" onClick={() => console.log("outline click")}>
-            Outline
-          </Button>
-          <Button variant="danger">Danger</Button>
-          <Button disabled>Disabled</Button>
-        </div>
+
+  return (
+    <div className="min-h-screen p-6 bg-background" dir="rtl">
+      <div className="max-w-4xl mx-auto">
+        <Button variant="outline" onClick={() => { alert('Reset clicked'); }}>
+          איפוס
+        </Button>
+      </div>
     </div>
   );
 }

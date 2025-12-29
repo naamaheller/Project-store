@@ -1,7 +1,9 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
-    "./src/**/*.{js,ts,jsx,tsx}",
+    "./app/**/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx}",
+    "./pages/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
@@ -11,44 +13,35 @@ export default {
           hover: "#1d4ed8",
           soft: "#dbeafe",
         },
-
         secondary: {
           DEFAULT: "#9333ea",
           hover: "#7e22ce",
         },
-
         background: {
           DEFAULT: "#ffffff",
           muted: "#f8fafc",
         },
-
         surface: "#ffffff",
-
         text: {
           DEFAULT: "#0f172a",
           muted: "#64748b",
           inverted: "#ffffff",
         },
-
         border: "#e5e7eb",
-
         success: "#16a34a",
         warning: "#f59e0b",
         error: "#dc2626",
-      },
-      spacing: {
-        xs: "4px",
-        sm: "8px",
-        md: "16px",
-        lg: "24px",
-        xl: "32px",
-        "2xl": "48px",
       },
       borderRadius: {
         sm: "6px",
         md: "10px",
         lg: "16px",
         full: "9999px",
+      },
+      boxShadow: {
+        sm: "0 1px 2px rgba(0,0,0,0.05)",
+        md: "0 4px 6px rgba(0,0,0,0.08)",
+        lg: "0 10px 15px rgba(0,0,0,0.12)",
       },
       fontSize: {
         xs: ["12px", { lineHeight: "16px" }],
@@ -64,11 +57,15 @@ export default {
         semibold: "600",
         bold: "700",
       },
-      boxShadow: {
-        sm: "0 1px 2px rgba(0,0,0,0.05)",
-        md: "0 4px 6px rgba(0,0,0,0.08)",
-        lg: "0 10px 15px rgba(0,0,0,0.12)",
+      spacing: {
+        xs: "4px",
+        sm: "8px",
+        md: "16px",
+        lg: "24px",
+        xl: "32px",
+        "2xl": "48px",
       },
     },
   },
+  plugins: [],
 };
