@@ -9,8 +9,9 @@ class CookieTokenToBearer
 {
     public function handle(Request $request, Closure $next)
     {
-        if (!$request->header('Authorization')) {
+        if (!$request->headers->has('Authorization')) {
             $token = $request->cookie('access_token');
+
             if ($token) {
                 $request->headers->set('Authorization', 'Bearer ' . $token);
             }
