@@ -1,4 +1,6 @@
 'use client';
+// קומפוננטת Select כללית עם label, placeholder וטיפול בשגיאות.
+// תומכת ברשימת אפשרויות ונגישות מלאה.
 
 import type { SelectHTMLAttributes } from 'react';
 
@@ -13,7 +15,7 @@ type SelectProps = {
   error?: string;
   helperText?: string;
   options: SelectOption[];
-  placeholder?: string; // מוצג כאופציה ראשונה "לא נבחר"
+  placeholder?: string;
 } & Omit<SelectHTMLAttributes<HTMLSelectElement>, 'children'>;
 
 export function Select({
@@ -51,7 +53,6 @@ export function Select({
         ].join(' ')}
         {...props}
       >
-        {/* placeholder כאופציה ראשונה */}
         <option value="" disabled>
           {placeholder}
         </option>

@@ -1,11 +1,13 @@
 'use client';
+// קומפוננטת עימוד לשליטה בעמודים וכמות שורות לתצוגה.
+// אינה מנהלת נתונים – רק שולחת אירועי שינוי החוצה.
 
 import { Button } from './Button';
 
 type PaginationProps = {
-    page: number; // 1-based
+    page: number;
     pageSize: number;
-    total: number; // total rows
+    total: number;
     onPageChange: (nextPage: number) => void;
     onPageSizeChange?: (nextPageSize: number) => void;
     pageSizeOptions?: number[];
