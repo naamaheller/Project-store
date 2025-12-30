@@ -21,7 +21,9 @@ Schema::create('products', function (Blueprint $table) {
 
     $table->unsignedInteger('stock')->default(0);
     $table->boolean('is_active')->default(true);
-    $table->string('image_url')->nullable();
+    $table->string('img_url')->nullable();
+    $table->index('price');
+    $table->index('is_active');
 
     $table->foreignId('category_id')
           ->nullable()

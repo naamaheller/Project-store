@@ -1,4 +1,11 @@
 services:
+  adminer:
+    image: adminer
+    ports:
+      - "8081:8080"
+    networks:
+      - app-network
+
   nginx:
     image: nginx:alpine
     ports:
