@@ -17,3 +17,5 @@ COPY . .
 RUN composer install --no-interaction --prefer-dist
 
 EXPOSE 9000
+
+CMD ["php-fpm"]
