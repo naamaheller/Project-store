@@ -1,13 +1,17 @@
 'use client';
+// קומפוננטת Table גנרית להצגת נתונים בטבלה.
+// תומכת ב־loading (Skeleton), מצב ריק (EmptyState) ורנדר מותאם לתאים.
 
 import type { ReactNode } from 'react';
+import { Skeleton } from './Skeleton';
+import { EmptyState } from './EmptyState';
 
 export type Column<T> = {
     key: string;
     header: ReactNode;
-    cell: (row: T) => ReactNode; // רנדר מותאם לכל תא
-    className?: string; // עיצוב לתא (td)
-    headerClassName?: string; // עיצוב לכותרת (th)
+    cell: (row: T) => ReactNode;
+    className?: string;
+    headerClassName?: string;
 };
 
 type TableProps<T> = {
@@ -16,6 +20,7 @@ type TableProps<T> = {
     rowKey: (row: T) => string | number;
 
     loading?: boolean;
+    skeletonRows?: number;
     emptyTitle?: string;
     emptyDescription?: string;
     className?: string;
@@ -26,6 +31,7 @@ export function Table<T>({
     rows,
     rowKey,
     loading = false,
+    skeletonRows = 5,
     emptyTitle = 'אין נתונים להצגה',
     emptyDescription = 'נסי לשנות פילטרים או להוסיף פריטים חדשים.',
     className,
@@ -36,7 +42,6 @@ export function Table<T>({
                 'w-full overflow-hidden rounded-lg border border-border bg-surface',
                 className ?? '',
             ].join(' ')}
-            dir="rtl"
         >
             <div className="w-full overflow-x-auto">
                 <table className="w-full text-right">
@@ -58,26 +63,23 @@ export function Table<T>({
 
                     <tbody>
                         {loading ? (
-                            // Loading rows (Skeleton-like פשוט)
-                            Array.from({ length: 5 }).map((_, i) => (
+                            Array.from({ length: skeletonRows }).map((_, i) => (
                                 <tr key={`sk-${i}`} className="border-b border-border last:border-b-0">
                                     {columns.map((col) => (
                                         <td key={`${col.key}-${i}`} className="px-4 py-3">
-                                            <div className="h-4 w-full rounded bg-border/60 animate-pulse" />
+                                            <Skeleton className="h-4 w-full" />
                                         </td>
                                     ))}
                                 </tr>
                             ))
                         ) : rows.length === 0 ? (
                             <tr>
-                                <td
-                                    colSpan={columns.length}
-                                    className="px-6 py-10 text-center"
-                                >
-                                    <div className="text-text font-medium">{emptyTitle}</div>
-                                    <div className="text-sm text-text-muted mt-1">
-                                        {emptyDescription}
-                                    </div>
+                                <td colSpan={columns.length} className="px-6 py-10">
+                                    <EmptyState
+                                        icon="📭"
+                                        title={emptyTitle}
+                                        description={emptyDescription}
+                                    />
                                 </td>
                             </tr>
                         ) : (

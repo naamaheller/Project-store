@@ -1,4 +1,6 @@
 import type { ReactNode } from 'react';
+// קומפוננטת Card לחלוקת תוכן לאזורים ברורים: Header, Content ו־Footer.
+// משמשת כקונטיינר אחיד לעמודים וטפסים.
 
 type CardProps = {
     children: ReactNode;

@@ -1,4 +1,6 @@
 'use client';
+// קומפוננטת Modal להצגת תוכן מעל העמוד במרכז המסך.
+// משתמשת ב־Portal, overlay וסגירה ב־ESC.
 
 import { ReactNode, useEffect } from 'react';
 import { Portal } from './Portal';
@@ -37,13 +39,11 @@ export function Modal({
   return (
     <Portal>
       <div className="fixed inset-0 z-50 flex items-center justify-center">
-        {/* overlay */}
         <div
           className="absolute inset-0 bg-black/40"
           onClick={onClose}
         />
 
-        {/* modal */}
         <div className="relative z-10 w-full max-w-md bg-surface rounded-lg shadow-lg">
           {title && (
             <div className="px-6 py-4 border-b border-border text-lg font-semibold">

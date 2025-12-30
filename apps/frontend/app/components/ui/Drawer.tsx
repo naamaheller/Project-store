@@ -1,4 +1,6 @@
 'use client';
+// קומפוננטת Drawer (פאנל צדדי) הנפתחת מעל העמוד.
+// משתמשת ב־Portal, חוסמת גלילה ונסגרת בלחיצה על ESC או overlay.
 
 import { ReactNode, useEffect } from 'react';
 import { Portal } from './Portal';
@@ -9,7 +11,7 @@ type DrawerProps = {
     onClose: () => void;
     title?: string;
     children: ReactNode;
-    width?: string; // default: 400px
+    width?: string;
 };
 
 export function Drawer({
@@ -37,13 +39,11 @@ export function Drawer({
     return (
         <Portal>
             <div className="fixed inset-0 z-50">
-                {/* overlay */}
                 <div
                     className="absolute inset-0 bg-black/40"
                     onClick={onClose}
                 />
 
-                {/* drawer */}
                 <div
                     className="absolute right-0 top-0 h-full bg-surface shadow-xl flex flex-col"
                     style={{ width }}

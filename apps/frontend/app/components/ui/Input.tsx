@@ -1,4 +1,6 @@
 'use client';
+// קומפוננטת Input כללית עם label, הודעת שגיאה וטקסט עזר.
+// שומרת על עיצוב עקבי ונגישות.
 
 import type { InputHTMLAttributes } from 'react';
 

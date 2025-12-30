@@ -1,4 +1,6 @@
 'use client';
+// קומפוננטת כפתור כללית עם וריאנטים ועיצוב אחיד לכל המערכת.
+// מטפלת במצבי disabled, focus ו־accessibility.
 
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
