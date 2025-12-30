@@ -21,7 +21,8 @@ services:
       - app-network  
     command: npm run dev
     environment:
-      - CHOKIDAR_USEPOLLING=true
+     - CHOKIDAR_USEPOLLING=true
+     - WATCHPACK_POLLING=true
 
   backend:
     build:
