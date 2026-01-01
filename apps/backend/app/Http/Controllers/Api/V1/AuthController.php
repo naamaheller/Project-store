@@ -6,71 +6,140 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Throwable;
 
 class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        $data = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
+        try {
+            $data = $request->validate([
+                'email' => ['required', 'email'],
+                'password' => ['required'],
+            ]);
 
-        $user = User::where('email', $data['email'])->first();
+            $user = User::where('email', $data['email'])->first();
 
-        if (!$user || !Hash::check($data['password'], $user->password)) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
+            if (!$user || !Hash::check($data['password'], $user->password)) {
+                return response()->json([
+                    'message' => 'Invalid credentials',
+                ], 401);
+            }
+
+            $token = $user->createToken('api')->accessToken;
+
+            return response()
+                ->json([
+                    'user' => $user->only([
+                        'id',
+                        'name',
+                        'email',
+                        'role',
+                        'created_at',
+                        'updated_at',
+                    ]),
+                ])
+                ->cookie(
+                    'access_token',
+                    $token,
+                    60 * 24 * 2,
+                    '/',
+                    null,
+                    false,
+                    true,
+                    false,
+                    'Lax'
+                );
+
+        } catch (Throwable $th) {
+            return response()->json([
+                'message' => 'Server error',
+                'error' => $th->getMessage(),
+            ], 500);
         }
-
-        $token = $user->createToken('web')->accessToken;
-
-        return response()->json([
-            'user' => $user->only([
-                'id',
-                'name',
-                'email',
-                'role',
-                'created_at',
-                'updated_at',
-            ]),
-        ])->cookie(
-                'access_token',
-                $token,
-                60 * 24 * 7, // שבוע
-                '/',
-                null,
-                false, // true בפרודקשן עם https
-                true,  // httpOnly
-                false,
-                'Lax'
-            );
-
     }
+    public function register(Request $request)
+    {
+        try {
+            $data = $request->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'email', 'unique:users,email'],
+                'password' => ['required', 'string', 'min:6'],
+            ]);
+
+            $user = User::create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']),
+                'role' => $data['role'] ?? 'USER',
+            ]);
+
+            return response()->json([
+                'message' => 'User registered successfully',
+                'user' => $user->only(['id', 'name', 'email', 'role', 'created_at', 'updated_at']),
+            ], 201);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation error',
+                'errors' => $e->errors(),
+            ], 422);
+
+        } catch (\Throwable $th) {
+            report($th);
+            return response()->json(['message' => 'Server error'], 500);
+        }
+    }
+
 
     public function me(Request $request)
     {
-        $user = $request->user('api'); // חשוב: guard api (passport)
+        try {
+            $user = $request->user('api');
 
-        if (!$user) {
-            return response()->json(['message' => 'Unauthenticated'], 401);
+            if (!$user) {
+                return response()->json([
+                    'message' => 'Unauthenticated',
+                ], 401);
+            }
+
+            return response()->json([
+                'user' => $user->only([
+                    'id',
+                    'name',
+                    'email',
+                    'role',
+                    'created_at',
+                    'updated_at',
+                ]),
+            ]);
+
+        } catch (Throwable $th) {
+            return response()->json([
+                'message' => 'Server error',
+                'error' => $th->getMessage(),
+            ], 500);
         }
-
-        return response()->json([
-            'user' => $user->only(['id', 'name', 'email', 'role', 'created_at', 'updated_at']),
-        ]);
     }
-
 
     public function logout(Request $request)
     {
-        $user = $request->user();
+        try {
+            $user = $request->user('api');
 
-        if ($user && $user->token()) {
-            $user->token()->revoke();
+            if ($user && $user->token()) {
+                $user->token()->revoke();
+            }
+
+            return response()
+                ->json(['message' => 'Logged out'])
+                ->cookie('access_token', '', -1, '/');
+
+        } catch (Throwable $th) {
+            return response()->json([
+                'message' => 'Server error',
+                'error' => $th->getMessage(),
+            ], 500);
         }
-
-        return response()
-            ->json(['message' => 'Logged out'])
-            ->cookie('access_token', '', -1, '/');
     }
 }
