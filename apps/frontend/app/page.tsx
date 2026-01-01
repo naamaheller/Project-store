@@ -8,6 +8,7 @@ import { Alert } from './components/ui/Alert';
 import { useToast } from './components/ui/Toast';
 import { Table, type Column } from './components/ui/Table';
 import { Pagination } from './components/ui/Pagination';
+import ProductPage from './pages/product/page';
 
 type Row = {
   id: number;
@@ -119,98 +120,99 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-background p-6" dir="rtl">
-      <div className="max-w-5xl mx-auto">
-        <Card>
-          <CardHeader>
-            <h1 className="text-xl font-semibold text-text">בדיקת Component Library</h1>
-            <p className="text-sm text-text-muted">
-              Toast / Alert / Table / Pagination / Skeleton / EmptyState
-            </p>
-          </CardHeader>
+    // <div className="min-h-screen bg-background p-6" dir="rtl">
+    //   <div className="max-w-5xl mx-auto">
+    //     <Card>
+    //       <CardHeader>
+    //         <h1 className="text-xl font-semibold text-text">בדיקת Component Library</h1>
+    //         <p className="text-sm text-text-muted">
+    //           Toast / Alert / Table / Pagination / Skeleton / EmptyState
+    //         </p>
+    //       </CardHeader>
 
-          <CardContent className="flex flex-col gap-4">
-            {showAlert ? (
-              <Alert variant="info" title="שים/י לב" onClose={() => setShowAlert(false)}>
-                זה Alert בתוך העמוד. נסגר עם ✕ ולא נעלם לבד.
-              </Alert>
-            ) : null}
+    //       <CardContent className="flex flex-col gap-4">
+    //         {showAlert ? (
+    //           <Alert variant="info" title="שים/י לב" onClose={() => setShowAlert(false)}>
+    //             זה Alert בתוך העמוד. נסגר עם ✕ ולא נעלם לבד.
+    //           </Alert>
+    //         ) : null}
 
-            {/* Controls */}
-            <div className="flex flex-wrap gap-2 justify-end">
-              <Button onClick={runAllTests}>הרץ בדיקה אוטומטית</Button>
+    //         {/* Controls */}
+    //         <div className="flex flex-wrap gap-2 justify-end">
+    //           <Button onClick={runAllTests}>הרץ בדיקה אוטומטית</Button>
 
-              <Button variant="outline" onClick={() => toast.success('נשמר בהצלחה!', 'הצלחה')}>
-                Success Toast
-              </Button>
-              <Button variant="outline" onClick={() => toast.info('זו הודעת מידע')}>
-                Info Toast
-              </Button>
-              <Button variant="outline" onClick={() => toast.warning('בדקי שדות חסרים', 'אזהרה')}>
-                Warning Toast
-              </Button>
-              <Button variant="danger" onClick={() => toast.error('משהו נכשל', 'שגיאה')}>
-                Error Toast
-              </Button>
+    //           <Button variant="outline" onClick={() => toast.success('נשמר בהצלחה!', 'הצלחה')}>
+    //             Success Toast
+    //           </Button>
+    //           <Button variant="outline" onClick={() => toast.info('זו הודעת מידע')}>
+    //             Info Toast
+    //           </Button>
+    //           <Button variant="outline" onClick={() => toast.warning('בדקי שדות חסרים', 'אזהרה')}>
+    //             Warning Toast
+    //           </Button>
+    //           <Button variant="danger" onClick={() => toast.error('משהו נכשל', 'שגיאה')}>
+    //             Error Toast
+    //           </Button>
 
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setLoading(true);
-                  toast.info('Skeleton ON (3 שניות)');
-                  setTimeout(() => setLoading(false), 3000);
-                }}
-              >
-                הדגם Skeleton
-              </Button>
+    //           <Button
+    //             variant="outline"
+    //             onClick={() => {
+    //               setLoading(true);
+    //               toast.info('Skeleton ON (3 שניות)');
+    //               setTimeout(() => setLoading(false), 3000);
+    //             }}
+    //           >
+    //             הדגם Skeleton
+    //           </Button>
 
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setHasData((v) => !v);
-                  setPage(1);
-                  toast.info('Toggle Empty/Data');
-                }}
-              >
-                Toggle Empty/Data
-              </Button>
+    //           <Button
+    //             variant="outline"
+    //             onClick={() => {
+    //               setHasData((v) => !v);
+    //               setPage(1);
+    //               toast.info('Toggle Empty/Data');
+    //             }}
+    //           >
+    //             Toggle Empty/Data
+    //           </Button>
 
-              <Button variant="outline" onClick={resetAll}>
-                איפוס הכל
-              </Button>
-            </div>
+    //           <Button variant="outline" onClick={resetAll}>
+    //             איפוס הכל
+    //           </Button>
+    //         </div>
 
-            {/* Table */}
-            <Table<Row>
-              columns={columns}
-              rows={pageRows}
-              rowKey={(r) => r.id}
-              loading={loading}
-              skeletonRows={5}
-              emptyTitle="אין פריטים"
-              emptyDescription="לחצי על Toggle כדי להחזיר נתונים."
-            />
+    //         {/* Table */}
+    //         <Table<Row>
+    //           columns={columns}
+    //           rows={pageRows}
+    //           rowKey={(r) => r.id}
+    //           loading={loading}
+    //           skeletonRows={5}
+    //           emptyTitle="אין פריטים"
+    //           emptyDescription="לחצי על Toggle כדי להחזיר נתונים."
+    //         />
 
-            {/* Pagination */}
-            <Pagination
-              page={page}
-              pageSize={pageSize}
-              total={filtered.length}
-              onPageChange={setPage}
-              onPageSizeChange={(next) => {
-                setPageSize(next);
-                setPage(1);
-              }}
-            />
-          </CardContent>
+    //         {/* Pagination */}
+    //         <Pagination
+    //           page={page}
+    //           pageSize={pageSize}
+    //           total={filtered.length}
+    //           onPageChange={setPage}
+    //           onPageSizeChange={(next) => {
+    //             setPageSize(next);
+    //             setPage(1);
+    //           }}
+    //         />
+    //       </CardContent>
 
-          <CardFooter className="flex justify-end">
-            <span className="text-sm text-text-muted">
-              טיפ: אם Toast לא עובד — בדקי שיש ToastProvider ב־layout.tsx
-            </span>
-          </CardFooter>
-        </Card>
-      </div>
-    </div>
+    //       <CardFooter className="flex justify-end">
+    //         <span className="text-sm text-text-muted">
+    //           טיפ: אם Toast לא עובד — בדקי שיש ToastProvider ב־layout.tsx
+    //         </span>
+    //       </CardFooter>
+    //     </Card>
+    //   </div>
+    // </div>
+    <ProductPage/>
   );
 }
