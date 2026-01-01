@@ -12,23 +12,25 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
-    ->withMiddleware(function (Middleware $middleware): void {
+   ->withMiddleware(function (Middleware $middleware): void {
 
-        // חשוב: בפרויקט API לא לעשות redirect אף פעם
-        $middleware->redirectGuestsTo(fn() => null);
+    $middleware->priority([
+        \App\Http\Middleware\CookieTokenToBearer::class,
+        \Illuminate\Auth\Middleware\Authenticate::class,
+        \Illuminate\Routing\Middleware\SubstituteBindings::class,
+    ]);
 
-        $middleware->alias([
-            'admin' => \App\Http\Middleware\AdminMiddleware::class,
-
-            // מומלץ גם להגדיר, למקרה שמשתמשים בשם הזה במקום Class
-            'cookieAuth' => \App\Http\Middleware\CookieTokenToBearer::class,
-        ]);
+    $middleware->alias([
+        'cookieAuth' => \App\Http\Middleware\CookieTokenToBearer::class,
+        'admin' => \App\Http\Middleware\AdminMiddleware::class,
+        
+    ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
 
         // כל פעם ש-auth נכשל -> להחזיר 401 JSON ולא redirect
-        $exceptions->render(function (AuthenticationException $e, $request) {
-            return response()->json(['message' => 'Unauthenticated'], 401);
-        });
+        // $exceptions->render(function (AuthenticationException $e, $request) {
+        //     return response()->json(['message' => 'Unauthenticated'], 401);
+        // });
     })
     ->create();

@@ -1,4 +1,5 @@
-// apps/frontend/app/api/auth.api.ts
+import apiClient from "./axios";
+
 export type LoginPayload = { email: string; password: string };
 
 export type User = {
@@ -10,43 +11,20 @@ export type User = {
   updated_at: string;
 };
 
-async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
-  const res = await fetch(path, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {}),
-    },
-    credentials: "include", // ✅ שולח cookies
-  });
-
-  if (!res.ok) {
-    // מחזירים הודעה נוחה
-    let msg = `Request failed: ${res.status}`;
-    try {
-      const data = await res.json();
-      msg = data?.message || msg;
-    } catch {
-      // ignore
-    }
-    throw new Error(msg);
-  }
-
-  return res.json() as Promise<T>;
+export async function loginApi(payload: LoginPayload) {
+  const { data } = await apiClient.post<{ user: User; token?: string }>(
+    "/auth/login",
+    payload
+  );
+  return data;
 }
 
-export function loginApi(payload: LoginPayload) {
-  // Laravel שם cookie HttpOnly. אנחנו לא שומרים token.
-  return apiFetch<{ user: User }>(`/api/auth/login`, {
-    method: "POST",
-    body: JSON.stringify(payload),
-  });
+export async function meApi() {
+  const { data } = await apiClient.get<{ user: User }>("/auth/me");
+  return data;
 }
 
-export function meApi() {
-  return apiFetch<{ user: User }>(`/api/auth/me`, { method: "GET" });
-}
-
-export function logoutApi() {
-  return apiFetch<{ message: string }>(`/api/auth/logout`, { method: "POST" });
+export async function logoutApi() {
+  const { data } = await apiClient.post<{ message: string }>("/auth/logout");
+  return data;
 }

@@ -8,7 +8,9 @@ class Authenticate extends Middleware
 {
     protected function redirectTo($request)
     {
-        // בפרויקט API לא עושים redirect בכלל
-        return null;
+         if ($request->expectsJson() || $request->is('api/*')) {
+            return null;
+        }
+        return route('login');
     }
 }

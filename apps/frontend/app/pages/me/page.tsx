@@ -27,7 +27,12 @@ export default function MePage() {
         <div className="min-h-screen bg-background-muted px-4 py-10">
             <Card className="mx-auto max-w-2xl p-6">
                 <div className="flex items-center justify-between gap-4">
-                    <h1 className="text-xl font-semibold text-text">Me</h1>
+                    <div>
+                        <h1 className="text-xl font-semibold text-text">Me</h1>
+                        <p className="text-sm text-text-muted">
+                            מגיע מ־<code>/api/auth/me</code> על בסיס Cookie.
+                        </p>
+                    </div>
 
                     <div className="flex gap-2">
                         <Button variant="outline" onClick={() => fetchMe()} disabled={loading}>
@@ -49,10 +54,6 @@ export default function MePage() {
 
                     {!loading && user && (
                         <div className="rounded-md border border-border bg-white p-4">
-                            <p className="text-sm text-text-muted mb-2">
-                                המשתמש הגיע מ־<code>/api/auth/me</code> על בסיס cookie.
-                            </p>
-
                             <pre className="text-xs overflow-auto">
                                 {JSON.stringify(user, null, 2)}
                             </pre>

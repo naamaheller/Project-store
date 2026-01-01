@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "../../store/auth.store";
 
@@ -13,30 +13,45 @@ export default function LoginPage() {
     const router = useRouter();
     const { login, loading, error, clearError } = useAuthStore();
 
-    const [email, setEmail] = useState("isabell.fritsch@example.com");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [show, setShow] = useState(false);
 
+    const canSubmit = useMemo(
+        () => email.trim().length > 3 && password.trim().length >= 1 && !loading,
+        [email, password, loading]
+    );
+    // טיפול בטופס התחברות
     async function onSubmit(e: React.FormEvent) {
+      
         e.preventDefault();
         clearError();
-        const ok = await login(email, password);
+
+        const ok = await login(email.trim(), password);
         if (ok) router.push("/pages/me");
     }
 
     return (
-        <div className="min-h-screen bg-background-muted flex items-center justify-center px-4">
+        <div className="min-h-screen flex items-center justify-center bg-background-muted px-4">
             <Card className="w-full max-w-md p-6">
-                <h1 className="text-xl font-semibold text-text mb-1">Login</h1>
-                <p className="text-sm text-text-muted mb-6">
-                    התחברות דרך Cookie (HttpOnly) — בלי לשמור token בפרונט
-                </p>
+                <h1 className="text-2xl font-semibold text-text text-center mb-6">
+                    Login
+                </h1>
 
                 <form onSubmit={onSubmit} className="grid gap-4">
+                    {error && (
+                        <Alert variant="error">
+                            {error}
+                        </Alert>
+                    )}
+
                     <div className="grid gap-2">
                         <label className="text-sm font-medium text-text">Email</label>
                         <Input
                             value={email}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                setEmail(e.target.value)
+                            }
                             placeholder="email@example.com"
                             autoComplete="email"
                         />
@@ -44,29 +59,31 @@ export default function LoginPage() {
 
                     <div className="grid gap-2">
                         <label className="text-sm font-medium text-text">Password</label>
-                        <Input
-                            type="password"
-                            value={password}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-                            placeholder="••••••••"
-                            autoComplete="current-password"
-                        />
+                        <div className="relative">
+                            <Input
+                                type={show ? "text" : "password"}
+                                value={password}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                    setPassword(e.target.value)
+                                }
+                                placeholder="••••••••"
+                                autoComplete="current-password"
+                                className="pr-20"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShow((v) => !v)}
+                                className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-text-muted hover:underline"
+                            >
+                                {show ? "Hide" : "Show"}
+                            </button>
+                        </div>
                     </div>
 
-                    {error && (
-                        <Alert variant="error">
-                            {error}
-                        </Alert>
-                    )}
-
-                    <Button type="submit" disabled={loading}>
-                        {loading ? "מתחבר..." : "Login"}
+                    <Button type="submit" disabled={!canSubmit}>
+                        {loading ? "Logging in..." : "Login"}
                     </Button>
                 </form>
-
-                <div className="mt-4 text-xs text-text-muted">
-                    טיפ: אחרי login, נוודא עם /api/auth/me שהדפדפן שולח את ה-cookie.
-                </div>
             </Card>
         </div>
     );

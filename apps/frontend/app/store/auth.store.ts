@@ -14,6 +14,15 @@ type AuthState = {
     clearError: () => void;
 };
 
+function getErrMessage(e: any) {
+    // axios error shape
+    return (
+        e?.response?.data?.message ||
+        e?.message ||
+        "Something went wrong"
+    );
+}
+
 export const useAuthStore = create<AuthState>((set, get) => ({
     user: null,
     loading: false,
@@ -24,11 +33,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     login: async (email, password) => {
         set({ loading: true, error: null });
         try {
-            const res = await loginApi({ email, password });
-            set({ user: res.user, loading: false });
+            await loginApi({ email, password });
+
+            const me = await meApi();
+
+            set({ user: me.user, loading: false });
             return true;
         } catch (e: any) {
-            set({ error: e?.message || "Login failed", loading: false, user: null });
+            set({ user: null, loading: false, error: getErrMessage(e) });
             return false;
         }
     },
@@ -39,8 +51,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             const res = await meApi();
             set({ user: res.user, loading: false });
         } catch (e: any) {
-            // אם אין cookie/לא מחובר → user נשאר null
-            set({ user: null, loading: false, error: e?.message || null });
+            set({ user: null, loading: false, error: getErrMessage(e) });
         }
     },
 
@@ -48,8 +59,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         set({ loading: true, error: null });
         try {
             await logoutApi();
-        } catch {
-            // גם אם נכשל, ננקה user בפרונט
         } finally {
             set({ user: null, loading: false });
         }
