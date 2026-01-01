@@ -10,20 +10,26 @@ class ProductService
      * only for admin users
      * get all products with no restrictions
      */
-    public function getAllProductsForAdmin()
+    public function getAllProductsForAdmin(Request $request)
     {
-        return Product::orderBy('created_at', 'desc')->get();
+        $perPage = $request->input('per_page', 15);
+        $perPage = min($perPage, 100);
+        
+        return Product::orderBy('created_at', 'desc')->paginate($perPage);
     }
 
     /**
      * only for regular users
      * only active products in stock
      */
-    public function getActiveProducts()
+    public function getActiveProducts(Request $request)
     {
-        return Product::where('is_active', true)
+         $perPage = $request->input('per_page', 15);
+         $perPage = min($perPage, 100);
+
+         return Product::where('is_active', true)
             ->where('stock', '>', 0)
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate($perPage);
     }
 }
