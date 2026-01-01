@@ -8,12 +8,7 @@ class Authenticate extends Middleware
 {
     protected function redirectTo($request)
     {
-        // בקשות API לא עושות redirect אף פעם
-        if ($request->expectsJson() || $request->is('api/*')) {
-            return null;
-        }
-
-        // אם זה WEB – אפשר להחזיר route('login') אם יש לך כזה
-        return route('login');
+        // בפרויקט API לא עושים redirect בכלל
+        return null;
     }
 }

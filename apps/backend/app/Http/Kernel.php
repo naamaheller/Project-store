@@ -15,6 +15,7 @@ class Kernel extends HttpKernel
     ];
 
     protected $middlewareGroups = [
+
         'web' => [
             \App\Http\Middleware\EncryptCookies::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
@@ -25,11 +26,15 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
-            \App\Http\Middleware\CookieTokenToBearer::class,
+            // 👇 חובה בשביל cookies
+            \App\Http\Middleware\EncryptCookies::class,
+            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
     ];
+
 
     protected $middlewareAliases = [
         'auth' => \App\Http\Middleware\Authenticate::class,
@@ -38,10 +43,13 @@ class Kernel extends HttpKernel
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
-        'signed' => \App\Http\Middleware\ValidateSignature::class,
+        'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
 
         'admin' => \App\Http\Middleware\AdminMiddleware::class,
+
+        // 👇 חדש: נשתמש בזה על routes שצריכים cookie -> bearer
+        'cookieAuth' => \App\Http\Middleware\CookieTokenToBearer::class,
     ];
 }

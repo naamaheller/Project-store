@@ -12,7 +12,7 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $data = $request->validate([
-            'email' => ['required','email'],
+            'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
 
@@ -24,28 +24,42 @@ class AuthController extends Controller
 
         $token = $user->createToken('web')->accessToken;
 
-        return response()
-    ->json([
-        'user' => $user,
-        'token' => $token,
-    ])
-    ->cookie(
-        'access_token',
-        $token,
-        60 * 24 * 7,
-        '/',
-        null,
-        false,
-        true,
-        false,
-        'Lax'
-    );
+        return response()->json([
+            'user' => $user->only([
+                'id',
+                'name',
+                'email',
+                'role',
+                'created_at',
+                'updated_at',
+            ]),
+        ])->cookie(
+                'access_token',
+                $token,
+                60 * 24 * 7, // שבוע
+                '/',
+                null,
+                false, // true בפרודקשן עם https
+                true,  // httpOnly
+                false,
+                'Lax'
+            );
+
     }
 
     public function me(Request $request)
     {
-        return response()->json(['user' => $request->user()]);
+        $user = $request->user('api'); // חשוב: guard api (passport)
+
+        if (!$user) {
+            return response()->json(['message' => 'Unauthenticated'], 401);
+        }
+
+        return response()->json([
+            'user' => $user->only(['id', 'name', 'email', 'role', 'created_at', 'updated_at']),
+        ]);
     }
+
 
     public function logout(Request $request)
     {
