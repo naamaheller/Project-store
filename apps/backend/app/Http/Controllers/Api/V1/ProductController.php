@@ -20,9 +20,9 @@ class ProductController extends Controller
      * retrieve a list of products
      * GET /api/v1/products
      */
-      public function index()
+      public function index(Request $request)
     {
-        $products = $this->productService->getActiveProducts();
+        $products = $this->productService->getActiveProducts($request);
 
         return response()->json($products);
     }
@@ -31,9 +31,9 @@ class ProductController extends Controller
      * retrieve a list of all products for admin users
      * GET /api/v1/admin/products
      */
-    public function adminIndex()
+    public function adminIndex(Request $request)
     {
-        $products = $this->productService->getAllProductsForAdmin();
+        $products = $this->productService->getAllProductsForAdmin($request);
 
         return response()->json($products);
     }
