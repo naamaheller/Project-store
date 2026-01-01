@@ -7,6 +7,7 @@ import type { User } from "../models/user.model";
 type AuthState = {
     user: User | null;
     loading: boolean;
+    ready: boolean;
     error: string | null;
 
     login: (email: string, password: string) => Promise<boolean>;
@@ -23,6 +24,7 @@ function getErrMessage(e: any) {
 export const useAuthStore = create<AuthState>((set, get) => ({
     user: null,
     loading: false,
+    ready: false,
     error: null,
 
     clearError: () => set({ error: null }),
@@ -33,11 +35,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             await loginApi({ email, password });
 
             const me = await meApi();
-            set({ user: me.user, loading: false });
+            set({ user: me.user, loading: false, ready: true });
 
             return true;
         } catch (e: any) {
-            set({ user: null, loading: false, error: getErrMessage(e) });
+            set({ user: null, loading: false, error: getErrMessage(e), ready: true });
             return false;
         }
     },
@@ -55,12 +57,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     },
 
     fetchMe: async () => {
+
         set({ loading: true, error: null });
         try {
             const res = await meApi();
-            set({ user: res.user, loading: false });
+            set({ user: res.user, loading: false, ready: true });
         } catch (e: any) {
-            set({ user: null, loading: false, error: getErrMessage(e) });
+
+            set({ user: null, loading: false, ready: true, error: null });
         }
     },
 
@@ -69,7 +73,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         try {
             await logoutApi();
         } finally {
-            set({ user: null, loading: false });
+            set({ user: null, loading: false, ready: true });
         }
     },
 }));
