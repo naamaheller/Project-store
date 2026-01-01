@@ -11,7 +11,7 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen bg-background-muted flex items-center justify-center px-4">
-      <ProductPage />
+   
       <Card className="w-full max-w-md p-6 text-center">
         <h1 className="text-xl font-semibold text-text mb-2">
           Frontend
@@ -32,6 +32,13 @@ export default function HomePage() {
           >
             Me
           </Button>
+           <Button
+            variant="outline"
+            onClick={() => router.push("/pages/product")}
+          >
+            products
+          </Button>
+
         </div>
       </Card>
     </main>
