@@ -1,6 +1,4 @@
 'use client';
-// קומפוננטת עימוד לשליטה בעמודים וכמות שורות לתצוגה.
-// אינה מנהלת נתונים – רק שולחת אירועי שינוי החוצה.
 
 import { Button } from './Button';
 
@@ -73,12 +71,12 @@ export function Pagination({
             </div>
 
             <div className="flex items-center gap-2 justify-end">
-                <Button variant="outline" onClick={() => go(1)} disabled={safePage === 1}>
+                <Button variant="primary" onClick={() => go(1)} disabled={safePage === 1}>
                     ראשון
                 </Button>
 
                 <Button
-                    variant="outline"
+                    variant="primary"
                     onClick={() => go(safePage - 1)}
                     disabled={safePage === 1}
                 >
@@ -90,7 +88,7 @@ export function Pagination({
                 </span>
 
                 <Button
-                    variant="outline"
+                    variant="primary"
                     onClick={() => go(safePage + 1)}
                     disabled={safePage === totalPages}
                 >
@@ -98,7 +96,7 @@ export function Pagination({
                 </Button>
 
                 <Button
-                    variant="outline"
+                    variant="primary"
                     onClick={() => go(totalPages)}
                     disabled={safePage === totalPages}
                 >

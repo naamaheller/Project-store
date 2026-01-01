@@ -1,27 +1,32 @@
-'use client';
+"use client";
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState } from "react";
 
-import { Card, CardHeader, CardContent, CardFooter } from './components/ui/Card';
-import { Button } from './components/ui/Button';
-import { Alert } from './components/ui/Alert';
-import { useToast } from './components/ui/Toast';
-import { Table, type Column } from './components/ui/Table';
-import { Pagination } from './components/ui/Pagination';
-import ProductPage from './pages/product/page';
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardFooter,
+} from "./components/ui/Card";
+import { Button } from "./components/ui/Button";
+import { Alert } from "./components/ui/Alert";
+import { useToast } from "./components/ui/Toast";
+import { Table, type Column } from "./components/ui/Table";
+import { Pagination } from "./components/ui/Pagination";
+import ProductPage from "./pages/productList/page";
 
 type Row = {
   id: number;
   name: string;
   city: string;
-  status: 'פעיל' | 'ממתין' | 'חסום';
+  status: "פעיל" | "ממתין" | "חסום";
 };
 
 const ALL_ROWS: Row[] = Array.from({ length: 37 }).map((_, i) => ({
   id: i + 1,
   name: `פריט ${i + 1}`,
-  city: ['תל אביב', 'ירושלים', 'חיפה'][i % 3],
-  status: (['פעיל', 'ממתין', 'חסום'] as const)[i % 3],
+  city: ["תל אביב", "ירושלים", "חיפה"][i % 3],
+  status: (["פעיל", "ממתין", "חסום"] as const)[i % 3],
 }));
 
 export default function Home() {
@@ -43,37 +48,45 @@ export default function Home() {
   }, [filtered, page, pageSize]);
 
   const columns: Column<Row>[] = [
-    { key: 'id', header: 'ID', cell: (r) => r.id, className: 'w-20 text-text-muted' },
-    { key: 'name', header: 'שם', cell: (r) => r.name },
-    { key: 'city', header: 'עיר', cell: (r) => r.city },
     {
-      key: 'status',
-      header: 'סטטוס',
+      key: "id",
+      header: "ID",
+      cell: (r) => r.id,
+      className: "w-20 text-text-muted",
+    },
+    { key: "name", header: "שם", cell: (r) => r.name },
+    { key: "city", header: "עיר", cell: (r) => r.city },
+    {
+      key: "status",
+      header: "סטטוס",
       cell: (r) => (
         <span
           className={[
-            'inline-flex items-center rounded-full px-2 py-1 text-xs font-medium',
-            r.status === 'פעיל'
-              ? 'bg-success/10 text-success'
-              : r.status === 'ממתין'
-                ? 'bg-warning/10 text-warning'
-                : 'bg-error/10 text-error',
-          ].join(' ')}
+            "inline-flex items-center rounded-full px-2 py-1 text-xs font-medium",
+            r.status === "פעיל"
+              ? "bg-success/10 text-success"
+              : r.status === "ממתין"
+              ? "bg-warning/10 text-warning"
+              : "bg-error/10 text-error",
+          ].join(" ")}
         >
           {r.status}
         </span>
       ),
     },
     {
-      key: 'actions',
-      header: '',
-      className: 'text-left',
+      key: "actions",
+      header: "",
+      className: "text-left",
       cell: (r) => (
         <div className="flex gap-2 justify-end">
           <Button variant="outline" onClick={() => toast.info(`עריכת ${r.id}`)}>
             עריכה
           </Button>
-          <Button variant="danger" onClick={() => toast.error(`מחיקה ${r.id}`, 'שגיאה')}>
+          <Button
+            variant="danger"
+            onClick={() => toast.error(`מחיקה ${r.id}`, "שגיאה")}
+          >
             מחיקה
           </Button>
         </div>
@@ -83,15 +96,15 @@ export default function Home() {
 
   const runAllTests = () => {
     // סדר פעולות שמדגים הכל בלי ללחוץ
-    toast.info('מריץ בדיקה אוטומטית…');
+    toast.info("מריץ בדיקה אוטומטית…");
 
     // 1) toast success
-    setTimeout(() => toast.success('Toast עובד ✅', 'הצלחה'), 300);
+    setTimeout(() => toast.success("Toast עובד ✅", "הצלחה"), 300);
 
     // 2) loading skeleton
     setTimeout(() => {
       setLoading(true);
-      toast.info('Skeleton ON (2 שניות)');
+      toast.info("Skeleton ON (2 שניות)");
       setTimeout(() => setLoading(false), 2000);
     }, 900);
 
@@ -99,14 +112,14 @@ export default function Home() {
     setTimeout(() => {
       setHasData(false);
       setPage(1);
-      toast.warning('EmptyState אמור להופיע עכשיו', 'בדיקה');
+      toast.warning("EmptyState אמור להופיע עכשיו", "בדיקה");
     }, 3200);
 
     // 4) restore data + jump page
     setTimeout(() => {
       setHasData(true);
       setPage(2);
-      toast.info('החזרתי נתונים + עברתי לעמוד 2');
+      toast.info("החזרתי נתונים + עברתי לעמוד 2");
     }, 5200);
   };
 
@@ -116,7 +129,7 @@ export default function Home() {
     setHasData(true);
     setPage(1);
     setPageSize(10);
-    toast.info('איפוס בוצע');
+    toast.info("איפוס בוצע");
   };
 
   return (
@@ -213,6 +226,8 @@ export default function Home() {
     //     </Card>
     //   </div>
     // </div>
-    <ProductPage/>
+    <div className="min-h-screen bg-background p-6" dir="rtl">
+    <ProductPage />
+  </div>
   );
 }
