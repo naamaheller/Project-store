@@ -20,7 +20,7 @@ class ProductController extends Controller
      * retrieve a list of products
      * GET /api/v1/products
      */
-      public function index(Request $request)
+    public function index(Request $request)
     {
         $products = $this->productService->getActiveProducts($request);
 
