@@ -7,29 +7,27 @@ import { useAuthStore } from "../../store/auth.store";
 import { fetchProducts } from "@/app/services/product.service";
 import { Product } from "@/app/models/product.model";
 
-function ProductPage() {
+export default function ProductPage() {
   const router = useRouter();
-  const { user, fetchMe, loading } = useAuthStore();
+  const { user, fetchMe, loading, ready } = useAuthStore();
 
   const [products, setProducts] = useState<Product[]>([]);
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
 
   useEffect(() => {
-    fetchMe();
-  }, [fetchMe]);
+    if (!ready) fetchMe();
+  }, [ready, fetchMe]);
 
   useEffect(() => {
-    if (!loading && !user) {
-      router.replace("/pages/login");
-    }
-  }, [loading, user, router]);
+    if (!ready) return;
+    if (!user) router.replace("/pages/login");
+  }, [ready, user, router]);
 
   useEffect(() => {
-    if (!user) return;
-
+    if (!ready || !user) return;
     loadProducts();
-  }, [page, user]);
+  }, [ready, user, page]);
 
   async function loadProducts() {
     const result = await fetchProducts({
@@ -41,7 +39,7 @@ function ProductPage() {
     setLastPage(result.last_page);
   }
 
-  if (loading) {
+  if (!ready || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <span>Loading...</span>
@@ -62,5 +60,3 @@ function ProductPage() {
     </>
   );
 }
-
-export default ProductPage;
