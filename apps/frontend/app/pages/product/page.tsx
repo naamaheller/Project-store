@@ -23,13 +23,16 @@ export default function ProductPage() {
   const [total, setTotal] = useState(0);
   const [loadingPage, setLoadingPage] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
   const [absoluteMaxPrice, setAbsoluteMaxPrice] = useState<number>(0);
+
   const [filters, setFilters] = useState<ProductFiltersState>({
     search: "",
     minPrice: null,
     maxPrice: null,
     categories: [],
   });
+
   const [filtersApplied, setFiltersApplied] = useState(false);
 
   useEffect(() => {
@@ -47,18 +50,17 @@ export default function ProductPage() {
   }, [ready, user, page, pageSize, filters.search]);
 
   async function loadProducts(overrideFilters?: Partial<ProductFiltersState>) {
-    const finalFilters = {
-      ...filters,
-      ...overrideFilters,
-    };
+    const finalFilters = { ...filters, ...overrideFilters };
+
     try {
       setLoadingPage(true);
+
       const result = await fetchProducts({
         page,
         per_page: pageSize,
         search: finalFilters.search,
-        min_price: finalFilters.minPrice!,
-        max_price: finalFilters.maxPrice!,
+        min_price: finalFilters.minPrice ?? undefined,
+        max_price: finalFilters.maxPrice ?? undefined,
         categories: finalFilters.categories,
       });
 
@@ -71,7 +73,7 @@ export default function ProductPage() {
 
   if (!ready || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-[calc(100vh-64px)] flex items-center justify-center">
         <span>Loading...</span>
       </div>
     );
@@ -80,10 +82,9 @@ export default function ProductPage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-[calc(100vh-64px)] flex flex-col">
       <div className="flex-1 px-6">
         <div className="flex gap-7">
-
           <aside className="w-72 shrink-0">
             <div className="sticky top-24">
               <FiltersProduct
@@ -97,53 +98,45 @@ export default function ProductPage() {
                   loadProducts(filters);
                 }}
                 onClear={() => {
-                  setFilters({
+                  const cleared: ProductFiltersState = {
                     search: "",
                     minPrice: null,
                     maxPrice: absoluteMaxPrice,
                     categories: [],
-                  });
+                  };
+
+                  setFilters(cleared);
                   setFiltersApplied(false);
                   setPage(1);
-                  loadProducts({
-                    search: "",
-                    minPrice: null,
-                    maxPrice: absoluteMaxPrice,
-                    categories: [],
-                  });
+                  loadProducts(cleared);
                 }}
                 applied={filtersApplied}
               />
             </div>
           </aside>
 
-          <main className="flex-1">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {/* Products */}
+          <main className="flex-1 flex flex-col">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {loadingPage
                 ? Array.from({ length: pageSize }).map((_, i) => (
-                    <ProductCardSkeleton key={i} />
-                  ))
+                  <ProductCardSkeleton key={i} />
+                ))
                 : products.map((p) => (
-                    <ProductCard
-                      key={p.id}
-                      product={p}
-                      onClick={setSelectedProduct}
-                    />
-                  ))}
+                  <ProductCard
+                    key={p.id}
+                    product={p}
+                    onClick={setSelectedProduct}
+                  />
+                ))}
             </div>
           </main>
         </div>
       </div>
 
-      <ProductShowModal
-        open={!!selectedProduct}
-        product={selectedProduct}
-        onClose={() => setSelectedProduct(null)}
-      />
-
-      {/* ✅ Pagination footer */}
-      <footer className="mt-auto border-t border-border bg-background">
-        <div className="container mx-auto px-4 py-4">
+      {/* footer */}
+      <footer className="border-t border-border bg-background">
+        <div className="container mx-auto px-4 py-[2px]">
           <Pagination
             page={page}
             pageSize={pageSize}
@@ -156,6 +149,12 @@ export default function ProductPage() {
           />
         </div>
       </footer>
+
+      <ProductShowModal
+        open={!!selectedProduct}
+        product={selectedProduct}
+        onClose={() => setSelectedProduct(null)}
+      />
     </div>
   );
 }
