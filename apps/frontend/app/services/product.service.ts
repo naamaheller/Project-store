@@ -1,4 +1,4 @@
-import { getAdminProducts, getProducts } from "../api/product.api";
+import { getAdminProducts, getMaxPrice, getProducts } from "../api/product.api";
 import { ProductFilters } from "../models/product.model";
 
 type ApiCall = (params: Record<string, any>) => Promise<{ data: any }>;
@@ -33,6 +33,16 @@ async function fetchProductsBase(apiCall: ApiCall, filters?: ProductFilters) {
     return response.data;
   } catch (error) {
     console.error("Error fetching products:", error);
+    throw error;
+  }
+}
+
+export async function fetchMaxPrice() {
+  try {
+    const response = await getMaxPrice();
+    return response.data.max_price;
+  } catch (error) {
+    console.error("Error fetching max price:", error);
     throw error;
   }
 }

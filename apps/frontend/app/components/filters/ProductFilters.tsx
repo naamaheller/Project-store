@@ -7,6 +7,7 @@ import { InputSearch } from "./SearchInput";
 import { useEffect, useState } from "react";
 import { fetchCategories } from "@/app/services/category.service";
 import { Category } from "@/app/models/category.model";
+import { fetchMaxPrice } from "@/app/services/product.service";
 
 type Props = {
   filters: ProductFiltersState;
@@ -17,11 +18,27 @@ type Props = {
 export function FiltersProduct({ filters, onChange, onApply }: Props) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMaxPrice, setLoadingMaxPrice] = useState(true);
+
+  useEffect(() => {
+    const loadMaxPrice = async () => {
+      try {
+        const priceMax = await fetchMaxPrice();
+        onChange({ ...filters, maxPrice: priceMax });
+      } catch (error) {
+        console.error("Failed to load max price", error);
+      } finally {
+        setLoadingMaxPrice(false);
+      }
+    };
+
+    loadMaxPrice();
+  }, []);
 
   useEffect(() => {
     const loadCategories = async () => {
       try {
-        const result = await fetchCategories();        
+        const result = await fetchCategories();
         setCategories(result);
       } catch (error) {
         console.error("Failed to load categories", error);
@@ -40,13 +57,17 @@ export function FiltersProduct({ filters, onChange, onApply }: Props) {
         onChange={(value) => onChange({ ...filters, search: value })}
       />
 
-      <RangePrice
-        min={filters.minPrice}
-        max={filters.maxPrice}
-        onChange={(min, max) =>
-          onChange({ ...filters, minPrice: min, maxPrice: max })
-        }
-      />
+      {loadingMaxPrice ? (
+        <p>Loading price range...</p>
+      ) : (
+        <RangePrice
+          min={filters.minPrice}
+          max={filters.maxPrice}
+          onChange={(min, max) =>
+            onChange({ ...filters, minPrice: min, maxPrice: max })
+          }
+        />
+      )}
 
       {loading ? (
         <p>Loading categories...</p>

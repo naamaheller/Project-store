@@ -53,6 +53,26 @@ class ProductController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * get the maximum price of all products
+     * GET /api/v1/products/max-price
+     */
+    public function getMaxPrice()
+    {
+        try {
+            $maxPrice = $this->productService->getMaxPrice();
+            return response()->json(['max_price' => $maxPrice], 200);
+
+        } catch (Throwable $e) {
+            return response()->json([
+                'message' => 'Failed to fetch max price',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+
     /**
      * delete a product by admin
      * DELETE /api/v1/admin/products/delete
@@ -83,17 +103,16 @@ class ProductController extends Controller
      * edit a product by admin
      * PUT /api/v1/admin/products/edit
      */
-    public function adminEditProduct(int $productId)
+    public function adminEditProduct(Request $request, int $productId)
     {
       
 
          try {
-             $this->productService->editProductByAdmin($productId);
+             $this->productService->editProductByAdmin($request, $productId);
             return response()->json([
                 'message' => 'Product edited successfully',
             ], 200);
 
-       
         } catch (ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Product not found',
@@ -105,4 +124,5 @@ class ProductController extends Controller
             ], 500);
         }
     }
+    
 }
