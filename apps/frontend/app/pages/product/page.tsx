@@ -9,6 +9,7 @@ import { Product } from "@/app/models/product.model";
 import { ProductCardSkeleton } from "@/app/components/pruduct/ProductCardSkeleton";
 import { ProductCard } from "@/app/components/pruduct/Product";
 import { Pagination } from "@/app/components/ui/Pagination";
+import { ProductShowModal } from "@/app/components/pruduct/productShow";
 
 export default function ProductPage() {
   const router = useRouter();
@@ -19,6 +20,13 @@ export default function ProductPage() {
   const [pageSize, setPageSize] = useState(5);
   const [total, setTotal] = useState(0);
   const [loadingPage, setLoadingPage] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [filters, setFilters] = useState({
+    categories: [] as number[],
+    priceMin: null,
+    priceMax: null,
+    search: "",
+  });
 
   useEffect(() => {
     if (!ready) fetchMe();
@@ -40,6 +48,10 @@ export default function ProductPage() {
       const result = await fetchProducts({
         page,
         per_page: pageSize,
+        category_id: filters.categories,
+        min_price: filters.priceMin ?? undefined,
+        max_price: filters.priceMax ?? undefined,
+        search: filters.search || undefined,
       });
 
       setProducts(result.data);
@@ -69,7 +81,13 @@ export default function ProductPage() {
               ? Array.from({ length: pageSize }).map((_, i) => (
                   <ProductCardSkeleton key={i} />
                 ))
-              : products.map((p) => <ProductCard key={p.id} product={p} />)}
+              : products.map((p) => (
+                  <ProductCard
+                    key={p.id}
+                    product={p}
+                    onClick={setSelectedProduct}
+                  />
+                ))}
           </div>
         </main>
       </div>
@@ -87,6 +105,13 @@ export default function ProductPage() {
           }}
         />
       </div>
+
+      <ProductShowModal
+        open={!!selectedProduct}
+        product={selectedProduct}
+        onClose={() => setSelectedProduct(null)}
+      />
+
     </div>
   );
 }

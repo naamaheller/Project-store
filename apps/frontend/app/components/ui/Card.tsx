@@ -3,13 +3,15 @@ import type { ReactNode } from 'react';
 // משמשת כקונטיינר אחיד לעמודים וטפסים.
 
 type CardProps = {
-    children: ReactNode;
-    className?: string;
+  children: ReactNode;
+  className?: string;
+  onClick?: () => void;
 };
 
-export function Card({ children, className }: CardProps) {
+export function Card({ children, className, onClick }: CardProps) {
     return (
         <div
+            onClick={onClick}
             className={[
                 'bg-surface border border-border rounded-lg shadow-sm',
                 className ?? '',
