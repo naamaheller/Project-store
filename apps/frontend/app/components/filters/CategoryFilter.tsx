@@ -19,14 +19,7 @@ export function FilterCategory({
   selected,
   onChange,
 }: CategoryProps) {
-  const toggle = (id: number) => {
-    if (selected.includes(id)) {
-      onChange(selected.filter((c) => c !== id));
-    } else {
-      onChange([...selected, id]);
-    }
-  };
-
+  
   useEffect(() => {
     console.log(categories);
   }, [categories]);
