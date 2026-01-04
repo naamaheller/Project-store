@@ -17,7 +17,7 @@ export function RangePrice({ min, max, onChange , value }: PriceRangeProps) {
         max={max}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full"
+        className="w-full range-track"
       />
 
       <div className="text-sm mt-1">
