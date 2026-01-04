@@ -11,6 +11,7 @@ import { ProductCard } from "@/app/components/pruduct/Product";
 import { Pagination } from "@/app/components/ui/Pagination";
 import { ProductShowModal } from "@/app/components/pruduct/productShow";
 
+
 export default function ProductPage() {
   const router = useRouter();
   const { user, fetchMe, loading, ready } = useAuthStore();
@@ -21,12 +22,7 @@ export default function ProductPage() {
   const [total, setTotal] = useState(0);
   const [loadingPage, setLoadingPage] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [filters, setFilters] = useState({
-    categories: [] as number[],
-    priceMin: null,
-    priceMax: null,
-    search: "",
-  });
+ 
 
   useEffect(() => {
     if (!ready) fetchMe();
@@ -42,16 +38,13 @@ export default function ProductPage() {
     loadProducts();
   }, [ready, user, page]);
 
+  
   async function loadProducts() {
     try {
       setLoadingPage(true);
       const result = await fetchProducts({
         page,
         per_page: pageSize,
-        category_id: filters.categories,
-        min_price: filters.priceMin ?? undefined,
-        max_price: filters.priceMax ?? undefined,
-        search: filters.search || undefined,
       });
 
       setProducts(result.data);
@@ -74,6 +67,7 @@ export default function ProductPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <div className="flex-1 container mx-auto px-4">
+
         {/* Products */}
         <main className="flex-1">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -111,7 +105,6 @@ export default function ProductPage() {
         product={selectedProduct}
         onClose={() => setSelectedProduct(null)}
       />
-
     </div>
   );
 }

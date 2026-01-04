@@ -98,7 +98,12 @@ class ProductService
         return $query;
     }
 
+    public function deleteProductByAdmin(int $productId)
+    {
+        $product = Product::findOrFail($productId);
+        $product->delete();
 
+    }
 
     
 }
