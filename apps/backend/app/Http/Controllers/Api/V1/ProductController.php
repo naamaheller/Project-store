@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Throwable;
 use App\Services\ProductService;
@@ -52,4 +53,28 @@ class ProductController extends Controller
             ], 500);
         }
     }
+
+    public function adminDeleteProduct(int $productId)
+    {
+
+        try {
+            $this->productService->deleteProductByAdmin($productId);
+
+
+            return response()->json([
+                'message' => 'Product deleted successfully',
+            ], 200);
+
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Product not found',
+            ], 404);
+
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => 'Failed to delete product',
+            ], 500);
+        }
+    }
+    
 }

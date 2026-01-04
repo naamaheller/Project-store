@@ -27,7 +27,7 @@ Route::prefix('v1')->group(function () {
 
 
         Route::get('/products', [ProductController::class, 'index']);
-
+        Route::delete('/admin/products/delete/{productId}', [ProductController::class, 'adminDeleteProduct']);
         Route::get('/admin/products', [ProductController::class, 'adminIndex']);
         Route::get('/categories', [CategoryController::class, 'index']);
     });

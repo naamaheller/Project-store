@@ -9,6 +9,8 @@ import { Product } from "@/app/models/product.model";
 import { ProductCardSkeleton } from "@/app/components/pruduct/ProductCardSkeleton";
 import { ProductCard } from "@/app/components/pruduct/Product";
 import { Pagination } from "@/app/components/ui/Pagination";
+import { ProductShowModal } from "@/app/components/pruduct/productShow";
+
 
 export default function ProductPage() {
   const router = useRouter();
@@ -19,6 +21,8 @@ export default function ProductPage() {
   const [pageSize, setPageSize] = useState(5);
   const [total, setTotal] = useState(0);
   const [loadingPage, setLoadingPage] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+ 
 
   useEffect(() => {
     if (!ready) fetchMe();
@@ -36,6 +40,7 @@ export default function ProductPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready, user, page, pageSize]);
 
+  
   async function loadProducts() {
     try {
       setLoadingPage(true);
@@ -64,16 +69,29 @@ export default function ProductPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <div className="flex-1 container mx-auto px-4">
-        <main className="flex-1 py-6">
+        {/* Products */}
+        <main className="flex-1">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {loadingPage
               ? Array.from({ length: pageSize }).map((_, i) => (
-                <ProductCardSkeleton key={i} />
-              ))
-              : products.map((p) => <ProductCard key={p.id} product={p} />)}
+                  <ProductCardSkeleton key={i} />
+                ))
+              : products.map((p) => (
+                  <ProductCard
+                    key={p.id}
+                    product={p}
+                    onClick={setSelectedProduct}
+                  />
+                ))}
           </div>
         </main>
       </div>
+
+      <ProductShowModal
+        open={!!selectedProduct}
+        product={selectedProduct}
+        onClose={() => setSelectedProduct(null)}
+      />
 
       {/* ✅ Pagination footer */}
       <footer className="mt-auto border-t border-border bg-background">
