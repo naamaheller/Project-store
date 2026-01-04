@@ -5,6 +5,9 @@ use Throwable;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\Category;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class ProductService
 {
@@ -48,6 +51,49 @@ class ProductService
             ], 500);
         }
     }
+    /**
+     * only for admin users
+     * add a new product
+     * protected $fillable = [
+     *   'name',
+     *   'slug',
+     *   'description',
+     *   'price',
+     *   'img_url',
+     *   'stock',
+     *   'is_active',
+     *   'category_id',
+     *];
+     */
+    public function addProductByAdmin(array $data)
+    {
+        return DB::transaction(function () use ($data) {
+
+        $categoryName = trim($data['category']);
+
+        $category = Category::firstOrCreate(
+            ['slug' => Str::slug($categoryName)],
+            ['name' => ucfirst($categoryName)]
+        );
+
+        $slug = Str::slug($data['name']);
+
+        if (Product::where('slug', $slug)->exists()) {
+            $slug .= '-' . uniqid();
+        }
+        
+        return Product::create([
+            'name' => $data['name'],
+            'slug' => $slug,
+            'description' => $data['description'] ?? null,
+            'price' => $data['price'],
+            'stock' => $data['stock'],
+            'is_active' => $data['is_active'],
+            'img_url' => $data['img_url'] ?? null,
+            'category_id' => $category->id,
+        ]);
+    });
+    }
     /*
      * only for admin users
      * delete a product
@@ -65,7 +111,7 @@ class ProductService
      * only for admin users
      * edit a product
      */
-    public function editProductByAdmin(int $productId)
+    public function editProductByAdmin(int $productId, Request $request)
     { 
 
         $product = Product::findOrFail($productId);

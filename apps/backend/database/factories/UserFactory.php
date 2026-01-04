@@ -35,7 +35,7 @@ class UserFactory extends Factory
     {
         return $this->state(fn () => [
             'role' => 'admin',
-            'email' => 'admin@example.com', // fixed for login
+            'email' => 'admin@example.com', 
             'name' => 'Admin User',
         ]);
     }
