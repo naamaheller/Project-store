@@ -9,7 +9,7 @@ import { Product } from "@/app/models/product.model";
 import { ProductCardSkeleton } from "@/app/components/pruduct/ProductCardSkeleton";
 import { ProductCard } from "@/app/components/pruduct/Product";
 import { Pagination } from "@/app/components/ui/Pagination";
-import { ProductShowModal } from "@/app/components/pruduct/ProductShow";
+import { ProductShowModal } from "@/app/components/pruduct/productShow";
 import ProductFiltersState from "@/app/models/product-filters.model";
 import { FiltersProduct } from "@/app/components/filters/ProductFilters";
 
@@ -100,15 +100,15 @@ export default function ProductPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {loadingPage
                 ? Array.from({ length: pageSize }).map((_, i) => (
-                    <ProductCardSkeleton key={i} />
-                  ))
+                  <ProductCardSkeleton key={i} />
+                ))
                 : products.map((p) => (
-                    <ProductCard
-                      key={p.id}
-                      product={p}
-                      onClick={setSelectedProduct}
-                    />
-                  ))}
+                  <ProductCard
+                    key={p.id}
+                    product={p}
+                    onClick={setSelectedProduct}
+                  />
+                ))}
             </div>
           </main>
         </div>

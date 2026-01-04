@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Throwable;
 use App\Services\ProductService;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 
 class ProductController extends Controller
