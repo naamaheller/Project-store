@@ -83,10 +83,8 @@ export default function ProductPage() {
 
   return (
     <div className="min-h-[calc(100vh-64px)] flex flex-col">
-      {/* content */}
       <div className="flex-1 px-6">
         <div className="flex gap-7">
-          {/* Filters */}
           <aside className="w-72 shrink-0">
             <div className="sticky top-24">
               <FiltersProduct

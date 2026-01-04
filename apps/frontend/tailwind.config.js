@@ -7,23 +7,7 @@ export default {
   ],
   theme: {
     extend: {
-      keyframes: {
-        shimmer: {
-          "0%": { transform: "translateX(-100%)" },
-          "100%": { transform: "translateX(100%)" },
-        },
-
-        modalIn: {
-          "0%": { opacity: "0", transform: "translateY(6px)" },
-          "100%": { opacity: "1", transform: "translateY(0)" },
-        },
-      },
-
-      animation: {
-        shimmer: "shimmer 1.5s infinite linear",
-        modalIn: "modalIn 0.12s ease-out",
-      },
-
+      
       spacing: {
         xs: "4px",
         sm: "8px",

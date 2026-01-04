@@ -95,3 +95,12 @@ input[type="range"]::-moz-range-thumb {
   border-radius: 50%;
   border: none;
 }
+
+@keyframes skeleton-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
