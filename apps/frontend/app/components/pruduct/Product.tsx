@@ -1,5 +1,5 @@
 import { Product } from "@/app/models/product.model";
-import { Card, CardContent, CardFooter } from "./ui/Card";
+import { Card, CardContent, CardFooter } from "../ui/Card";
 
 interface Props {
   product: Product;
