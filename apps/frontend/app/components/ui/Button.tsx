@@ -9,7 +9,8 @@ type ButtonProps = {
 
 const baseStyles =
   "px-4 py-2 rounded-md font-medium transition inline-flex items-center justify-center " +
-  "focus:outline-none focus:ring-2 focus:ring-primary-soft";
+  // focus (keyboard only)
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
@@ -22,7 +23,7 @@ const variantStyles: Record<ButtonVariant, string> = {
     "border border-border bg-white text-text hover:bg-background-muted hover:border-primary/50",
 
   danger:
-    "bg-error text-text-inverted hover:opacity-90 focus:ring-error/20",
+    "bg-error text-text-inverted hover:opacity-90 focus-visible:ring-error/20",
 };
 
 export function Button({

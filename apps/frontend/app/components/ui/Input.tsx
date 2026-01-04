@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import type { InputHTMLAttributes } from 'react';
+import type { InputHTMLAttributes } from "react";
 
 type InputProps = {
     label?: string;
@@ -22,10 +22,7 @@ export function Input({
     return (
         <div className="flex w-full flex-col gap-1">
             {label && (
-                <label
-                    htmlFor={inputId}
-                    className="text-sm font-medium text-text"
-                >
+                <label htmlFor={inputId} className="text-sm font-medium text-text">
                     {label}
                 </label>
             )}
@@ -40,13 +37,17 @@ export function Input({
 
                     // border
                     "border-2 border-primary/40",
-                    "focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
+
+                    // focus (keyboard only)
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary",
+                    "focus-visible:ring-offset-2 focus-visible:ring-offset-background",
 
                     // states
-                    error && "border-error focus:border-error focus:ring-error/20",
+                    error &&
+                    "border-error focus-visible:border-error focus-visible:ring-error/20",
                     disabled && "opacity-50 cursor-not-allowed bg-background-muted",
 
-                    className,
+                    className ?? "",
                 ]
                     .filter(Boolean)
                     .join(" ")}
