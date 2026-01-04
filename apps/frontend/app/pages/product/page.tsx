@@ -6,6 +6,9 @@ import { useAuthStore } from "../../store/auth.store";
 
 import { fetchProducts } from "@/app/services/product.service";
 import { Product } from "@/app/models/product.model";
+import { ProductCardSkeleton } from "@/app/components/ProductCardSkeleton";
+import { ProductCard } from "@/app/components/Product";
+import { Pagination } from "@/app/components/ui/Pagination";
 
 export default function ProductPage() {
   const router = useRouter();
@@ -13,7 +16,9 @@ export default function ProductPage() {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [page, setPage] = useState(1);
-  const [lastPage, setLastPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
+  const [total, setTotal] = useState(0);
+  const [loadingPage, setLoadingPage] = useState(false);
 
   useEffect(() => {
     if (!ready) fetchMe();
@@ -30,13 +35,18 @@ export default function ProductPage() {
   }, [ready, user, page]);
 
   async function loadProducts() {
-    const result = await fetchProducts({
-      page,
-      per_page: 12,
-    });
+    try {
+      setLoadingPage(true);
+      const result = await fetchProducts({
+        page,
+        per_page: pageSize,
+      });
 
-    setProducts(result.data);
-    setLastPage(result.last_page);
+      setProducts(result.data);
+      setTotal(result.total);
+    } finally {
+      setLoadingPage(false);
+    }
   }
 
   if (!ready || loading) {
@@ -50,13 +60,33 @@ export default function ProductPage() {
   if (!user) return null;
 
   return (
-    <>
-      <h1 style={{ color: "blue" }}>Products</h1>
-      <ul>
-        {products.map((p) => (
-          <li key={p.id}>{p.name}</li>
-        ))}
-      </ul>
-    </>
+    <div className="min-h-screen flex flex-col">
+      <div className="flex-1 container mx-auto px-4">
+        {/* Products */}
+        <main className="flex-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {loading
+              ? Array.from({ length: pageSize }).map((_, i) => (
+                  <ProductCardSkeleton key={i} />
+                ))
+              : products.map((p) => <ProductCard key={p.id} product={p} />)}
+          </div>
+        </main>
+      </div>
+
+      {/* Pagination */}
+      <div className="mt-auto pt-6">
+        <Pagination
+          page={page}
+          pageSize={pageSize}
+          total={total}
+          onPageChange={setPage}
+          onPageSizeChange={(size) => {
+            setPage(1);
+            setPageSize(size);
+          }}
+        />
+      </div>
+    </div>
   );
 }
