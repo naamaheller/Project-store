@@ -46,3 +46,20 @@ input[type="range"]::-moz-range-thumb {
   background: var(--color-primary);
   cursor: pointer;
 }
+
+/* 
+   Global focus states 
+  */
+
+:where(a, button, input, textarea, select, summary, [role="button"], [tabindex]:not([tabindex="-1"])):focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+:where(a, button, input, textarea, select, summary, [role="button"], [tabindex]:not([tabindex="-1"])):focus {
+  outline: none;
+}
+
+:where(button, input, textarea, select):disabled {
+  outline: none;
+}
