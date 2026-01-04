@@ -13,29 +13,24 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
    ->withMiddleware(function (Middleware $middleware): void {
-    $middleware->throttleApi('60,1');
 
     $middleware->priority([
         \App\Http\Middleware\CookieTokenToBearer::class,
-        \App\Http\Middleware\Authenticate::class,
+        \Illuminate\Auth\Middleware\Authenticate::class,
         \Illuminate\Routing\Middleware\SubstituteBindings::class,
     ]);
 
     $middleware->alias([
-        'auth' => \App\Http\Middleware\Authenticate::class,
         'cookieAuth' => \App\Http\Middleware\CookieTokenToBearer::class,
-        'admin' => \App\Http\Middleware\AdminMiddleware::class,    
-        'scopes' => \Laravel\Passport\Http\Middleware\CheckScopes::class,
-        'scope' => \Laravel\Passport\Http\Middleware\CheckForAnyScope::class,
-   
+        'admin' => \App\Http\Middleware\AdminMiddleware::class,
         
     ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
 
         // כל פעם ש-auth נכשל -> להחזיר 401 JSON ולא redirect
-        $exceptions->render(function (AuthenticationException $e, $request) {
-            return response()->json(['message' => 'Unauthenticated'], 401);
-        });
+        // $exceptions->render(function (AuthenticationException $e, $request) {
+        //     return response()->json(['message' => 'Unauthenticated'], 401);
+        // });
     })
     ->create();

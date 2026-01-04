@@ -55,29 +55,55 @@ class ProductService
             ], 500);
         }
     }
-    /*
-     * only for admin users
-     * delete a product
-     */
+
+    private function buildFilteredQuery(Request $request)
+    {
+        $query = Product::with('category');
+
+        if ($request->boolean('only_active', true)) {
+            $query->where('is_active', true)
+                ->where('stock', '>', 0);
+        }
+
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        if ($request->filled('min_price')) {
+            $query->where('price', '>=', $request->min_price);
+        }
+
+        if ($request->filled('max_price')) {
+            $query->where('price', '<=', $request->max_price);
+        }
+
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+
+            $words = preg_split('/\s+/', $search);
+
+            $query->where(function ($q) use ($words) {
+                foreach ($words as $word) {
+                    $q->where(function ($qq) use ($word) {
+                        $qq->where('name', 'like', "%{$word}%")
+                            ->orWhere('description', 'like', "%{$word}%")
+                            ->orWhere('slug', 'like', "%{$word}%");
+
+                    });
+                }
+            });
+        }
+
+
+        return $query;
+    }
+
     public function deleteProductByAdmin(int $productId)
-    { 
-        
+    {
         $product = Product::findOrFail($productId);
         $product->delete();
-           
-       
+
     }
 
-    /*
-     * only for admin users
-     * edit a product
-     */
-    public function editProductByAdmin(int $productId)
-    { 
-
-        $product = Product::findOrFail($productId);
-        $product->update($request->all());
-        return $product;
-    }
-
+    
 }

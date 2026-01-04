@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Laravel\Passport\Passport;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,10 +19,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Passport::loadKeysFrom(storage_path());
-        Passport::tokensCan([
-        'admin' => 'Access administrative operations',
-        'user' => 'Access standard user operations',
-    ]);
+        //
     }
 }
