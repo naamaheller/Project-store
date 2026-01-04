@@ -17,13 +17,7 @@ function clamp(n: number, min: number, max: number) {
     return Math.max(min, Math.min(max, n));
 }
 
-function Icon({
-    title,
-    children,
-}: {
-    title: string;
-    children: ReactNode;
-}) {
+function Icon({ title, children }: { title: string; children: ReactNode }) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -113,8 +107,11 @@ export function Pagination({
         <div
             className={[
                 "w-full",
-                "flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between",
+                // ✅ היה gap-3 -> עכשיו קטן יותר
+                "flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between",
                 "text-sm text-text-muted",
+                // ✅ רווח קטן מאוד מעל/מתחת
+                "py-1",
                 className ?? "",
             ].join(" ")}
             dir="ltr"
