@@ -6,8 +6,8 @@ import { useAuthStore } from "../../store/auth.store";
 
 import { fetchProducts } from "@/app/services/product.service";
 import { Product } from "@/app/models/product.model";
-import { ProductCardSkeleton } from "@/app/components/ProductCardSkeleton";
-import { ProductCard } from "@/app/components/Product";
+import { ProductCardSkeleton } from "@/app/components/pruduct/ProductCardSkeleton";
+import { ProductCard } from "@/app/components/pruduct/Product";
 import { Pagination } from "@/app/components/ui/Pagination";
 
 export default function ProductPage() {
@@ -65,7 +65,7 @@ export default function ProductPage() {
         {/* Products */}
         <main className="flex-1">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {loading
+            {loadingPage
               ? Array.from({ length: pageSize }).map((_, i) => (
                   <ProductCardSkeleton key={i} />
                 ))
