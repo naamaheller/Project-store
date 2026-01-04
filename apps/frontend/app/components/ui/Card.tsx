@@ -13,9 +13,9 @@ export function Card({ children, className, onClick }: CardProps) {
         <div
             onClick={onClick}
             className={[
-                'bg-surface border border-border rounded-lg shadow-sm',
-                className ?? '',
-            ].join(' ')}
+                "bg-surface border-2 border-primary/40 rounded-xl shadow-md",
+                className ?? "",
+            ].join(" ")}
         >
             {children}
         </div>

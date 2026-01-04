@@ -1,5 +1,3 @@
-"use client";
-
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 type ButtonVariant = "primary" | "secondary" | "outline" | "danger";
@@ -11,19 +9,20 @@ type ButtonProps = {
 
 const baseStyles =
   "px-4 py-2 rounded-md font-medium transition inline-flex items-center justify-center " +
-  "focus:outline-none focus:ring-2";
+  "focus:outline-none focus:ring-2 focus:ring-primary-soft";
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    "border border-primary text-text bg-transparent " +
-    "hover:bg-primary-soft/80 focus:ring-primary-soft",
+    "bg-primary text-text-inverted border border-primary hover:bg-primary-hover",
+
   secondary:
-    "bg-secondary text-text-inverted hover:bg-secondary-hover focus:ring-secondary",
+    "bg-secondary text-text-inverted hover:bg-secondary-hover",
 
   outline:
-    "border border-border text-text hover:bg-background-muted focus:ring-border",
+    "border border-border bg-white text-text hover:bg-background-muted hover:border-primary/50",
 
-  danger: "bg-error text-text-inverted hover:opacity-90 focus:ring-error",
+  danger:
+    "bg-error text-text-inverted hover:opacity-90 focus:ring-error/20",
 };
 
 export function Button({
@@ -33,15 +32,13 @@ export function Button({
   className,
   ...props
 }: ButtonProps) {
-  const isDisabled = !!disabled;
-
   return (
     <button
-      disabled={isDisabled}
+      disabled={disabled}
       className={[
         baseStyles,
         variantStyles[variant],
-        isDisabled ? "opacity-50 cursor-not-allowed pointer-events-none" : "",
+        disabled ? "opacity-50 cursor-not-allowed pointer-events-none" : "",
         className ?? "",
       ].join(" ")}
       {...props}

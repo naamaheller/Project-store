@@ -33,10 +33,12 @@ export default function ProductPage() {
     if (!user) router.replace("/pages/login");
   }, [ready, user, router]);
 
+  // ✅ הוספנו pageSize
   useEffect(() => {
     if (!ready || !user) return;
     loadProducts();
-  }, [ready, user, page]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready, user, page, pageSize]);
 
   
   async function loadProducts() {
@@ -67,7 +69,6 @@ export default function ProductPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <div className="flex-1 container mx-auto px-4">
-
         {/* Products */}
         <main className="flex-1">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -86,25 +87,27 @@ export default function ProductPage() {
         </main>
       </div>
 
-      {/* Pagination */}
-      <div className="mt-auto pt-6">
-        <Pagination
-          page={page}
-          pageSize={pageSize}
-          total={total}
-          onPageChange={setPage}
-          onPageSizeChange={(size) => {
-            setPage(1);
-            setPageSize(size);
-          }}
-        />
-      </div>
-
       <ProductShowModal
         open={!!selectedProduct}
         product={selectedProduct}
         onClose={() => setSelectedProduct(null)}
       />
+
+      {/* ✅ Pagination footer */}
+      <footer className="mt-auto border-t border-border bg-background">
+        <div className="container mx-auto px-4 py-4">
+          <Pagination
+            page={page}
+            pageSize={pageSize}
+            total={total}
+            onPageChange={setPage}
+            onPageSizeChange={(size) => {
+              setPage(1);
+              setPageSize(size);
+            }}
+          />
+        </div>
+      </footer>
     </div>
   );
 }
