@@ -61,16 +61,7 @@ class ProductService
     /**
      * only for admin users
      * add a new product
-     * protected $fillable = [
-     *   'name',
-     *   'slug',
-     *   'description',
-     *   'price',
-     *   'img_url',
-     *   'stock',
-     *   'is_active',
-     *   'category_id',
-     *];
+     * 
      */
     public function addProductByAdmin(array $data)
     {
@@ -101,6 +92,49 @@ class ProductService
         ]);
     });
     }
+
+    private function buildFilteredQuery(Request $request)
+    {
+        $query = Product::with('category');
+
+        if ($request->boolean('only_active', true)) {
+            $query->where('is_active', true)
+                ->where('stock', '>', 0);
+        }
+
+        if ($request->filled('categories')) {
+            $query->whereIn('category_id', $request->categories);
+        }
+
+        if ($request->filled('min_price')) {
+            $query->where('price', '>=', $request->min_price);
+        }
+
+        if ($request->filled('max_price')) {
+            $query->where('price', '<=', $request->max_price);
+        }
+
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+
+            $words = preg_split('/\s+/', $search);
+
+            $query->where(function ($q) use ($words) {
+                foreach ($words as $word) {
+                    $q->where(function ($qq) use ($word) {
+                        $qq->where('name', 'like', "%{$word}%")
+                            ->orWhere('description', 'like', "%{$word}%")
+                            ->orWhere('slug', 'like', "%{$word}%");
+
+                    });
+                }
+            });
+        }
+
+
+        return $query;
+    }
+
     /*
      * only for admin users
      * delete a product
