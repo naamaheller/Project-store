@@ -11,9 +11,10 @@ use App\Http\Controllers\Api\V1\CategoryController;
 Route::prefix('v1')->group(function () {
     // public
     Route::post('/auth/login', [AuthController::class, 'login']);
+    Route::post('/auth/register', [AuthController::class, 'register']);
 
     // protected - cookie -> bearer -> passport(guard api)
-    Route::middleware( [CookieTokenToBearer::class, 'auth:api'])->group(function () {
+    Route::middleware([CookieTokenToBearer::class, 'auth:api'])->group(function () {
 
         Route::get('/auth/me', [AuthController::class, 'me']);
         Route::post('/auth/logout', [AuthController::class, 'logout']);

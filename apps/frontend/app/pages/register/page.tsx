@@ -9,40 +9,54 @@ import { Input } from "../../components/ui/Input";
 import { Button } from "../../components/ui/Button";
 import { Alert } from "../../components/ui/Alert";
 
-export default function LoginPage() {
+export default function RegisterPage() {
     const router = useRouter();
-    const { login, loading, error, clearError } = useAuthStore();
+    const { register, loading, error, clearError } = useAuthStore();
 
+    const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+
     const [show, setShow] = useState(false);
 
-    const canSubmit = useMemo(
-        () => email.trim().length > 3 && password.trim().length >= 1 && !loading,
-        [email, password, loading]
-    );
-    async function onSubmit(e: React.FormEvent) {
+    const canSubmit = useMemo(() => {
+        return (
+            name.trim().length >= 2 &&
+            email.trim().length > 3 &&
+            password.trim().length >= 6 &&
+            !loading
+        );
+    }, [name, email, password, loading]);
 
+    async function onSubmit(e: React.FormEvent) {
         e.preventDefault();
         clearError();
 
-        const ok = await login(email.trim(), password);
-        if (ok) router.push("/pages/product");
+        const ok = await register(name.trim(), email.trim(), password);
+        if (ok) router.push("/pages/login");
     }
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-background-muted px-4">
             <Card className="w-full max-w-md p-6">
                 <h1 className="text-2xl font-semibold text-text text-center mb-6">
-                    Login
+                    Register
                 </h1>
 
                 <form onSubmit={onSubmit} className="grid gap-4">
-                    {error && (
-                        <Alert variant="error">
-                            {error}
-                        </Alert>
-                    )}
+                    {error && <Alert variant="error">{error}</Alert>}
+
+                    <div className="grid gap-2">
+                        <label className="text-sm font-medium text-text">Name</label>
+                        <Input
+                            value={name}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                setName(e.target.value)
+                            }
+                            placeholder="Your name"
+                            autoComplete="name"
+                        />
+                    </div>
 
                     <div className="grid gap-2">
                         <label className="text-sm font-medium text-text">Email</label>
@@ -66,7 +80,7 @@ export default function LoginPage() {
                                     setPassword(e.target.value)
                                 }
                                 placeholder="••••••••"
-                                autoComplete="current-password"
+                                autoComplete="new-password"
                                 className="pr-20"
                             />
                             <button
@@ -77,21 +91,27 @@ export default function LoginPage() {
                                 {show ? "Hide" : "Show"}
                             </button>
                         </div>
+
+                        <p className="text-xs text-text-muted">
+                            Password must be at least 6 characters.
+                        </p>
                     </div>
 
                     <Button type="submit" disabled={!canSubmit}>
-                        {loading ? "Logging in..." : "Login"}
+                        {loading ? "Creating account..." : "Create account"}
                     </Button>
+
                     <div className="text-center text-sm text-text-muted">
                         <button
                             type="button"
-                            onClick={() => router.push("/pages/register")}
-                            className="text-text font-medium hover:underline"
+                            onClick={() => router.push("/pages/login")}
+                            className="text-text hover:underline font-medium"
                         >
-                            Sign up
+                            Login
                         </button>
-                        {" "}?Don’t have an account
+                        {" "}?Already have an account
                     </div>
+
                 </form>
             </Card>
         </div>

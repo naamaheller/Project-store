@@ -1,19 +1,28 @@
 import apiClient from "./axios";
+import type { User } from "@/app/models/user.model";
 
-export type LoginPayload = { email: string; password: string };
+export type LoginPayload = {
+  email: string;
+  password: string;
+};
 
-export type User = {
-  id: number;
+export type RegisterPayload = {
   name: string;
   email: string;
-  role: string;
-  created_at: string;
-  updated_at: string;
+  password: string;
 };
 
 export async function loginApi(payload: LoginPayload) {
   const { data } = await apiClient.post<{ user: User; token?: string }>(
     "/auth/login",
+    payload
+  );
+  return data;
+}
+
+export async function registerApi(payload: RegisterPayload) {
+  const { data } = await apiClient.post<{ message: string; user: User }>(
+    "/auth/register",
     payload
   );
   return data;
