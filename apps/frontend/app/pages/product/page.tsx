@@ -24,12 +24,16 @@ export default function ProductPage() {
   const [loadingPage, setLoadingPage] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
+  const [absoluteMaxPrice, setAbsoluteMaxPrice] = useState<number>(0);
+
   const [filters, setFilters] = useState<ProductFiltersState>({
     search: "",
     minPrice: null,
     maxPrice: null,
     categories: [],
   });
+
+  const [filtersApplied, setFiltersApplied] = useState(false);
 
   useEffect(() => {
     if (!ready) fetchMe();
@@ -43,7 +47,6 @@ export default function ProductPage() {
   useEffect(() => {
     if (!ready || !user) return;
     loadProducts();
-    // שימי לב: אם תרצי שגם שינוי קטגוריות/טווח מחיר יטען אוטומטית – נוסיף אותם כאן
   }, [ready, user, page, pageSize, filters.search]);
 
   async function loadProducts(overrideFilters?: Partial<ProductFiltersState>) {
@@ -79,9 +82,8 @@ export default function ProductPage() {
   if (!user) return null;
 
   return (
-    // ✅ גובה העמוד מתחת ל-Header (64px) + Flex column
     <div className="min-h-[calc(100vh-64px)] flex flex-col">
-      {/* ✅ התוכן תופס את כל הגובה הפנוי כדי שה-pagination יידחף למטה כשאין הרבה מוצרים */}
+      {/* content */}
       <div className="flex-1 container mx-auto px-4 pt-6 pb-6">
         <div className="flex gap-4">
           {/* Filters */}
@@ -90,10 +92,27 @@ export default function ProductPage() {
               <FiltersProduct
                 filters={filters}
                 onChange={setFilters}
+                absoluteMaxPrice={absoluteMaxPrice}
+                setAbsoluteMaxPrice={setAbsoluteMaxPrice}
                 onApply={() => {
                   setPage(1);
-                  loadProducts();
+                  setFiltersApplied(true);
+                  loadProducts(filters);
                 }}
+                onClear={() => {
+                  const cleared: ProductFiltersState = {
+                    search: "",
+                    minPrice: null,
+                    maxPrice: absoluteMaxPrice,
+                    categories: [],
+                  };
+
+                  setFilters(cleared);
+                  setFiltersApplied(false);
+                  setPage(1);
+                  loadProducts(cleared);
+                }}
+                applied={filtersApplied}
               />
             </div>
           </aside>
@@ -103,21 +122,21 @@ export default function ProductPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {loadingPage
                 ? Array.from({ length: pageSize }).map((_, i) => (
-                  <ProductCardSkeleton key={i} />
-                ))
+                    <ProductCardSkeleton key={i} />
+                  ))
                 : products.map((p) => (
-                  <ProductCard
-                    key={p.id}
-                    product={p}
-                    onClick={setSelectedProduct}
-                  />
-                ))}
+                    <ProductCard
+                      key={p.id}
+                      product={p}
+                      onClick={setSelectedProduct}
+                    />
+                  ))}
             </div>
           </main>
         </div>
       </div>
 
-      {/* ✅ תמיד למטה כשאין הרבה תוכן, ואם יש הרבה – יורד אחרי התוכן (בגלל flow רגיל) */}
+      {/* footer */}
       <footer className="border-t border-border bg-background">
         <div className="container mx-auto px-4 py-[2px]">
           <Pagination
@@ -132,8 +151,6 @@ export default function ProductPage() {
           />
         </div>
       </footer>
-
-
 
       <ProductShowModal
         open={!!selectedProduct}

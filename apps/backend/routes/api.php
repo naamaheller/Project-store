@@ -29,7 +29,14 @@ Route::prefix('v1')->group(function () {
 
         Route::get('/categories', [CategoryController::class, 'index']);
 
+        Route::get('/products/max-price', [ProductController::class, 'getMaxPrice']);
+
+
         Route::middleware('admin')->group(function () {
+            Route::post(
+                '/admin/products/add',
+                [ProductController::class, 'adminAddProduct']
+            );
 
             Route::get(
                 '/admin/products',

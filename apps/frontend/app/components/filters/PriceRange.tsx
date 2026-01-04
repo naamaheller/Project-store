@@ -1,26 +1,27 @@
 "use client";
 
 type PriceRangeProps = {
-  min: number | null;
-  max: number | null;
-  onChange: (min: number, max: number) => void;
+  min: number;
+  value: number;
+  max: number; 
+  onChange: (value: number) => void;
 };
-
-export function RangePrice({ min, max, onChange }: PriceRangeProps) {
+export function RangePrice({ min, max, onChange , value }: PriceRangeProps) {
   return (
     <div>
       <p className="font-medium mb-2">price range</p>
 
       <input
         type="range"
-        min={0}
-        max={5000}
-        value={max ?? 5000}
-        onChange={(e) => onChange(min ?? 0, Number(e.target.value))}
+        min={min}
+        max={max}
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className="w-full range-track"
       />
 
       <div className="text-sm mt-1">
-        {min ?? 0}₪ - {max ?? 5000}₪
+        {min}₪ - {value}₪
       </div>
     </div>
   );
