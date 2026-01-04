@@ -32,7 +32,6 @@ export default function ProductPage() {
   });
   const [filtersApplied, setFiltersApplied] = useState(false);
 
-
   useEffect(() => {
     if (!ready) fetchMe();
   }, [ready, fetchMe]);
@@ -82,8 +81,9 @@ export default function ProductPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <div className="flex-1 container mx-auto px-4">
-        <div className="flex gap-6">
+      <div className="flex-1 px-6">
+        <div className="flex gap-7">
+
           <aside className="w-72 shrink-0">
             <div className="sticky top-24">
               <FiltersProduct
@@ -117,20 +117,19 @@ export default function ProductPage() {
             </div>
           </aside>
 
-          {/* Products */}
           <main className="flex-1">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {loadingPage
                 ? Array.from({ length: pageSize }).map((_, i) => (
-                  <ProductCardSkeleton key={i} />
-                ))
+                    <ProductCardSkeleton key={i} />
+                  ))
                 : products.map((p) => (
-                  <ProductCard
-                    key={p.id}
-                    product={p}
-                    onClick={setSelectedProduct}
-                  />
-                ))}
+                    <ProductCard
+                      key={p.id}
+                      product={p}
+                      onClick={setSelectedProduct}
+                    />
+                  ))}
             </div>
           </main>
         </div>
