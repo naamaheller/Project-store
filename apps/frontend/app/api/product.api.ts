@@ -16,3 +16,7 @@ export function getProducts(params?: { page?: number; per_page?: number }) {
 export function getAdminProducts(params?: { page?: number; per_page?: number }) {
   return apiClient.get<ProductsResponse>("/admin/products", { params });
 }
+
+export function getMaxPrice() {
+  return apiClient.get<{ max_price: number }>("/products/max-price");
+}

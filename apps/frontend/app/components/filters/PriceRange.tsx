@@ -14,8 +14,8 @@ export function RangePrice({ min, max, onChange }: PriceRangeProps) {
       <input
         type="range"
         min={0}
-        max={5000}
-        value={max ?? 5000}
+        max={max!}
+        value={max!}
         onChange={(e) => onChange(min ?? 0, Number(e.target.value))}
       />
 
