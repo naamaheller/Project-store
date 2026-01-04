@@ -3,7 +3,6 @@
 import { ReactNode, useEffect } from "react";
 import { Portal } from "./Portal";
 import { useLockBodyScroll } from "./useLockBodyScroll";
-import { X } from "lucide-react";
 
 type ModalProps = {
   open: boolean;
@@ -31,28 +30,51 @@ export function Modal({ open, onClose, title, children, footer }: ModalProps) {
 
   return (
     <Portal>
-      <div className="fixed inset-0 z-50 flex items-center justify-center">
-        <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        role="dialog"
+        aria-modal="true"
+      >
+        {/* Backdrop */}
+        <div
+          className="absolute inset-0 bg-black/45 backdrop-blur-[2px]"
+          onClick={onClose}
+        />
 
-        <div className="relative z-10 w-full max-w-md bg-surface rounded-lg shadow-lg">
-          <button
-            onClick={onClose}
-            aria-label="Close modal"
-            className="absolute top-3 right-3 text-text-muted hover:text-text transition "
-          >
-            <X size={18} />
-          </button>
-
-          {title && (
-            <div className="px-6 py-4 border-b border-border text-lg font-semibold">
-              {title}
+        {/* Panel */}
+        <div className="relative z-10 w-full max-w-2xl overflow-hidden rounded-xl border-[3px] border-primary/50 bg-surface shadow-lg animate-modalIn">
+          {/* Header */}
+          <div className="flex items-center justify-between gap-3 px-6 py-4 border-b border-border">
+            <div className="min-w-0">
+              {title && (
+                <h3 className="truncate text-lg font-semibold text-text">
+                  {title}
+                </h3>
+              )}
             </div>
-          )}
 
+            {/* Close - only X (big + motion) */}
+            <button
+              onClick={onClose}
+              aria-label="Close modal"
+              className={[
+                "text-3xl leading-none text-text-muted",
+                "transition-transform duration-200 ease-out",
+                "hover:text-text hover:-translate-y-0.5",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20",
+                "focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+              ].join(" ")}
+            >
+              ×
+            </button>
+          </div>
+
+          {/* Body */}
           <div className="p-6">{children}</div>
 
+          {/* Footer (only if provided) */}
           {footer && (
-            <div className="px-6 py-4 border-t border-border flex justify-end gap-3">
+            <div className="px-6 py-4 border-t border-border flex justify-end gap-3 bg-background-muted/30">
               {footer}
             </div>
           )}

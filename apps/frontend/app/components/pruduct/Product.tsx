@@ -8,7 +8,10 @@ interface Props {
 
 export function ProductCard({ product, onClick }: Props) {
   return (
-    <Card className="hover:shadow-md transition" onClick={() => onClick(product)}>
+    <Card
+      className="hover:shadow-md transition cursor-pointer"
+      onClick={() => onClick(product)}
+    >
       <CardContent className="flex flex-col gap-3">
         <div className="aspect-square bg-background-muted rounded-md flex items-center justify-center text-text-muted">
           IMG
@@ -25,3 +28,4 @@ export function ProductCard({ product, onClick }: Props) {
     </Card>
   );
 }
+
