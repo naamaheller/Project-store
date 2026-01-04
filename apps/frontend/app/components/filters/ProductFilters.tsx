@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { fetchCategories } from "@/app/services/category.service";
 import { Category } from "@/app/models/category.model";
 import { fetchMaxPrice } from "@/app/services/product.service";
+import { Button } from "../ui/Button";
 
 type Props = {
   filters: ProductFiltersState;
@@ -102,7 +103,7 @@ export function FiltersProduct({
         />
       )}
 
-      <button
+      <Button
         onClick={applied ? onClear : onApply}
         className={`w-full py-2 rounded transition
     ${
@@ -112,7 +113,7 @@ export function FiltersProduct({
     }`}
       >
         {applied ? "Clear filters" : "Filter"}
-      </button>
+      </Button>
     </div>
   );
 }
