@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "../../store/auth.store";
+import { SlidersHorizontal } from "lucide-react";
 
 import { fetchProducts } from "@/app/services/product.service";
 import { Product } from "@/app/models/product.model";
@@ -12,6 +13,7 @@ import { Pagination } from "@/app/components/ui/Pagination";
 import { ProductShowModal } from "@/app/components/pruduct/productShow";
 import ProductFiltersState from "@/app/models/product-filters.model";
 import { FiltersProduct } from "@/app/components/filters/ProductFilters";
+import { Drawer } from "@/app/components/ui/Drawer";
 
 export default function ProductPage() {
   const router = useRouter();
@@ -23,7 +25,7 @@ export default function ProductPage() {
   const [total, setTotal] = useState(0);
   const [loadingPage, setLoadingPage] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [absoluteMaxPrice, setAbsoluteMaxPrice] = useState<number>(0);
 
   const [filters, setFilters] = useState<ProductFiltersState>({
@@ -87,47 +89,65 @@ export default function ProductPage() {
         <div className="flex gap-7">
           <aside className="w-72 shrink-0">
             <div className="sticky top-24">
-              <FiltersProduct
-                filters={filters}
-                onChange={setFilters}
-                absoluteMaxPrice={absoluteMaxPrice}
-                setAbsoluteMaxPrice={setAbsoluteMaxPrice}
-                onApply={() => {
-                  setPage(1);
-                  setFiltersApplied(true);
-                  loadProducts(filters);
-                }}
-                onClear={() => {
-                  const cleared: ProductFiltersState = {
-                    search: "",
-                    minPrice: null,
-                    maxPrice: absoluteMaxPrice,
-                    categories: [],
-                  };
+              <Drawer
+                open={filtersOpen}
+                onClose={() => setFiltersOpen(false)}
+                title="Filters Products"
+                width="100%"
+              >
+                <FiltersProduct
+                  filters={filters}
+                  onChange={setFilters}
+                  absoluteMaxPrice={absoluteMaxPrice}
+                  setAbsoluteMaxPrice={setAbsoluteMaxPrice}
+                  onApply={() => {
+                    setPage(1);
+                    setFiltersApplied(true);
+                    loadProducts(filters);
+                    setFiltersOpen(false);
+                  }}
+                  onClear={() => {
+                    const cleared: ProductFiltersState = {
+                      search: "",
+                      minPrice: null,
+                      maxPrice: absoluteMaxPrice,
+                      categories: [],
+                    };
 
-                  setFilters(cleared);
-                  setFiltersApplied(false);
-                  setPage(1);
-                  loadProducts(cleared);
-                }}
-                applied={filtersApplied}
-              />
+                    setFilters(cleared);
+                    setFiltersApplied(false);
+                    setPage(1);
+                    loadProducts(cleared);
+                    setFiltersOpen(false);
+                  }}
+                  applied={filtersApplied}
+                />
+              </Drawer>
             </div>
           </aside>
 
           <main className="flex-1">
+            <div className="mb-4 flex items-center justify-between md:hidden">
+              <button
+                onClick={() => setFiltersOpen(true)}
+                className="flex items-center gap-2 rounded-md border border-border px-3 py-2 text-sm font-medium hover:bg-background-muted transition"
+              >
+                <SlidersHorizontal className="h-4 w-4" />
+                <span>Filters</span>
+              </button>
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
               {loadingPage
                 ? Array.from({ length: pageSize }).map((_, i) => (
-                  <ProductCardSkeleton key={i} />
-                ))
+                    <ProductCardSkeleton key={i} />
+                  ))
                 : products.map((p) => (
-                  <ProductCard
-                    key={p.id}
-                    product={p}
-                    onClick={setSelectedProduct}
-                  />
-                ))}
+                    <ProductCard
+                      key={p.id}
+                      product={p}
+                      onClick={setSelectedProduct}
+                    />
+                  ))}
             </div>
           </main>
         </div>
