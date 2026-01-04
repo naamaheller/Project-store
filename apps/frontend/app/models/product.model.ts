@@ -18,7 +18,7 @@ export interface Product {
 export interface ProductFilters {
   page?: number;
   per_page?: number;
-  category_id?: number[];
+  categories?: number[];
   min_price?: number;
   max_price?: number;
   search?: string;
