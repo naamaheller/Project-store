@@ -65,8 +65,8 @@ class ProductService
                 ->where('stock', '>', 0);
         }
 
-        if ($request->filled('category_id')) {
-            $query->where('category_id', $request->category_id);
+        if ($request->filled('categories')) {
+            $query->whereIn('category_id', $request->categories);
         }
 
         if ($request->filled('min_price')) {

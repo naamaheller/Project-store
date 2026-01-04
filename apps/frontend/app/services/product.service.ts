@@ -21,8 +21,8 @@ async function fetchProductsBase(apiCall: ApiCall, filters?: ProductFilters) {
     if (filters?.min_price !== undefined) params.min_price = filters.min_price;
     if (filters?.max_price !== undefined) params.max_price = filters.max_price;
 
-    if (filters?.category_id?.length) {
-      params.category_id = filters.category_id;
+    if (filters?.categories?.length) {
+      params.categories = filters.categories;
     }
     
     Object.keys(params).forEach(
