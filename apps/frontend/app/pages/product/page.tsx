@@ -84,8 +84,8 @@ export default function ProductPage() {
   return (
     <div className="min-h-[calc(100vh-64px)] flex flex-col">
       {/* content */}
-      <div className="flex-1 container mx-auto px-4 pt-6 pb-6">
-        <div className="flex gap-4">
+      <div className="flex-1 px-6">
+        <div className="flex gap-7">
           {/* Filters */}
           <aside className="w-72 shrink-0">
             <div className="sticky top-24">
@@ -122,15 +122,15 @@ export default function ProductPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {loadingPage
                 ? Array.from({ length: pageSize }).map((_, i) => (
-                    <ProductCardSkeleton key={i} />
-                  ))
+                  <ProductCardSkeleton key={i} />
+                ))
                 : products.map((p) => (
-                    <ProductCard
-                      key={p.id}
-                      product={p}
-                      onClick={setSelectedProduct}
-                    />
-                  ))}
+                  <ProductCard
+                    key={p.id}
+                    product={p}
+                    onClick={setSelectedProduct}
+                  />
+                ))}
             </div>
           </main>
         </div>
