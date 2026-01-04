@@ -7,30 +7,15 @@ export default {
   ],
   theme: {
     extend: {
-      colors: {
-        primary: {
-          DEFAULT: "#2563eb",
-          hover: "#1d4ed8",
-          soft: "#dbeafe",
+      keyframes: {
+        shimmer: {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(100%)" },
         },
-        secondary: {
-          DEFAULT: "#9333ea",
-          hover: "#7e22ce",
-        },
-        background: {
-          DEFAULT: "#ffffff",
-          muted: "#f8fafc",
-        },
-        surface: "#ffffff",
-        text: {
-          DEFAULT: "#0f172a",
-          muted: "#64748b",
-          inverted: "#ffffff",
-        },
-        border: "#e5e7eb",
-        success: "#16a34a",
-        warning: "#f59e0b",
-        error: "#dc2626",
+      },
+      
+      animation: {
+        shimmer: "shimmer 1.5s infinite linear",
       },
 
       spacing: {

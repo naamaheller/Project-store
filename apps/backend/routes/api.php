@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\ProductController;
 use App\Http\Middleware\CookieTokenToBearer;
+use App\Http\Controllers\Api\V1\CategoryController;
+
 Route::prefix('v1')->group(function () {
     // public
     Route::post('/auth/login', [AuthController::class, 'login']);
@@ -26,7 +28,7 @@ Route::prefix('v1')->group(function () {
 
         Route::get('/products', [ProductController::class, 'index']);
 
-        Route::get('/admin/products', [ProductController::class, 'adminIndex'])
-            ->middleware('admin');
+        Route::get('/admin/products', [ProductController::class, 'adminIndex']);
+        Route::get('/categories', [CategoryController::class, 'index']);
     });
 });

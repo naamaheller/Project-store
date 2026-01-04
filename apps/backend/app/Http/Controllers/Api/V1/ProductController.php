@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Throwable;
 use App\Services\ProductService;
 
 
@@ -22,9 +23,16 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
+        try {
         $products = $this->productService->getActiveProducts($request);
+        return response()->json($products, 200);
 
-        return response()->json($products);
+        } catch (Throwable $e) {
+            return response()->json([
+                'message' => 'Failed to fetch products',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -33,8 +41,15 @@ class ProductController extends Controller
      */
     public function adminIndex(Request $request)
     {
-        $products = $this->productService->getAllProductsForAdmin($request);
+         try {
+            $products = $this->productService->getAllProductsForAdmin($request);
+            return response()->json($products, 200);
 
-        return response()->json($products);
+        } catch (Throwable $e) {
+            return response()->json([
+                'message' => 'Failed to fetch admin products',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
     }
 }
