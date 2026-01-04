@@ -3,13 +3,18 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Services\AuthService;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 use Throwable;
 
 class AuthController extends Controller
 {
+    public function __construct(private readonly AuthService $authService)
+    {
+    }
+
     public function login(Request $request)
     {
         try {
@@ -18,79 +23,84 @@ class AuthController extends Controller
                 'password' => ['required'],
             ]);
 
-            $user = User::where('email', $data['email'])->first();
-
-            if (!$user || !Hash::check($data['password'], $user->password)) {
-                return response()->json([
-                    'message' => 'Invalid credentials',
-                ], 401);
-            }
-
-            $token = $user->createToken('api')->accessToken;
+            [$user, $token] = $this->authService->login($data['email'], $data['password']);
 
             return response()
                 ->json([
-                    'user' => $user->only([
-                        'id',
-                        'name',
-                        'email',
-                        'role',
-                        'created_at',
-                        'updated_at',
-                    ]),
+                    'user' => $this->authService->userPayload($user),
                 ])
                 ->cookie(
                     'access_token',
                     $token,
-                    60 * 24 * 2,
+                    60 * 24 * 2, // 2 ימים
                     '/',
                     null,
-                    false,
-                    true,
+                    false, // true בפרודקשן עם https
+                    true,  // httpOnly
                     false,
                     'Lax'
                 );
 
-        } catch (Throwable $th) {
+        } catch (ValidationException $e) {
             return response()->json([
-                'message' => 'Server error',
-                'error' => $th->getMessage(),
-            ], 500);
-        }
-    }
-    public function register(Request $request)
-    {
-        try {
-            $data = $request->validate([
-                'name' => ['required', 'string', 'max:255'],
-                'email' => ['required', 'email', 'unique:users,email'],
-                'password' => ['required', 'string', 'min:6'],
-            ]);
-
-            $user = User::create([
-                'name' => $data['name'],
-                'email' => $data['email'],
-                'password' => Hash::make($data['password']),
-                'role' => $data['role'] ?? 'USER',
-            ]);
-
-            return response()->json([
-                'message' => 'User registered successfully',
-                'user' => $user->only(['id', 'name', 'email', 'role', 'created_at', 'updated_at']),
-            ], 201);
-
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'message' => 'Validation error',
+                'message' => collect($e->errors())->flatten()->first() ?? 'Incorrect email or password',
                 'errors' => $e->errors(),
-            ], 422);
+            ], 401);
 
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             report($th);
             return response()->json(['message' => 'Server error'], 500);
         }
     }
 
+    public function register(Request $request)
+    {
+        try {
+            // ✅ כאן אנחנו מגדירים הודעה מותאמת ל-unique
+            $data = $request->validate(
+                [
+                    'name' => ['required', 'string', 'max:255'],
+                    'email' => ['required', 'email', 'unique:users,email'],
+                    'password' => ['required', 'string', 'min:6'],
+                    'role' => ['sometimes', 'string'],
+                ],
+                [
+                    'email.unique' => 'The email already exists.',
+                ]
+            );
+
+            $user = $this->authService->register($data);
+
+            return response()->json([
+                'message' => 'User registered successfully',
+                'user' => $this->authService->userPayload($user),
+            ], 201);
+
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => collect($e->errors())->flatten()->first() ?? 'Validation error',
+                'errors' => $e->errors(),
+            ], 422);
+
+        } catch (QueryException $e) {
+            // MySQL duplicate entry (race condition) => error code 1062
+            if (($e->errorInfo[1] ?? null) == 1062) {
+                return response()->json([
+                    'message' => 'The email already exists.',
+                    'errors' => [
+                        'email' => ['The email already exists.'],
+                    ],
+                ], 422);
+            }
+
+            report($e);
+            return response()->json(['message' => 'Server error'], 500);
+
+        } catch (Throwable $th) {
+            report($th);
+            return response()->json(['message' => 'Server error'], 500);
+        }
+    }
 
     public function me(Request $request)
     {
@@ -98,27 +108,16 @@ class AuthController extends Controller
             $user = $request->user('api');
 
             if (!$user) {
-                return response()->json([
-                    'message' => 'Unauthenticated',
-                ], 401);
+                return response()->json(['message' => 'Unauthenticated'], 401);
             }
 
             return response()->json([
-                'user' => $user->only([
-                    'id',
-                    'name',
-                    'email',
-                    'role',
-                    'created_at',
-                    'updated_at',
-                ]),
+                'user' => $this->authService->userPayload($user),
             ]);
 
         } catch (Throwable $th) {
-            return response()->json([
-                'message' => 'Server error',
-                'error' => $th->getMessage(),
-            ], 500);
+            report($th);
+            return response()->json(['message' => 'Server error'], 500);
         }
     }
 
@@ -126,20 +125,15 @@ class AuthController extends Controller
     {
         try {
             $user = $request->user('api');
-
-            if ($user && $user->token()) {
-                $user->token()->revoke();
-            }
+            $this->authService->logout($user);
 
             return response()
                 ->json(['message' => 'Logged out'])
                 ->cookie('access_token', '', -1, '/');
 
         } catch (Throwable $th) {
-            return response()->json([
-                'message' => 'Server error',
-                'error' => $th->getMessage(),
-            ], 500);
+            report($th);
+            return response()->json(['message' => 'Server error'], 500);
         }
     }
 }

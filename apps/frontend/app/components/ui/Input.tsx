@@ -1,8 +1,6 @@
-'use client';
-// קומפוננטת Input כללית עם label, הודעת שגיאה וטקסט עזר.
-// שומרת על עיצוב עקבי ונגישות.
+"use client";
 
-import type { InputHTMLAttributes } from 'react';
+import type { InputHTMLAttributes } from "react";
 
 type InputProps = {
     label?: string;
@@ -22,28 +20,37 @@ export function Input({
     const inputId = id ?? props.name;
 
     return (
-        <div className="flex flex-col gap-1 w-full">
-            {label ? (
-                <label
-                    htmlFor={inputId}
-                    className="text-sm font-medium text-text"
-                >
+        <div className="flex w-full flex-col gap-1">
+            {label && (
+                <label htmlFor={inputId} className="text-sm font-medium text-text">
                     {label}
                 </label>
-            ) : null}
+            )}
 
             <input
                 id={inputId}
                 disabled={disabled}
                 className={[
-                    'w-full rounded-md px-3 py-2 text-base transition',
-                    'bg-background text-text placeholder:text-text-muted',
-                    'border border-border',
-                    'focus:outline-none focus:ring-2 focus:ring-primary-soft focus:border-primary',
-                    error ? 'border-error focus:border-error focus:ring-error/20' : '',
-                    disabled ? 'opacity-50 cursor-not-allowed bg-background-muted' : '',
-                    className ?? '',
-                ].join(' ')}
+                    // base
+                    "w-full rounded-md px-3 py-2 text-base transition",
+                    "bg-background text-text placeholder:text-text-muted",
+
+                    // border
+                    "border-2 border-primary/40",
+
+                    // focus (keyboard only)
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary",
+                    "focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+
+                    // states
+                    error &&
+                    "border-error focus-visible:border-error focus-visible:ring-error/20",
+                    disabled && "opacity-50 cursor-not-allowed bg-background-muted",
+
+                    className ?? "",
+                ]
+                    .filter(Boolean)
+                    .join(" ")}
                 {...props}
             />
 

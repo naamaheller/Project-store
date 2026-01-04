@@ -1,33 +1,38 @@
-import { getProducts, getAdminProducts } from "@/app/api/product.api";
+import { getAdminProducts, getProducts } from "../api/product.api";
+import { ProductFilters } from "../models/product.model";
 
-export async function fetchProducts(options?: {
-  page?: number;
-  per_page?: number;
-}) {
+type ApiCall = (params: Record<string, any>) => Promise<{ data: any }>;
+
+export function fetchProducts(filters?: ProductFilters) {
+  return fetchProductsBase(getProducts, filters);
+}
+
+export function fetchAdminProducts(filters?: ProductFilters) {
+  return fetchProductsBase(getAdminProducts, filters);
+}
+
+async function fetchProductsBase(apiCall: ApiCall, filters?: ProductFilters) {
   try {
-    const response = await getProducts({
-      page: options?.page,
-      per_page: options?.per_page,
-    });
+    const params: any = {};
+
+    if (filters?.page !== undefined) params.page = filters.page;
+    if (filters?.per_page !== undefined) params.per_page = filters.per_page;
+    if (filters?.search) params.search = filters.search;
+    if (filters?.min_price !== undefined) params.min_price = filters.min_price;
+    if (filters?.max_price !== undefined) params.max_price = filters.max_price;
+
+    if (filters?.category_id?.length) {
+      params.category_id = filters.category_id;
+    }
+    
+    Object.keys(params).forEach(
+      (k) => params[k] === undefined && delete params[k]
+    );
+
+    const response = await apiCall(params);
     return response.data;
   } catch (error) {
     console.error("Error fetching products:", error);
-    throw error;
-  }
-}
-
-export async function fetchAdminProducts(options?: {
-  page?: number;
-  per_page?: number;
-}) {
-  try {
-    const response = await getAdminProducts({
-      page: options?.page,
-      per_page: options?.per_page,
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching admin products:", error);
     throw error;
   }
 }

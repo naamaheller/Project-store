@@ -1,13 +1,14 @@
 import { Product } from "@/app/models/product.model";
-import { Card, CardContent, CardFooter } from "./ui/Card";
+import { Card, CardContent, CardFooter } from "../ui/Card";
 
 interface Props {
   product: Product;
+  onClick: (product: Product) => void;
 }
 
-export function ProductCard({ product }: Props) {
+export function ProductCard({ product, onClick }: Props) {
   return (
-    <Card className="hover:shadow-md transition">
+    <Card className="hover:shadow-md transition" onClick={() => onClick(product)}>
       <CardContent className="flex flex-col gap-3">
         <div className="aspect-square bg-background-muted rounded-md flex items-center justify-center text-text-muted">
           IMG
