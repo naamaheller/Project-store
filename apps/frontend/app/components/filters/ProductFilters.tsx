@@ -13,9 +13,21 @@ type Props = {
   filters: ProductFiltersState;
   onChange: (filters: ProductFiltersState) => void;
   onApply: () => void;
+  onClear: () => void;
+  applied: boolean;
+  absoluteMaxPrice: number;
+  setAbsoluteMaxPrice: (price: number) => void;
 };
 
-export function FiltersProduct({ filters, onChange, onApply }: Props) {
+export function FiltersProduct({
+  filters,
+  onChange,
+  onApply,
+  onClear,
+  applied,
+  absoluteMaxPrice,
+  setAbsoluteMaxPrice
+}: Props) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMaxPrice, setLoadingMaxPrice] = useState(true);
@@ -24,6 +36,7 @@ export function FiltersProduct({ filters, onChange, onApply }: Props) {
     const loadMaxPrice = async () => {
       try {
         const priceMax = await fetchMaxPrice();
+        setAbsoluteMaxPrice(priceMax);
         onChange({ ...filters, maxPrice: priceMax });
       } catch (error) {
         console.error("Failed to load max price", error);
@@ -50,6 +63,17 @@ export function FiltersProduct({ filters, onChange, onApply }: Props) {
     loadCategories();
   }, []);
 
+  const clearFilters = () => {
+    onChange({
+      search: "",
+      minPrice: null,
+      maxPrice: filters.maxPrice,
+      categories: [],
+    });
+
+    onApply();
+  };
+
   return (
     <div className="w-64 space-y-4">
       <InputSearch
@@ -61,11 +85,10 @@ export function FiltersProduct({ filters, onChange, onApply }: Props) {
         <p>Loading price range...</p>
       ) : (
         <RangePrice
-          min={filters.minPrice}
-          max={filters.maxPrice}
-          onChange={(min, max) =>
-            onChange({ ...filters, minPrice: min, maxPrice: max })
-          }
+          min={0}
+          max={absoluteMaxPrice}
+          value={filters.maxPrice ?? absoluteMaxPrice}
+          onChange={(value) => onChange({ ...filters, maxPrice: value })}
         />
       )}
 
@@ -80,10 +103,15 @@ export function FiltersProduct({ filters, onChange, onApply }: Props) {
       )}
 
       <button
-        onClick={onApply}
-        className="w-full bg-primary text-white py-2 rounded"
+        onClick={applied ? onClear : onApply}
+        className={`w-full py-2 rounded transition
+    ${
+      applied
+        ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
+        : "bg-primary text-white hover:opacity-90"
+    }`}
       >
-        filter...
+        {applied ? "Clear filters" : "Filter"}
       </button>
     </div>
   );

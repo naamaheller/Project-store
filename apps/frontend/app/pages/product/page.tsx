@@ -23,12 +23,15 @@ export default function ProductPage() {
   const [total, setTotal] = useState(0);
   const [loadingPage, setLoadingPage] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [absoluteMaxPrice, setAbsoluteMaxPrice] = useState<number>(0);
   const [filters, setFilters] = useState<ProductFiltersState>({
     search: "",
     minPrice: null,
     maxPrice: null,
     categories: [],
   });
+  const [filtersApplied, setFiltersApplied] = useState(false);
+
 
   useEffect(() => {
     if (!ready) fetchMe();
@@ -81,16 +84,35 @@ export default function ProductPage() {
     <div className="min-h-screen flex flex-col">
       <div className="flex-1 container mx-auto px-4">
         <div className="flex gap-6">
-          {/* Filters – Left side */}
           <aside className="w-72 shrink-0">
             <div className="sticky top-24">
               <FiltersProduct
                 filters={filters}
                 onChange={setFilters}
+                absoluteMaxPrice={absoluteMaxPrice}
+                setAbsoluteMaxPrice={setAbsoluteMaxPrice}
                 onApply={() => {
                   setPage(1);
-                  loadProducts();
+                  setFiltersApplied(true);
+                  loadProducts(filters);
                 }}
+                onClear={() => {
+                  setFilters({
+                    search: "",
+                    minPrice: null,
+                    maxPrice: absoluteMaxPrice,
+                    categories: [],
+                  });
+                  setFiltersApplied(false);
+                  setPage(1);
+                  loadProducts({
+                    search: "",
+                    minPrice: null,
+                    maxPrice: absoluteMaxPrice,
+                    categories: [],
+                  });
+                }}
+                applied={filtersApplied}
               />
             </div>
           </aside>
