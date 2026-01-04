@@ -115,12 +115,27 @@ class ProductService
      * only for admin users
      * edit a product
      */
-    public function editProductByAdmin(int $productId)
+    public function editProductByAdmin(Request $request,int $productId)
     { 
-
         $product = Product::findOrFail($productId);
         $product->update($request->all());
         return $product;
+    }
+
+    /*`
+     * get max price of products
+     */
+    public function getMaxPrice()
+    {
+        try {
+            return Product::max('price');
+
+        } catch (Throwable $e) {
+            return response()->json([
+                'message' => 'Failed to fetch max price',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
     }
 
 }
