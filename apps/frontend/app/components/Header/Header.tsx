@@ -9,14 +9,21 @@ export default function AppHeader() {
     const { user, logout, loading } = useAuthStore();
 
     return (
-        <header className="w-full bg-white/70 backdrop-blur border-b border-border">
-            <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-                <h1 className="text-lg font-semibold text-text">Store</h1>
+        <header className="w-full h-16 bg-white/70 backdrop-blur border-b border-border">
+            <div
+                className="max-w-5xl mx-auto h-full px-4
+                   flex items-center justify-between"
+            >
 
-                {user ? (
+
+                {/* User section */}
+                {user && (
                     <div className="flex items-center gap-4">
                         <span className="text-sm text-text-muted">
-                            Hello, <span className="font-medium text-text">{user.name}</span>
+                            Hello,{" "}
+                            <span className="font-medium text-text">
+                                {user.name}
+                            </span>
                         </span>
 
                         <Button
@@ -30,7 +37,11 @@ export default function AppHeader() {
                             Logout
                         </Button>
                     </div>
-                ) : null}
+                )}
+                {/* Logo / Title */}
+                <h1 className="text-lg font-semibold text-text">
+                    Store
+                </h1>
             </div>
         </header>
     );
