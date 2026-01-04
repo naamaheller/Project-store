@@ -11,9 +11,9 @@ export function Card({ children, className }: CardProps) {
     return (
         <div
             className={[
-                'bg-surface border border-border rounded-lg shadow-sm',
-                className ?? '',
-            ].join(' ')}
+                "bg-surface border-2 border-primary/40 rounded-xl shadow-md",
+                className ?? "",
+            ].join(" ")}
         >
             {children}
         </div>
