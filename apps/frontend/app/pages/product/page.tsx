@@ -6,8 +6,8 @@ import { useAuthStore } from "../../store/auth.store";
 
 import { fetchProducts } from "@/app/services/product.service";
 import { Product } from "@/app/models/product.model";
-import { ProductCardSkeleton } from "@/app/components/ProductCardSkeleton";
-import { ProductCard } from "@/app/components/Product";
+import { ProductCardSkeleton } from "@/app/components/pruduct/ProductCardSkeleton";
+import { ProductCard } from "@/app/components/pruduct/Product";
 import { Pagination } from "@/app/components/ui/Pagination";
 
 export default function ProductPage() {
