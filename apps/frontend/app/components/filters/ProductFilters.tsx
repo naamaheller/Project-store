@@ -76,7 +76,7 @@ export function FiltersProduct({
   };
 
   return (
-    <div className="w-64 space-y-4">
+    <div className="w-64 space-y-12">
       <InputSearch
         value={filters.search}
         onChange={(value) => onChange({ ...filters, search: value })}

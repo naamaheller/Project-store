@@ -31,7 +31,15 @@ export function CheckboxGroup<T extends number | string>({
   }
 
   return (
-    <div className="space-y-1">
+    <div
+      className="
+        max-h-48
+        overflow-y-auto
+        pr-1
+        space-y-3
+        scroll-smooth
+      "
+    >
       {options.map((opt) => (
         <Checkbox
           key={opt.value}
