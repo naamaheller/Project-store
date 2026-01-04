@@ -6,5 +6,5 @@ export interface CategoriesResponse {
 }
 
 export function getCategories() {
-    return apiClient.get<CategoriesResponse>("/categories");
+    return apiClient.get<Category[]>("/categories");
 }

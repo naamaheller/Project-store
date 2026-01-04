@@ -65,8 +65,8 @@ class ProductService
                 ->where('stock', '>', 0);
         }
 
-        if ($request->filled('category_id')) {
-            $query->where('category_id', $request->category_id);
+        if ($request->filled('categories')) {
+            $query->whereIn('category_id', $request->categories);
         }
 
         if ($request->filled('min_price')) {
@@ -98,12 +98,29 @@ class ProductService
         return $query;
     }
 
+    /*
+     * only for admin users
+     * delete a product
+     */
     public function deleteProductByAdmin(int $productId)
-    {
+    { 
+        
         $product = Product::findOrFail($productId);
         $product->delete();
-
+           
+       
     }
 
-    
+    /*
+     * only for admin users
+     * edit a product
+     */
+    public function editProductByAdmin(int $productId)
+    { 
+
+        $product = Product::findOrFail($productId);
+        $product->update($request->all());
+        return $product;
+    }
+
 }

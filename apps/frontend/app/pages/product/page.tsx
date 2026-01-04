@@ -9,8 +9,9 @@ import { Product } from "@/app/models/product.model";
 import { ProductCardSkeleton } from "@/app/components/pruduct/ProductCardSkeleton";
 import { ProductCard } from "@/app/components/pruduct/Product";
 import { Pagination } from "@/app/components/ui/Pagination";
-import { ProductShowModal } from "@/app/components/pruduct/productShow";
-
+import { ProductShowModal } from "@/app/components/pruduct/ProductShow";
+import ProductFiltersState from "@/app/models/product-filters.model";
+import { FiltersProduct } from "@/app/components/filters/ProductFilters";
 
 export default function ProductPage() {
   const router = useRouter();
@@ -22,7 +23,12 @@ export default function ProductPage() {
   const [total, setTotal] = useState(0);
   const [loadingPage, setLoadingPage] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
- 
+  const [filters, setFilters] = useState<ProductFiltersState>({
+    search: "",
+    minPrice: null,
+    maxPrice: null,
+    categories: [],
+  });
 
   useEffect(() => {
     if (!ready) fetchMe();
@@ -33,20 +39,25 @@ export default function ProductPage() {
     if (!user) router.replace("/pages/login");
   }, [ready, user, router]);
 
-  // ✅ הוספנו pageSize
   useEffect(() => {
     if (!ready || !user) return;
     loadProducts();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ready, user, page, pageSize]);
+  }, [ready, user, page, pageSize, filters.search]);
 
-  
-  async function loadProducts() {
+  async function loadProducts(overrideFilters?: Partial<ProductFiltersState>) {
+    const finalFilters = {
+      ...filters,
+      ...overrideFilters,
+    };
     try {
       setLoadingPage(true);
       const result = await fetchProducts({
         page,
         per_page: pageSize,
+        search: finalFilters.search,
+        min_price: finalFilters.minPrice!,
+        max_price: finalFilters.maxPrice!,
+        categories: finalFilters.categories,
       });
 
       setProducts(result.data);
@@ -69,22 +80,38 @@ export default function ProductPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <div className="flex-1 container mx-auto px-4">
-        {/* Products */}
-        <main className="flex-1">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {loadingPage
-              ? Array.from({ length: pageSize }).map((_, i) => (
-                  <ProductCardSkeleton key={i} />
-                ))
-              : products.map((p) => (
-                  <ProductCard
-                    key={p.id}
-                    product={p}
-                    onClick={setSelectedProduct}
-                  />
-                ))}
-          </div>
-        </main>
+        <div className="flex gap-6">
+          {/* Filters – Left side */}
+          <aside className="w-72 shrink-0">
+            <div className="sticky top-24">
+              <FiltersProduct
+                filters={filters}
+                onChange={setFilters}
+                onApply={() => {
+                  setPage(1);
+                  loadProducts();
+                }}
+              />
+            </div>
+          </aside>
+
+          {/* Products */}
+          <main className="flex-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {loadingPage
+                ? Array.from({ length: pageSize }).map((_, i) => (
+                    <ProductCardSkeleton key={i} />
+                  ))
+                : products.map((p) => (
+                    <ProductCard
+                      key={p.id}
+                      product={p}
+                      onClick={setSelectedProduct}
+                    />
+                  ))}
+            </div>
+          </main>
+        </div>
       </div>
 
       <ProductShowModal
