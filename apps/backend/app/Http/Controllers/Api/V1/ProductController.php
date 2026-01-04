@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Throwable;
 use App\Services\ProductService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 
 class ProductController extends Controller
@@ -49,6 +50,58 @@ class ProductController extends Controller
             return response()->json([
                 'message' => 'Failed to fetch admin products',
                 'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+    /**
+     * delete a product by admin
+     * DELETE /api/v1/admin/products/delete
+     */
+    public function adminDeleteProduct(int $productId)
+    {
+  
+        try {
+           $this->productService->deleteProductByAdmin($productId);
+             
+
+            return response()->json([
+                'message' => 'Product deleted successfully',
+            ], 200);
+
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Product not found',
+            ], 404);
+
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => 'Failed to delete product',
+            ], 500);
+        }
+    }
+    /**
+     * edit a product by admin
+     * PUT /api/v1/admin/products/edit
+     */
+    public function adminEditProduct(int $productId)
+    {
+      
+
+         try {
+             $this->productService->editProductByAdmin($productId);
+            return response()->json([
+                'message' => 'Product edited successfully',
+            ], 200);
+
+       
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Product not found',
+            ], 404);
+
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => 'Failed to edit product',
             ], 500);
         }
     }
