@@ -5,8 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { SlidersHorizontal } from "lucide-react";
 
 import { useAuthStore } from "../../store/auth.store";
-import { useProductStore } from "@/app/store/product.store";
-
 import { ProductCardSkeleton } from "@/app/components/pruduct/ProductCardSkeleton";
 import { ProductCard } from "@/app/components/pruduct/Product";
 import { Pagination } from "@/app/components/ui/Pagination";
@@ -14,6 +12,8 @@ import { ProductShowModal } from "@/app/components/pruduct/productShow";
 import { FiltersProduct } from "@/app/components/filters/ProductFilters";
 import { Drawer } from "@/app/components/ui/Drawer";
 import { Button } from "@/app/components/ui/Button";
+import { useProductStore } from "@/app/store/product.store";
+import LoadingText from "@/app/components/state/loading/Loading";
 
 export default function ProductPage() {
   const router = useRouter();
@@ -121,7 +121,7 @@ export default function ProductPage() {
   if (!ready || checking) {
     return (
       <div className="min-h-[calc(100vh-64px)] flex items-center justify-center">
-        <span>Loading...</span>
+        <LoadingText />
       </div>
     );
   }
@@ -185,11 +185,7 @@ export default function ProductPage() {
         </div>
       </footer>
 
-      <ProductShowModal
-        open={!!selectedProduct}
-        product={selectedProduct}
-        onClose={() => selectProduct(null)}
-      />
+      <ProductShowModal/>
 
       <Drawer
         open={filtersOpen}
