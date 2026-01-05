@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "../../store/auth.store";
+import { SlidersHorizontal } from "lucide-react";
 
 import { fetchProducts } from "@/app/services/product.service";
 import { Product } from "@/app/models/product.model";
@@ -12,6 +13,8 @@ import { Pagination } from "@/app/components/ui/Pagination";
 import { ProductShowModal } from "@/app/components/pruduct/productShow";
 import ProductFiltersState from "@/app/models/product-filters.model";
 import { FiltersProduct } from "@/app/components/filters/ProductFilters";
+import { Drawer } from "@/app/components/ui/Drawer";
+import { Button } from "@/app/components/ui/Button";
 
 export default function ProductPage() {
   const router = useRouter();
@@ -23,7 +26,7 @@ export default function ProductPage() {
   const [total, setTotal] = useState(0);
   const [loadingPage, setLoadingPage] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [absoluteMaxPrice, setAbsoluteMaxPrice] = useState<number>(0);
 
   const [filters, setFilters] = useState<ProductFiltersState>({
@@ -85,7 +88,7 @@ export default function ProductPage() {
     <div className="min-h-[calc(100vh-64px)] flex flex-col">
       <div className="flex-1 px-6">
         <div className="flex gap-7">
-          <aside className="w-72 shrink-0">
+          <aside className="hidden lg:block w-72 shrink-0">
             <div className="sticky top-24">
               <FiltersProduct
                 filters={filters}
@@ -116,18 +119,27 @@ export default function ProductPage() {
           </aside>
 
           <main className="flex-1">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
+            <div className="lg:hidden">
+              <Button
+                onClick={() => setFiltersOpen(true)}
+                className="mb-6 flex items-center gap-2"
+              >
+                <SlidersHorizontal className="h-4 w-4" />
+                <span>Filters</span>
+              </Button>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
               {loadingPage
                 ? Array.from({ length: pageSize }).map((_, i) => (
-                  <ProductCardSkeleton key={i} />
-                ))
+                    <ProductCardSkeleton key={i} />
+                  ))
                 : products.map((p) => (
-                  <ProductCard
-                    key={p.id}
-                    product={p}
-                    onClick={setSelectedProduct}
-                  />
-                ))}
+                    <ProductCard
+                      key={p.id}
+                      product={p}
+                      onClick={setSelectedProduct}
+                    />
+                  ))}
             </div>
           </main>
         </div>
@@ -154,6 +166,41 @@ export default function ProductPage() {
         product={selectedProduct}
         onClose={() => setSelectedProduct(null)}
       />
+
+      <Drawer
+        open={filtersOpen}
+        onClose={() => setFiltersOpen(false)}
+        title="Filters Products"
+        width="min(420px, 90vw)"
+      >
+        <FiltersProduct
+          filters={filters}
+          onChange={setFilters}
+          absoluteMaxPrice={absoluteMaxPrice}
+          setAbsoluteMaxPrice={setAbsoluteMaxPrice}
+          onApply={() => {
+            setPage(1);
+            setFiltersApplied(true);
+            loadProducts(filters);
+            setFiltersOpen(false);
+          }}
+          onClear={() => {
+            const cleared: ProductFiltersState = {
+              search: "",
+              minPrice: null,
+              maxPrice: absoluteMaxPrice,
+              categories: [],
+            };
+
+            setFilters(cleared);
+            setFiltersApplied(false);
+            setPage(1);
+            loadProducts(cleared);
+            setFiltersOpen(false);
+          }}
+          applied={filtersApplied}
+        />
+      </Drawer>
     </div>
   );
 }
