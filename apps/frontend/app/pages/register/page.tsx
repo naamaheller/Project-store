@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "../../store/auth.store";
 
@@ -12,20 +12,21 @@ import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
 export default function RegisterPage() {
     const router = useRouter();
-    const { register, loading, error, clearError } = useAuthStore();
+    const register = useAuthStore((s) => s.register);
+    const loading = useAuthStore((s) => s.loading);
+    const error = useAuthStore((s) => s.error);
+    const clearError = useAuthStore((s) => s.clearError);
 
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [show, setShow] = useState(false);
 
-    // ✅ Email validation (show error only after user starts typing)
     const isEmailValid = useMemo(() => {
         if (!email) return true;
         return email.includes("@") && email.includes(".");
     }, [email]);
 
-    // ✅ Password validation (show error only after user starts typing)
     const isPasswordValid = useMemo(() => {
         if (!password) return true;
         return password.trim().length >= 6;
@@ -44,19 +45,26 @@ export default function RegisterPage() {
 
     async function onSubmit(e: React.FormEvent) {
         e.preventDefault();
+
         clearError();
 
         if (!isEmailValid || !isPasswordValid) return;
 
         const ok = await register(name.trim(), email.trim(), password);
-        if (ok) router.push("/pages/login");
+
+        if (ok) {
+            clearError();
+            router.push("/pages/login");
+        }
     }
 
     return (
         <div className="min-h-screen flex items-center justify-center px-4">
             <Card className="w-full max-w-md p-10 min-h-[440px] border-2 border-primary/50">
                 <div className="mx-auto w-full max-w-sm">
-                    <h1 className="text-2xl font-semibold text-center mb-8">Register</h1>
+                    <h1 className="text-2xl font-semibold text-center mb-8">
+                        Register
+                    </h1>
 
                     <form onSubmit={onSubmit} className="grid gap-6">
                         {error && <Alert variant="error">{error}</Alert>}

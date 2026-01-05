@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { Button } from "./Button";
+import { Select } from "./Select";
 
 type PaginationProps = {
     page: number;
@@ -107,48 +108,48 @@ export function Pagination({
         <div
             className={[
                 "w-full",
-                // ✅ היה gap-3 -> עכשיו קטן יותר
-                "flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between",
+                "flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between",
                 "text-sm text-text-muted",
-                // ✅ רווח קטן מאוד מעל/מתחת
                 "py-1",
                 className ?? "",
             ].join(" ")}
             dir="ltr"
         >
             {/* left */}
-            <div className="flex items-center gap-3 flex-wrap">
-                <span>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 justify-center sm:justify-start text-center sm:text-left">
+                <span className="whitespace-nowrap">
                     Showing <span className="text-text">{from}</span>–<span className="text-text">{to}</span> of{" "}
                     <span className="text-text">{total}</span>
                 </span>
 
                 {onPageSizeChange ? (
-                    <div className="flex items-center gap-2">
-                        <span className="text-border">|</span>
-                        <label className="text-text-muted">Rows per page:</label>
-                        <select
-                            className={[
-                                "min-w-[72px] rounded-md px-2 py-1",
-                                "bg-background text-text border border-border",
-                                "focus:outline-none focus:ring-2 focus:ring-primary-soft focus:border-primary",
-                            ].join(" ")}
-                            value={pageSize}
-                            onChange={(e) => onPageSizeChange(Number(e.target.value))}
-                            aria-label="Rows per page"
-                        >
-                            {pageSizeOptions.map((opt) => (
-                                <option key={opt} value={opt}>
-                                    {opt}
-                                </option>
-                            ))}
-                        </select>
+                    <div className="flex items-center gap-2 whitespace-nowrap">
+                        <span className="text-border hidden sm:inline">|</span>
+
+                        <span className="text-text-muted sm:hidden">Rows:</span>
+                        <label className="text-text-muted whitespace-nowrap hidden sm:inline">
+                            Rows per page:
+                        </label>
+
+                        <div className="shrink-0">
+                            <Select
+                                options={pageSizeOptions.map((opt) => ({
+                                    value: String(opt),
+                                    label: String(opt),
+                                }))}
+                                value={String(pageSize)}
+                                onChange={(e) => onPageSizeChange?.(Number(e.target.value))}
+                                aria-label="Rows per page"
+                                className="w-[52px] min-w-[52px] px-1 py-1 text-sm"
+                            />
+                        </div>
                     </div>
                 ) : null}
             </div>
 
+
             {/* right */}
-            <div className="flex items-center gap-2 justify-end">
+            <div className="flex items-center gap-2 justify-center sm:justify-end flex-wrap">
                 <Button
                     variant="outline"
                     onClick={() => go(1)}

@@ -5,6 +5,7 @@ import "./globals.css";
 import { ToastProvider } from "./components/ui/Toast";
 import Header from "./components/Header/Header";
 import { AuthProvider } from "./components/auth/AuthProvider";
+import AuthBootstrap from "./components/AuthBootstrap";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,11 +22,7 @@ export const metadata: Metadata = {
   description: "Modern store application",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" dir="ltr">
       <body
@@ -37,12 +34,9 @@ export default function RootLayout({
       >
         <AuthProvider>
         <ToastProvider>
+          <AuthBootstrap />
           <Header />
-
-          {/* רווח רק מה־Header */}
-          <main className="pt-8">
-            {children}
-          </main>
+          <main className="pt-8">{children}</main>
         </ToastProvider>
         </AuthProvider>
       </body>

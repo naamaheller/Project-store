@@ -37,33 +37,32 @@ type ProductStore = {
   selectProduct: (product: Product | null) => void;
 };
 
-const hasActiveFilters = (
-  filters: ProductFiltersState,
-  absoluteMaxPrice: number
-) => {
-  return (
-    !!filters.search ||
-    filters.categories.length > 0 ||
-    filters.minPrice !== null ||
-    (filters.maxPrice !== null && filters.maxPrice < absoluteMaxPrice)
-  );
-};
+const hasActiveFilters = (filters: ProductFiltersState, absoluteMaxPrice: number) =>
+  !!filters.search ||
+  filters.categories.length > 0 ||
+  filters.minPrice !== null ||
+  (filters.maxPrice !== null && absoluteMaxPrice > 0 && filters.maxPrice < absoluteMaxPrice);
 
 export const useProductStore = create<ProductStore>((set, get) => ({
   products: [],
   selectedProduct: null,
+
   page: 1,
   pageSize: 5,
   total: 0,
+
   filters: {
     search: "",
     minPrice: null,
     maxPrice: null,
     categories: [],
   },
+
   filtersApplied: false,
   absoluteMaxPrice: 0,
+
   loading: false,
+
   categories: [],
   loadingCategories: false,
   loadingMaxPrice: false,
@@ -72,6 +71,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     set({ page });
     await get().loadProducts();
   },
+
   setPageSize: async (pageSize) => {
     set({ pageSize, page: 1 });
     await get().loadProducts();
@@ -126,7 +126,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       filters: {
         search: "",
         minPrice: null,
-        maxPrice: max,
+        maxPrice: max > 0 ? max : null,
         categories: [],
       },
       filtersApplied: false,
@@ -149,10 +149,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
 
   loadFiltersData: async () => {
     try {
-      set({
-        loadingCategories: true,
-        loadingMaxPrice: true,
-      });
+      set({ loadingCategories: true, loadingMaxPrice: true });
 
       const [categories, maxPrice] = await Promise.all([
         fetchCategories(),
@@ -164,16 +161,13 @@ export const useProductStore = create<ProductStore>((set, get) => ({
         absoluteMaxPrice: maxPrice,
         filters: {
           ...state.filters,
-          maxPrice,
+          maxPrice: state.filters.maxPrice ?? maxPrice,
         },
       }));
     } catch (e) {
       console.error("Failed to load filters data", e);
     } finally {
-      set({
-        loadingCategories: false,
-        loadingMaxPrice: false,
-      });
+      set({ loadingCategories: false, loadingMaxPrice: false });
     }
   },
     clearSelectedProduct: () => set({ selectedProduct: null }),
