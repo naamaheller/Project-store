@@ -18,7 +18,7 @@ type ProductStore = {
   absoluteMaxPrice: number;
 
   loading: boolean;
-
+  
   categories: Category[];
   loadingCategories: boolean;
   loadingMaxPrice: boolean;
@@ -28,6 +28,7 @@ type ProductStore = {
   setFilters: (filters: Partial<ProductFiltersState>) => void;
 
   loadProducts: () => Promise<void>;
+  loadProductById: (id: number) => Promise<void>;
   loadFiltersData: () => Promise<void>;
 
   applyFilters: () => Promise<void>;
@@ -134,6 +135,17 @@ export const useProductStore = create<ProductStore>((set, get) => ({
 
     await get().loadProducts();
   },
+  loadProductById: async (id: number) => {
+    set({ loading: true });
+
+    const res = await fetch(`/api/admin/products/${id}`);
+    const product = await res.json();
+
+    set({
+      selectedProduct: product,
+      loading: false,
+    });
+  },
 
   loadFiltersData: async () => {
     try {
@@ -164,4 +176,6 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       });
     }
   },
+    clearSelectedProduct: () => set({ selectedProduct: null }),
+
 }));

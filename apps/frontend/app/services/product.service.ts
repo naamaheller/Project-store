@@ -3,15 +3,21 @@ import { ProductFilters } from "../models/product.model";
 
 type ApiCall = (params: Record<string, any>) => Promise<{ data: any }>;
 
-export function fetchProducts(filters?: ProductFilters) {
-  return fetchProductsBase(getProducts, filters);
-}
+//check if role is user or admin
+// export function fetchProducts(filters?: ProductFilters) {
 
-export function fetchAdminProducts(filters?: ProductFilters) {
-  return fetchProductsBase(getAdminProducts, filters);
-}
 
-async function fetchProductsBase(apiCall: ApiCall, filters?: ProductFilters) {
+// }
+
+// export function fetchUserProducts(filters?: ProductFilters) {
+//   return fetchProductsBase(getProducts, filters);
+// }
+
+// export function fetchAdminProducts(filters?: ProductFilters) {
+//   return fetchProductsBase(getAdminProducts, filters);
+// }
+
+export async function fetchProducts(filters?: ProductFilters) {
   try {
     const params: any = {};
 
@@ -29,7 +35,7 @@ async function fetchProductsBase(apiCall: ApiCall, filters?: ProductFilters) {
       (k) => params[k] === undefined && delete params[k]
     );
 
-    const response = await apiCall(params);
+    const response = await getProducts(params);
     return response.data;
   } catch (error) {
     console.error("Error fetching products:", error);
