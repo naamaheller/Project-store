@@ -36,6 +36,18 @@ type ProductStore = {
   selectProduct: (product: Product | null) => void;
 };
 
+const hasActiveFilters = (
+  filters: ProductFiltersState,
+  absoluteMaxPrice: number
+) => {
+  return (
+    !!filters.search ||
+    filters.categories.length > 0 ||
+    filters.minPrice !== null ||
+    (filters.maxPrice !== null && filters.maxPrice < absoluteMaxPrice)
+  );
+};
+
 export const useProductStore = create<ProductStore>((set, get) => ({
   products: [],
   selectedProduct: null,
@@ -96,7 +108,13 @@ export const useProductStore = create<ProductStore>((set, get) => ({
   },
 
   applyFilters: async () => {
-    set({ page: 1, filtersApplied: true });
+    const { filters, absoluteMaxPrice } = get();
+
+    set({
+      page: 1,
+      filtersApplied: hasActiveFilters(filters, absoluteMaxPrice),
+    });
+
     await get().loadProducts();
   },
 
@@ -116,7 +134,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
 
     await get().loadProducts();
   },
-  
+
   loadFiltersData: async () => {
     try {
       set({
