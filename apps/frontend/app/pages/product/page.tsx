@@ -14,6 +14,7 @@ import { FiltersProduct } from "@/app/components/filters/ProductFilters";
 import { Drawer } from "@/app/components/ui/Drawer";
 import { Button } from "@/app/components/ui/Button";
 import { useProductStore } from "@/app/store/product.store";
+import LoadingText from "@/app/components/state/loading/Loading";
 
 export default function ProductPage() {
   const router = useRouter();
@@ -108,7 +109,7 @@ export default function ProductPage() {
   if (!ready || loading) {
     return (
       <div className="min-h-[calc(100vh-64px)] flex items-center justify-center">
-        <span>Loading...</span>
+        <LoadingText />
       </div>
     );
   }

@@ -1,0 +1,83 @@
+
+
+.loadingWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: var(--color-background);
+}
+
+.loadingText {
+  display: flex;
+  gap: 12px;
+}
+
+.letter {
+  font-size: 120px;
+  font-weight: 800;
+  letter-spacing: 0.25em;
+  display: inline-block;
+  color: var(--color-text-inverted);
+
+  text-shadow: -1px -1px 0 var(--color-primary), 1px -1px 0 var(--color-primary),
+    -1px 1px 0 var(--color-primary), 1px 1px 0 var(--color-primary),
+    0 4px 0 var(--color-primary-hover), 0 8px 12px rgba(111, 174, 62, 0.22);
+}
+
+.bubbles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.bubble {
+  position: absolute;
+  bottom: -100px;
+  background: rgba(111, 174, 62, 0.35);
+  border-radius: 50%;
+  animation: rise linear infinite;
+}
+
+.fromBottom {
+  bottom: -120px;
+  animation-name: riseUp;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes riseUp {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translateY(-120vh);
+    opacity: 0;
+  }
+}
+
+.fromTop {
+  top: -120px;
+  animation-name: fallDown;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes fallDown {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.35;
+  }
+  100% {
+    transform: translateY(120vh);
+    opacity: 0;
+  }
+}
