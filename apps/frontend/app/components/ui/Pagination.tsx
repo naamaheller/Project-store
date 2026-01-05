@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { Button } from "./Button";
+import { Select } from "./Select";
 
 type PaginationProps = {
     page: number;
@@ -117,7 +118,7 @@ export function Pagination({
             dir="ltr"
         >
             {/* left */}
-            <div className="flex items-center gap-3 flex-wrap">
+            <div className="flex items-center gap-3 whitespace-nowrap">
                 <span>
                     Showing <span className="text-text">{from}</span>–<span className="text-text">{to}</span> of{" "}
                     <span className="text-text">{total}</span>
@@ -126,23 +127,20 @@ export function Pagination({
                 {onPageSizeChange ? (
                     <div className="flex items-center gap-2">
                         <span className="text-border">|</span>
-                        <label className="text-text-muted">Rows per page:</label>
-                        <select
-                            className={[
-                                "min-w-[72px] rounded-md px-2 py-1",
-                                "bg-background text-text border border-border",
-                                "focus:outline-none focus:ring-2 focus:ring-primary-soft focus:border-primary",
-                            ].join(" ")}
-                            value={pageSize}
-                            onChange={(e) => onPageSizeChange(Number(e.target.value))}
+                        <label className="text-text-muted whitespace-nowrap">
+                            Rows per page:
+                        </label>
+                        <Select
+                            options={pageSizeOptions.map((opt) => ({
+                                value: String(opt),
+                                label: String(opt),
+                            }))}
+                            value={String(pageSize)}
+                            onChange={(e) => onPageSizeChange?.(Number(e.target.value))}
                             aria-label="Rows per page"
-                        >
-                            {pageSizeOptions.map((opt) => (
-                                <option key={opt} value={opt}>
-                                    {opt}
-                                </option>
-                            ))}
-                        </select>
+                            className="w-[64px] min-w-[64px] px-1 py-1 text-sm"
+                        />
+
                     </div>
                 ) : null}
             </div>
