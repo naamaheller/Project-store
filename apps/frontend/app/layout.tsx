@@ -4,6 +4,7 @@ import "./globals.css";
 
 import { ToastProvider } from "./components/ui/Toast";
 import Header from "./components/Header/Header";
+import { AuthProvider } from "./components/auth/AuthProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,10 +35,12 @@ export default function RootLayout({
           "antialiased min-h-screen bg-background text-text",
         ].join(" ")}
       >
+        <AuthProvider>
         <ToastProvider>
           <Header />
           <main className="min-h-[calc(100vh-64px)]">{children}</main>
         </ToastProvider>
+        </AuthProvider>
       </body>
     </html>
   );

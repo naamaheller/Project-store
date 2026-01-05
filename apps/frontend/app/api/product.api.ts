@@ -20,3 +20,15 @@ export function getAdminProducts(params?: { page?: number; per_page?: number }) 
 export function getMaxPrice() {
   return apiClient.get<{ max_price: number }>("/products/max-price");
 }
+export function adminAddProduct(productData: FormData) {
+  return apiClient.post("/admin/products/add", productData, );
+}
+export function adminDeleteProduct(productId: number) {
+  return apiClient.delete(`/admin/products/${productId}`);
+}
+export function adminEditProduct(
+  productId: number,
+  productData: FormData
+) {
+  return apiClient.post(`/admin/products/edit/${productId}`, productData);
+}

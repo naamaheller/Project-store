@@ -33,10 +33,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         set({ loading: true, error: null });
         try {
             await loginApi({ email, password });
-
+            
             const me = await meApi();
             set({ user: me.user, loading: false, ready: true });
-
+            
             return true;
         } catch (e: any) {
             set({ user: null, loading: false, error: getErrMessage(e), ready: true });
