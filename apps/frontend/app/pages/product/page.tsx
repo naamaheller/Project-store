@@ -4,12 +4,12 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "../../store/auth.store";
 import { SlidersHorizontal } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
 import { ProductCardSkeleton } from "@/app/components/pruduct/ProductCardSkeleton";
 import { ProductCard } from "@/app/components/pruduct/Product";
 import { Pagination } from "@/app/components/ui/Pagination";
 import { ProductShowModal } from "@/app/components/pruduct/productShow";
-import ProductFiltersState from "@/app/models/product-filters.model";
 import { FiltersProduct } from "@/app/components/filters/ProductFilters";
 import { Drawer } from "@/app/components/ui/Drawer";
 import { Button } from "@/app/components/ui/Button";
@@ -44,6 +44,7 @@ export default function ProductPage() {
   } = useProductStore();
 
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     if (!ready) fetchMe();
@@ -66,9 +67,43 @@ export default function ProductPage() {
     const timeout = setTimeout(() => {
       applyFilters();
     }, 400);
-
     return () => clearTimeout(timeout);
   }, [filters.search]);
+
+  useEffect(() => {
+    if (!ready || !user) return;
+
+    const search = searchParams.get("search") ?? "";
+    const maxPrice = searchParams.get("max-price");
+    const categories = searchParams.get("categories");
+
+    setFilters({
+      search,
+      maxPrice: maxPrice ? Number(maxPrice) : null,
+      categories: categories ? categories.split(",").map(Number) : [],
+    });
+
+    applyFilters();
+  }, [ready, user]);
+
+  useEffect(() => {
+    if (!filtersApplied) return;
+
+    const params = new URLSearchParams();
+
+    if (filters.search) params.set("search", filters.search);
+    if (filters.maxPrice !== null && filters.maxPrice < absoluteMaxPrice) {
+      params.set("max-price", String(filters.maxPrice));
+    }
+    if (filters.categories.length)
+      params.set("categories", filters.categories.join(","));
+    router.replace(`?${params.toString()}`, { scroll: false });
+  }, [filtersApplied, filters]);
+
+  useEffect(() => {
+    if (filtersApplied) return;
+    router.replace("?", { scroll: false });
+  }, [filtersApplied]);
 
   if (!ready || loading) {
     return (

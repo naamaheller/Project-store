@@ -47,7 +47,11 @@ export function FiltersProduct({
           min={0}
           max={absoluteMaxPrice}
           value={filters.maxPrice ?? absoluteMaxPrice}
-          onChange={(value) => onChange({ maxPrice: value })}
+          onChange={(value) =>
+            onChange({
+              maxPrice: value < absoluteMaxPrice ? value : null,
+            })
+          }
         />
       )}
 
