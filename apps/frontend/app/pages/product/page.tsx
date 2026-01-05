@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAuthStore } from "../../store/auth.store";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { SlidersHorizontal } from "lucide-react";
-import { useSearchParams } from "next/navigation";
+
+import { useAuthStore } from "../../store/auth.store";
+import { useProductStore } from "@/app/store/product.store";
 
 import { ProductCardSkeleton } from "@/app/components/pruduct/ProductCardSkeleton";
 import { ProductCard } from "@/app/components/pruduct/Product";
@@ -13,11 +14,13 @@ import { ProductShowModal } from "@/app/components/pruduct/productShow";
 import { FiltersProduct } from "@/app/components/filters/ProductFilters";
 import { Drawer } from "@/app/components/ui/Drawer";
 import { Button } from "@/app/components/ui/Button";
-import { useProductStore } from "@/app/store/product.store";
 
 export default function ProductPage() {
   const router = useRouter();
-  const { user, fetchMe, loading, ready } = useAuthStore();
+  const searchParams = useSearchParams();
+
+  const { user, checking, ready } = useAuthStore();
+
   const {
     products,
     page,
@@ -31,24 +34,19 @@ export default function ProductPage() {
     categories,
     loadingCategories,
     loadingMaxPrice,
-  } = useProductStore();
-  const {
+
     setPage,
     setPageSize,
     setFilters,
     applyFilters,
     clearFilters,
-    loadProducts,
     loadFiltersData,
     selectProduct,
   } = useProductStore();
 
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const searchParams = useSearchParams();
 
-  useEffect(() => {
-    if (!ready) fetchMe();
-  }, [ready, fetchMe]);
+  const initializedFromUrlRef = useRef(false);
 
   useEffect(() => {
     if (!ready) return;
@@ -57,55 +55,70 @@ export default function ProductPage() {
 
   useEffect(() => {
     if (!ready || !user) return;
-    loadProducts();
     loadFiltersData();
+  }, [ready, user, loadFiltersData]);
+
+  useEffect(() => {
+    if (!ready || !user) return;
+    if (initializedFromUrlRef.current) return;
+
+    const search = searchParams.get("search") ?? "";
+    const maxPrice = searchParams.get("max-price");
+    const minPrice = searchParams.get("min-price");
+    const cats = searchParams.get("categories");
+
+    setFilters({
+      search,
+      minPrice: minPrice ? Number(minPrice) : null,
+      maxPrice: maxPrice ? Number(maxPrice) : null,
+      categories: cats ? cats.split(",").map(Number) : [],
+    });
+
+    initializedFromUrlRef.current = true;
+    applyFilters();
+  }, [ready, user, searchParams, setFilters, applyFilters]);
+
+  useEffect(() => {
+    if (!ready || !user) return;
+    if (!initializedFromUrlRef.current) return;
   }, [ready, user]);
 
   useEffect(() => {
     if (!ready || !user) return;
+    if (!initializedFromUrlRef.current) return;
 
     const timeout = setTimeout(() => {
       applyFilters();
     }, 400);
+
     return () => clearTimeout(timeout);
-  }, [filters.search]);
+  }, [filters.search, ready, user, applyFilters]);
 
   useEffect(() => {
-    if (!ready || !user) return;
+    if (!initializedFromUrlRef.current) return;
 
-    const search = searchParams.get("search") ?? "";
-    const maxPrice = searchParams.get("max-price");
-    const categories = searchParams.get("categories");
-
-    setFilters({
-      search,
-      maxPrice: maxPrice ? Number(maxPrice) : null,
-      categories: categories ? categories.split(",").map(Number) : [],
-    });
-
-    applyFilters();
-  }, [ready, user]);
-
-  useEffect(() => {
-    if (!filtersApplied) return;
+    if (!filtersApplied) {
+      router.replace("?", { scroll: false });
+      return;
+    }
 
     const params = new URLSearchParams();
 
     if (filters.search) params.set("search", filters.search);
+    if (filters.minPrice !== null) params.set("min-price", String(filters.minPrice));
+
     if (filters.maxPrice !== null && filters.maxPrice < absoluteMaxPrice) {
       params.set("max-price", String(filters.maxPrice));
     }
-    if (filters.categories.length)
+
+    if (filters.categories.length) {
       params.set("categories", filters.categories.join(","));
+    }
+
     router.replace(`?${params.toString()}`, { scroll: false });
-  }, [filtersApplied, filters]);
+  }, [filtersApplied, filters, absoluteMaxPrice, router]);
 
-  useEffect(() => {
-    if (filtersApplied) return;
-    router.replace("?", { scroll: false });
-  }, [filtersApplied]);
-
-  if (!ready || loading) {
+  if (!ready || checking) {
     return (
       <div className="min-h-[calc(100vh-64px)] flex items-center justify-center">
         <span>Loading...</span>
@@ -117,7 +130,7 @@ export default function ProductPage() {
 
   return (
     <div className="min-h-[calc(100vh-64px)] flex flex-col">
-      <div className="flex-1 px-6 pb-4">
+      <div className="flex-1 px-6 pb-2">
         <div className="flex gap-7">
           <aside className="hidden lg:block w-72 shrink-0">
             <div className="sticky top-24">
@@ -145,17 +158,14 @@ export default function ProductPage() {
                 <span>Filters</span>
               </Button>
             </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
               {loadingPage
                 ? Array.from({ length: pageSize }).map((_, i) => (
                   <ProductCardSkeleton key={i} />
                 ))
                 : products.map((p) => (
-                  <ProductCard
-                    key={p.id}
-                    product={p}
-                    onClick={selectProduct}
-                  />
+                  <ProductCard key={p.id} product={p} onClick={selectProduct} />
                 ))}
             </div>
           </main>

@@ -12,7 +12,10 @@ import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
 export default function LoginPage() {
     const router = useRouter();
-    const { login, loading, error, clearError } = useAuthStore();
+    const login = useAuthStore((s) => s.login);
+    const loading = useAuthStore((s) => s.loading);
+    const error = useAuthStore((s) => s.error);
+    const clearError = useAuthStore((s) => s.clearError);
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -42,7 +45,6 @@ export default function LoginPage() {
                         Login
                     </h1>
 
-                    {/* אותו רווח כמו Register */}
                     <form onSubmit={onSubmit} className="grid gap-6">
                         {error && <Alert variant="error">{error}</Alert>}
 
