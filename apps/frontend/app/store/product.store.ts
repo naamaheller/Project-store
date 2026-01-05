@@ -1,0 +1,167 @@
+import { create } from "zustand";
+import { Product } from "@/app/models/product.model";
+import ProductFiltersState from "@/app/models/product-filters.model";
+import { fetchMaxPrice, fetchProducts } from "@/app/services/product.service";
+import { Category } from "../models/category.model";
+import { fetchCategories } from "../services/category.service";
+
+type ProductStore = {
+  products: Product[];
+  selectedProduct: Product | null;
+
+  page: number;
+  pageSize: number;
+  total: number;
+
+  filters: ProductFiltersState;
+  filtersApplied: boolean;
+  absoluteMaxPrice: number;
+
+  loading: boolean;
+
+  categories: Category[];
+  loadingCategories: boolean;
+  loadingMaxPrice: boolean;
+
+  setPage: (page: number) => Promise<void>;
+  setPageSize: (size: number) => Promise<void>;
+  setFilters: (filters: Partial<ProductFiltersState>) => void;
+
+  loadProducts: () => Promise<void>;
+  loadFiltersData: () => Promise<void>;
+
+  applyFilters: () => Promise<void>;
+  clearFilters: () => Promise<void>;
+
+  selectProduct: (product: Product | null) => void;
+};
+
+const hasActiveFilters = (
+  filters: ProductFiltersState,
+  absoluteMaxPrice: number
+) => {
+  return (
+    !!filters.search ||
+    filters.categories.length > 0 ||
+    filters.minPrice !== null ||
+    (filters.maxPrice !== null && filters.maxPrice < absoluteMaxPrice)
+  );
+};
+
+export const useProductStore = create<ProductStore>((set, get) => ({
+  products: [],
+  selectedProduct: null,
+  page: 1,
+  pageSize: 5,
+  total: 0,
+  filters: {
+    search: "",
+    minPrice: null,
+    maxPrice: null,
+    categories: [],
+  },
+  filtersApplied: false,
+  absoluteMaxPrice: 0,
+  loading: false,
+  categories: [],
+  loadingCategories: false,
+  loadingMaxPrice: false,
+
+  setPage: async (page) => {
+    set({ page });
+    await get().loadProducts();
+  },
+  setPageSize: async (pageSize) => {
+    set({ pageSize, page: 1 });
+    await get().loadProducts();
+  },
+
+  setFilters: (partial) =>
+    set((state) => ({
+      filters: { ...state.filters, ...partial },
+    })),
+
+  selectProduct: (product) => set({ selectedProduct: product }),
+
+  loadProducts: async () => {
+    const { page, pageSize, filters } = get();
+
+    try {
+      set({ loading: true });
+
+      const result = await fetchProducts({
+        page,
+        per_page: pageSize,
+        search: filters.search,
+        min_price: filters.minPrice ?? undefined,
+        max_price: filters.maxPrice ?? undefined,
+        categories: filters.categories,
+      });
+
+      set({
+        products: result.data,
+        total: result.total,
+      });
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  applyFilters: async () => {
+    const { filters, absoluteMaxPrice } = get();
+
+    set({
+      page: 1,
+      filtersApplied: hasActiveFilters(filters, absoluteMaxPrice),
+    });
+
+    await get().loadProducts();
+  },
+
+  clearFilters: async () => {
+    const max = get().absoluteMaxPrice;
+
+    set({
+      filters: {
+        search: "",
+        minPrice: null,
+        maxPrice: max,
+        categories: [],
+      },
+      filtersApplied: false,
+      page: 1,
+    });
+
+    await get().loadProducts();
+  },
+
+  loadFiltersData: async () => {
+    try {
+      set({
+        loadingCategories: true,
+        loadingMaxPrice: true,
+      });
+
+      const [categories, maxPrice] = await Promise.all([
+        fetchCategories(),
+        fetchMaxPrice(),
+      ]);
+
+      set((state) => ({
+        categories,
+        absoluteMaxPrice: maxPrice,
+        filters: {
+          ...state.filters,
+          maxPrice,
+        },
+      }));
+    } catch (e) {
+      console.error("Failed to load filters data", e);
+    } finally {
+      set({
+        loadingCategories: false,
+        loadingMaxPrice: false,
+      });
+    }
+  },
+}));

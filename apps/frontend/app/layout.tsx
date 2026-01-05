@@ -32,13 +32,17 @@ export default function RootLayout({
         className={[
           geistSans.variable,
           geistMono.variable,
-          "antialiased min-h-screen bg-background text-text",
+          "antialiased bg-background text-text",
         ].join(" ")}
       >
         <AuthProvider>
         <ToastProvider>
           <Header />
-          <main className="min-h-[calc(100vh-64px)]">{children}</main>
+
+          {/* רווח רק מה־Header */}
+          <main className="pt-8">
+            {children}
+          </main>
         </ToastProvider>
         </AuthProvider>
       </body>

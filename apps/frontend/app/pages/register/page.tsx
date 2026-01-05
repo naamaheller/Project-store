@@ -53,7 +53,7 @@ export default function RegisterPage() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-background-muted px-4">
+        <div className="min-h-screen flex items-center justify-center px-4">
             <Card className="w-full max-w-md p-10 min-h-[440px] border-2 border-primary/50">
                 <div className="mx-auto w-full max-w-sm">
                     <h1 className="text-2xl font-semibold text-center mb-8">Register</h1>

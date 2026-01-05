@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { CheckboxGroup } from "../ui/CheckboxGroup";
 
 type Category = {
   id: number;
@@ -13,34 +14,28 @@ type CategoryProps = {
   onChange: (categories: number[]) => void;
 };
 
-export function FilterCategory({ categories, selected, onChange }: CategoryProps) {
-
-  const toggle = (id: number) => {
-    if (selected.includes(id)) {
-      onChange(selected.filter((c) => c !== id));
-    } else {
-      onChange([...selected, id]);
-    }
-  };
-
+export function FilterCategory({
+  categories,
+  selected,
+  onChange,
+}: CategoryProps) {
+  
   useEffect(() => {
     console.log(categories);
   }, [categories]);
 
   return (
     <div>
-      <p className="font-medium mb-2">categories</p>
-      {categories.length === 0 && <p>No categories available.</p>}
-      {categories.map((cat) => (
-        <label key={cat.id} className="flex gap-2">
-          <input
-            type="checkbox"
-            checked={selected.includes(cat.id)}
-            onChange={() => toggle(cat.id)}
-          />
-          {cat.name}
-        </label>
-      ))}
+      <p className="font-medium mb-2">Categories</p>
+
+      <CheckboxGroup
+        options={categories.map((cat) => ({
+          value: cat.id,
+          label: cat.name,
+        }))}
+        selected={selected}
+        onChange={onChange}
+      />
     </div>
   );
 }

@@ -1,6 +1,4 @@
 'use client';
-// קומפוננטת Table גנרית להצגת נתונים בטבלה.
-// תומכת ב־loading (Skeleton), מצב ריק (EmptyState) ורנדר מותאם לתאים.
 
 import type { ReactNode } from 'react';
 import { Skeleton } from './Skeleton';
