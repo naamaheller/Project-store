@@ -5,8 +5,6 @@ import { useRouter } from "next/navigation";
 import { useAuthStore } from "../../store/auth.store";
 import { SlidersHorizontal } from "lucide-react";
 
-import { fetchProducts } from "@/app/services/product.service";
-import { Product } from "@/app/models/product.model";
 import { ProductCardSkeleton } from "@/app/components/pruduct/ProductCardSkeleton";
 import { ProductCard } from "@/app/components/pruduct/Product";
 import { Pagination } from "@/app/components/ui/Pagination";
@@ -15,28 +13,37 @@ import ProductFiltersState from "@/app/models/product-filters.model";
 import { FiltersProduct } from "@/app/components/filters/ProductFilters";
 import { Drawer } from "@/app/components/ui/Drawer";
 import { Button } from "@/app/components/ui/Button";
+import { useProductStore } from "@/app/store/product.store";
 
 export default function ProductPage() {
   const router = useRouter();
   const { user, fetchMe, loading, ready } = useAuthStore();
+  const {
+    products,
+    page,
+    pageSize,
+    total,
+    loading: loadingPage,
+    filters,
+    filtersApplied,
+    absoluteMaxPrice,
+    selectedProduct,
+    categories,
+    loadingCategories,
+    loadingMaxPrice,
+  } = useProductStore();
+  const {
+    setPage,
+    setPageSize,
+    setFilters,
+    applyFilters,
+    clearFilters,
+    loadProducts,
+    loadFiltersData,
+    selectProduct,
+  } = useProductStore();
 
-  const [products, setProducts] = useState<Product[]>([]);
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
-  const [total, setTotal] = useState(0);
-  const [loadingPage, setLoadingPage] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const [absoluteMaxPrice, setAbsoluteMaxPrice] = useState<number>(0);
-
-  const [filters, setFilters] = useState<ProductFiltersState>({
-    search: "",
-    minPrice: null,
-    maxPrice: null,
-    categories: [],
-  });
-
-  const [filtersApplied, setFiltersApplied] = useState(false);
 
   useEffect(() => {
     if (!ready) fetchMe();
@@ -50,29 +57,18 @@ export default function ProductPage() {
   useEffect(() => {
     if (!ready || !user) return;
     loadProducts();
-  }, [ready, user, page, pageSize, filters.search]);
+    loadFiltersData();
+  }, [ready, user]);
 
-  async function loadProducts(overrideFilters?: Partial<ProductFiltersState>) {
-    const finalFilters = { ...filters, ...overrideFilters };
+  useEffect(() => {
+    if (!ready || !user) return;
 
-    try {
-      setLoadingPage(true);
+    const timeout = setTimeout(() => {
+      applyFilters();
+    }, 400);
 
-      const result = await fetchProducts({
-        page,
-        per_page: pageSize,
-        search: finalFilters.search,
-        min_price: finalFilters.minPrice ?? undefined,
-        max_price: finalFilters.maxPrice ?? undefined,
-        categories: finalFilters.categories,
-      });
-
-      setProducts(result.data);
-      setTotal(result.total);
-    } finally {
-      setLoadingPage(false);
-    }
-  }
+    return () => clearTimeout(timeout);
+  }, [filters.search]);
 
   if (!ready || loading) {
     return (
@@ -93,26 +89,12 @@ export default function ProductPage() {
               <FiltersProduct
                 filters={filters}
                 onChange={setFilters}
+                categories={categories}
                 absoluteMaxPrice={absoluteMaxPrice}
-                setAbsoluteMaxPrice={setAbsoluteMaxPrice}
-                onApply={() => {
-                  setPage(1);
-                  setFiltersApplied(true);
-                  loadProducts(filters);
-                }}
-                onClear={() => {
-                  const cleared: ProductFiltersState = {
-                    search: "",
-                    minPrice: null,
-                    maxPrice: absoluteMaxPrice,
-                    categories: [],
-                  };
-
-                  setFilters(cleared);
-                  setFiltersApplied(false);
-                  setPage(1);
-                  loadProducts(cleared);
-                }}
+                loadingCategories={loadingCategories}
+                loadingMaxPrice={loadingMaxPrice}
+                onApply={applyFilters}
+                onClear={clearFilters}
                 applied={filtersApplied}
               />
             </div>
@@ -137,7 +119,7 @@ export default function ProductPage() {
                     <ProductCard
                       key={p.id}
                       product={p}
-                      onClick={setSelectedProduct}
+                      onClick={selectProduct}
                     />
                   ))}
             </div>
@@ -153,10 +135,7 @@ export default function ProductPage() {
             pageSize={pageSize}
             total={total}
             onPageChange={setPage}
-            onPageSizeChange={(size) => {
-              setPage(1);
-              setPageSize(size);
-            }}
+            onPageSizeChange={setPageSize}
           />
         </div>
       </footer>
@@ -164,7 +143,7 @@ export default function ProductPage() {
       <ProductShowModal
         open={!!selectedProduct}
         product={selectedProduct}
-        onClose={() => setSelectedProduct(null)}
+        onClose={() => selectProduct(null)}
       />
 
       <Drawer
@@ -176,28 +155,12 @@ export default function ProductPage() {
         <FiltersProduct
           filters={filters}
           onChange={setFilters}
+          categories={categories}
           absoluteMaxPrice={absoluteMaxPrice}
-          setAbsoluteMaxPrice={setAbsoluteMaxPrice}
-          onApply={() => {
-            setPage(1);
-            setFiltersApplied(true);
-            loadProducts(filters);
-            setFiltersOpen(false);
-          }}
-          onClear={() => {
-            const cleared: ProductFiltersState = {
-              search: "",
-              minPrice: null,
-              maxPrice: absoluteMaxPrice,
-              categories: [],
-            };
-
-            setFilters(cleared);
-            setFiltersApplied(false);
-            setPage(1);
-            loadProducts(cleared);
-            setFiltersOpen(false);
-          }}
+          loadingCategories={loadingCategories}
+          loadingMaxPrice={loadingMaxPrice}
+          onApply={applyFilters}
+          onClear={clearFilters}
           applied={filtersApplied}
         />
       </Drawer>
