@@ -108,3 +108,17 @@ input[type="range"]::-moz-range-thumb {
     transform: translateX(100%);
   }
 }
+
+@layer utilities {
+  @keyframes riseUp {
+    0% { transform: translateY(0); opacity: 0 }
+    10% { opacity: 0.4 }
+    100% { transform: translateY(-120vh); opacity: 0 }
+  }
+
+  @keyframes fallDown {
+    0% { transform: translateY(0); opacity: 0 }
+    10% { opacity: 0.35 }
+    100% { transform: translateY(120vh); opacity: 0 }
+  }
+}
