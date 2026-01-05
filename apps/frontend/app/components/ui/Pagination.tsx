@@ -100,7 +100,7 @@ export function Pagination({
     const go = (p: number) => onPageChange(clamp(p, 1, totalPages));
 
     const iconBtn =
-        "h-9 w-9 p-0 shrink-0 border border-primary/40 bg-white " +
+        "h-9 w-9 p-0 shrink-0 border border-primary/40" +
         "hover:bg-primary-soft focus:ring-primary-soft";
 
     return (
