@@ -1,18 +1,22 @@
 "use client";
 
-import styles from "./Loading.module.css";
 import { BUBBLES } from "@/app/config/ui.config";
-
 
 export function BackgroundBubbles() {
   return (
-    <div className={styles.bubbles}>
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
       {BUBBLES.map((bubble, i) => (
         <span
           key={i}
-          className={`${styles.bubble} ${
-            bubble.from === "top" ? styles.fromTop : styles.fromBottom
-          }`}
+          className={`
+            absolute rounded-full
+            bg-[rgba(111,174,62,0.35)]
+            ${
+              bubble.from === "top"
+                ? "top-[-120px] animate-[fallDown_linear_infinite]"
+                : "bottom-[-120px] animate-[riseUp_linear_infinite]"
+            }
+          `}
           style={{
             left: bubble.left,
             width: `${bubble.size}px`,
