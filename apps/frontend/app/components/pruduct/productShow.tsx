@@ -2,6 +2,7 @@
 
 import { Product } from "@/app/models/product.model";
 import { Modal } from "@/app/components/ui/Modal";
+import { useProductStore } from "@/app/store/product.store";
 
 type Props = {
   open: boolean;
@@ -9,7 +10,8 @@ type Props = {
   product: Product | null;
 };
 
-export function ProductShowModal({ open, onClose, product }: Props) {
+export function ProductShowModal() {
+  const { selectedProduct: product, selectProduct } = useProductStore();
   if (!product) return null;
 
   const price =
@@ -18,13 +20,12 @@ export function ProductShowModal({ open, onClose, product }: Props) {
       : String(product.price);
 
   return (
-    <Modal open={open} onClose={onClose} title={product.name}>
+    <Modal open={true} onClose={() => selectProduct(null)} title={product.name}>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Image */}
         <div className="rounded-lg border border-border bg-background-muted/60 p-4">
           <div className="aspect-square rounded-md bg-background-muted flex items-center justify-center text-text-muted overflow-hidden">
             {product.img_url ? (
-              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={product.img_url}
                 alt={product.name}

@@ -185,11 +185,7 @@ export default function ProductPage() {
         </div>
       </footer>
 
-      <ProductShowModal
-        open={!!selectedProduct}
-        product={selectedProduct}
-        onClose={() => selectProduct(null)}
-      />
+      <ProductShowModal/>
 
       <Drawer
         open={filtersOpen}
