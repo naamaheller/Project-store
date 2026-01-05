@@ -34,7 +34,7 @@ export default function Header() {
     const { user, logout, loading } = useAuthStore();
 
     return (
-        <header className="sticky top-0 z-40 w-full h-16 bg-white/80 backdrop-blur border-b border-border">
+        <header className="sticky top-0 z-40 w-full h-16 /80 backdrop-blur border-b border-border">
             {/* FULL WIDTH CONTAINER */}
             <div className="w-full h-full px-6 flex items-center">
                 {/* הכי שמאלה */}

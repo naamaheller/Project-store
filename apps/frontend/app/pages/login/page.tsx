@@ -32,75 +32,75 @@ export default function LoginPage() {
     if (ok) router.push("/pages/product");
   }
 
-  return (
-    <div className="relative min-h-screen flex items-center justify-center bg-background-muted px-4">
-      <BackgroundBubbles />
-      <div className="relative z-10 w-full max-w-md">
-        <Card className="w-full max-w-md p-10 min-h-[440px] border-2 border-primary/50">
-          <div className="mx-auto w-full max-w-sm">
-            <h1 className="text-2xl font-semibold text-center mb-8">Login</h1>
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <BackgroundBubbles />
+        <div className="relative z-10 w-full max-w-md">
+          <Card className="w-full max-w-md p-10 min-h-[440px] border-2 border-primary/50">
+            <div className="mx-auto w-full max-w-sm">
+              <h1 className="text-2xl font-semibold text-center mb-8">Login</h1>
 
-            {/* אותו רווח כמו Register */}
-            <form onSubmit={onSubmit} className="grid gap-6">
-              {error && <Alert variant="error">{error}</Alert>}
+              {/* אותו רווח כמו Register */}
+              <form onSubmit={onSubmit} className="grid gap-6">
+                {error && <Alert variant="error">{error}</Alert>}
 
-              <div className="grid gap-2">
-                <label className="text-sm font-medium">Email</label>
-                <Input
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="email@example.com"
-                  autoComplete="email"
-                />
-              </div>
-
-              <div className="grid gap-2">
-                <label className="text-sm font-medium">Password</label>
-
-                <div className="relative">
+                <div className="grid gap-2">
+                  <label className="text-sm font-medium">Email</label>
                   <Input
-                    type={show ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    autoComplete="current-password"
-                    className="pr-12"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="email@example.com"
+                    autoComplete="email"
                   />
+                </div>
 
+                <div className="grid gap-2">
+                  <label className="text-sm font-medium">Password</label>
+
+                  <div className="relative">
+                    <Input
+                      type={show ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      autoComplete="current-password"
+                      className="pr-12"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => setShow((v) => !v)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2
+                             text-text-muted hover:text-text transition"
+                      aria-label={show ? "Hide password" : "Show password"}
+                    >
+                      {show ? (
+                        <EyeSlashIcon className="h-5 w-5" />
+                      ) : (
+                        <EyeIcon className="h-5 w-5" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                <Button type="submit" disabled={!canSubmit}>
+                  {loading ? "Logging in..." : "Login"}
+                </Button>
+
+                <div className="text-center text-sm text-text-muted">
+                  Don’t have an account?{" "}
                   <button
                     type="button"
-                    onClick={() => setShow((v) => !v)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2
-                             text-text-muted hover:text-text transition"
-                    aria-label={show ? "Hide password" : "Show password"}
+                    onClick={() => router.push("/pages/register")}
+                    className="text-primary font-medium hover:underline"
                   >
-                    {show ? (
-                      <EyeSlashIcon className="h-5 w-5" />
-                    ) : (
-                      <EyeIcon className="h-5 w-5" />
-                    )}
+                    Sign up
                   </button>
                 </div>
-              </div>
-
-              <Button type="submit" disabled={!canSubmit}>
-                {loading ? "Logging in..." : "Login"}
-              </Button>
-
-              <div className="text-center text-sm text-text-muted">
-                Don’t have an account?{" "}
-                <button
-                  type="button"
-                  onClick={() => router.push("/pages/register")}
-                  className="text-primary font-medium hover:underline"
-                >
-                  Sign up
-                </button>
-              </div>
-            </form>
-          </div>
-        </Card>
+              </form>
+            </div>
+          </Card>
+        </div>
       </div>
-    </div>
-  );
+    );
 }

@@ -1,6 +1,4 @@
 'use client';
-// קומפוננטת Drawer (פאנל צדדי) הנפתחת מעל העמוד.
-// משתמשת ב־Portal, חוסמת גלילה ונסגרת בלחיצה על ESC או overlay.
 
 import { ReactNode, useEffect } from 'react';
 import { Portal } from './Portal';
@@ -39,22 +37,43 @@ export function Drawer({
     return (
         <Portal>
             <div className="fixed inset-0 z-50">
-                <div
-                    className="absolute inset-0 bg-black/40"
+                <button
+                    type="button"
+                    className="absolute inset-0 z-0 bg-black/40"
                     onClick={onClose}
+                    aria-label="Close drawer overlay"
                 />
 
                 <div
-                    className="absolute right-0 top-0 h-full bg-surface shadow-xl flex flex-col"
+                    className="absolute left-0 top-0 z-10 h-full shadow-xl flex flex-col"
                     style={{ width }}
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label={title ?? 'Drawer'}
                 >
-                    {title && (
-                        <div className="px-6 py-4 border-b border-border text-lg font-semibold">
-                            {title}
+                    <div className="h-full bg-[var(--color-background-soft)] flex flex-col">
+                        <div className="px-6 py-4 border-b border-border flex items-center justify-between">
+                            <div className="text-lg font-semibold">{title}</div>
+                            <button
+                                type="button"
+                                onClick={onClose}
+                                className="
+                  relative z-20
+                  h-9 w-9 inline-flex items-center justify-center
+                  text-primary
+                  transition-transform transition-colors
+                  hover:scale-110 hover:text-primary-hover
+                  focus:outline-none focus:ring-2 focus:ring-primary-soft rounded-md
+                "
+                                aria-label="Close drawer"
+                                title="Close"
+                            >
+                                ✕
+                            </button>
                         </div>
-                    )}
 
-                    <div className="p-6 flex-1 overflow-auto">{children}</div>
+                        <div className="p-6 flex-1 overflow-auto">{children}</div>
+                    </div>
                 </div>
             </div>
         </Portal>
