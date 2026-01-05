@@ -64,17 +64,6 @@ export function FiltersProduct({
     loadCategories();
   }, []);
 
-  const clearFilters = () => {
-    onChange({
-      search: "",
-      minPrice: null,
-      maxPrice: filters.maxPrice,
-      categories: [],
-    });
-
-    onApply();
-  };
-
   return (
     <div className="w-64 space-y-12">
       <InputSearch

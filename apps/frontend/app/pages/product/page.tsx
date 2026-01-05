@@ -14,6 +14,7 @@ import { ProductShowModal } from "@/app/components/pruduct/productShow";
 import ProductFiltersState from "@/app/models/product-filters.model";
 import { FiltersProduct } from "@/app/components/filters/ProductFilters";
 import { Drawer } from "@/app/components/ui/Drawer";
+import { Button } from "@/app/components/ui/Button";
 
 export default function ProductPage() {
   const router = useRouter();
@@ -87,56 +88,47 @@ export default function ProductPage() {
     <div className="min-h-[calc(100vh-64px)] flex flex-col">
       <div className="flex-1 px-6">
         <div className="flex gap-7">
-          <aside className="w-72 shrink-0">
+          <aside className="hidden lg:block w-72 shrink-0">
             <div className="sticky top-24">
-              <Drawer
-                open={filtersOpen}
-                onClose={() => setFiltersOpen(false)}
-                title="Filters Products"
-                width="100%"
-              >
-                <FiltersProduct
-                  filters={filters}
-                  onChange={setFilters}
-                  absoluteMaxPrice={absoluteMaxPrice}
-                  setAbsoluteMaxPrice={setAbsoluteMaxPrice}
-                  onApply={() => {
-                    setPage(1);
-                    setFiltersApplied(true);
-                    loadProducts(filters);
-                    setFiltersOpen(false);
-                  }}
-                  onClear={() => {
-                    const cleared: ProductFiltersState = {
-                      search: "",
-                      minPrice: null,
-                      maxPrice: absoluteMaxPrice,
-                      categories: [],
-                    };
+              <FiltersProduct
+                filters={filters}
+                onChange={setFilters}
+                absoluteMaxPrice={absoluteMaxPrice}
+                setAbsoluteMaxPrice={setAbsoluteMaxPrice}
+                onApply={() => {
+                  setPage(1);
+                  setFiltersApplied(true);
+                  loadProducts(filters);
+                }}
+                onClear={() => {
+                  const cleared: ProductFiltersState = {
+                    search: "",
+                    minPrice: null,
+                    maxPrice: absoluteMaxPrice,
+                    categories: [],
+                  };
 
-                    setFilters(cleared);
-                    setFiltersApplied(false);
-                    setPage(1);
-                    loadProducts(cleared);
-                    setFiltersOpen(false);
-                  }}
-                  applied={filtersApplied}
-                />
-              </Drawer>
+                  setFilters(cleared);
+                  setFiltersApplied(false);
+                  setPage(1);
+                  loadProducts(cleared);
+                }}
+                applied={filtersApplied}
+              />
             </div>
           </aside>
 
           <main className="flex-1">
-            <div className="mb-4 flex items-center justify-between md:hidden">
-              <button
+            <div className="lg:hidden">
+              <Button
                 onClick={() => setFiltersOpen(true)}
-                className="flex items-center gap-2 rounded-md border border-border px-3 py-2 text-sm font-medium hover:bg-background-muted transition"
+                className="mb-6 flex items-center gap-2"
               >
                 <SlidersHorizontal className="h-4 w-4" />
                 <span>Filters</span>
-              </button>
+              </Button>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
               {loadingPage
                 ? Array.from({ length: pageSize }).map((_, i) => (
                     <ProductCardSkeleton key={i} />
@@ -174,6 +166,41 @@ export default function ProductPage() {
         product={selectedProduct}
         onClose={() => setSelectedProduct(null)}
       />
+
+      <Drawer
+        open={filtersOpen}
+        onClose={() => setFiltersOpen(false)}
+        title="Filters Products"
+        width="min(420px, 90vw)"
+      >
+        <FiltersProduct
+          filters={filters}
+          onChange={setFilters}
+          absoluteMaxPrice={absoluteMaxPrice}
+          setAbsoluteMaxPrice={setAbsoluteMaxPrice}
+          onApply={() => {
+            setPage(1);
+            setFiltersApplied(true);
+            loadProducts(filters);
+            setFiltersOpen(false);
+          }}
+          onClear={() => {
+            const cleared: ProductFiltersState = {
+              search: "",
+              minPrice: null,
+              maxPrice: absoluteMaxPrice,
+              categories: [],
+            };
+
+            setFilters(cleared);
+            setFiltersApplied(false);
+            setPage(1);
+            loadProducts(cleared);
+            setFiltersOpen(false);
+          }}
+          applied={filtersApplied}
+        />
+      </Drawer>
     </div>
   );
 }
