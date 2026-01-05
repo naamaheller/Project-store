@@ -7,6 +7,7 @@ import type { User } from "../models/user.model";
 type AuthState = {
     user: User | null;
     loading: boolean;
+    checking: boolean;
     ready: boolean;
     error: string | null;
 
@@ -17,6 +18,7 @@ type AuthState = {
     clearError: () => void;
 };
 
+
 function getErrMessage(e: any) {
     return e?.response?.data?.message || e?.message || "Something went wrong";
 }
@@ -24,6 +26,7 @@ function getErrMessage(e: any) {
 export const useAuthStore = create<AuthState>((set, get) => ({
     user: null,
     loading: false,
+    checking: false,
     ready: false,
     error: null,
 
@@ -32,15 +35,21 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     login: async (email, password) => {
         set({ loading: true, error: null });
         try {
-            await loginApi({ email, password });
+            const res = await loginApi({ email, password });
+
+            if (res?.user) {
+                set({ user: res.user, ready: true });
+                return true;
+            }
 
             const me = await meApi();
-            set({ user: me.user, loading: false, ready: true });
-
+            set({ user: me.user, ready: true });
             return true;
         } catch (e: any) {
-            set({ user: null, loading: false, error: getErrMessage(e), ready: true });
+            set({ user: null, error: getErrMessage(e), ready: true });
             return false;
+        } finally {
+            set({ loading: false });
         }
     },
 
@@ -48,32 +57,35 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         set({ loading: true, error: null });
         try {
             await registerApi({ name, email, password });
-            set({ loading: false });
             return true;
         } catch (e: any) {
-            set({ loading: false, error: getErrMessage(e) });
+            set({ error: getErrMessage(e) });
             return false;
+        } finally {
+            set({ loading: false });
         }
     },
 
     fetchMe: async () => {
+        set({ checking: true });
 
-        set({ loading: true, error: null });
         try {
             const res = await meApi();
-            set({ user: res.user, loading: false, ready: true });
-        } catch (e: any) {
-
-            set({ user: null, loading: false, ready: true, error: null });
+            set({ user: res.user, ready: true });
+        } catch {
+            set({ user: null, ready: true });
+        } finally {
+            set({ checking: false });
         }
     },
+
 
     logout: async () => {
         set({ loading: true, error: null });
         try {
             await logoutApi();
         } finally {
-            set({ user: null, loading: false, ready: true });
+            set({ user: null, loading: false, ready: true, error: null });
         }
     },
 }));

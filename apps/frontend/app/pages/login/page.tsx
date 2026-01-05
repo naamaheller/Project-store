@@ -12,8 +12,11 @@ import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { BackgroundBubbles } from "@/app/components/state/loading/Bubbles";
 
 export default function LoginPage() {
-  const router = useRouter();
-  const { login, loading, error, clearError } = useAuthStore();
+    const router = useRouter();
+    const login = useAuthStore((s) => s.login);
+    const loading = useAuthStore((s) => s.loading);
+    const error = useAuthStore((s) => s.error);
+    const clearError = useAuthStore((s) => s.clearError);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -40,9 +43,8 @@ export default function LoginPage() {
             <div className="mx-auto w-full max-w-sm">
               <h1 className="text-2xl font-semibold text-center mb-8">Login</h1>
 
-              {/* אותו רווח כמו Register */}
-              <form onSubmit={onSubmit} className="grid gap-6">
-                {error && <Alert variant="error">{error}</Alert>}
+                    <form onSubmit={onSubmit} className="grid gap-6">
+                        {error && <Alert variant="error">{error}</Alert>}
 
                 <div className="grid gap-2">
                   <label className="text-sm font-medium">Email</label>

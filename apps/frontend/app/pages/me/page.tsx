@@ -13,10 +13,6 @@ export default function MePage() {
     const router = useRouter();
     const { user, loading, error, fetchMe, logout } = useAuthStore();
 
-    useEffect(() => {
-        fetchMe();
-    }, []);
-
     async function onLogout() {
         await logout();
         router.push("/pages/login");
