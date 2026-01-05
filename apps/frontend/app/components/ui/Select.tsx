@@ -23,7 +23,7 @@ export function Select({
   error,
   helperText,
   options,
-  placeholder = 'בחר/י אפשרות',
+  placeholder = "Select option",
   disabled,
   className,
   id,
@@ -32,7 +32,7 @@ export function Select({
   const selectId = id ?? props.name;
 
   return (
-    <div className="flex flex-col gap-1 w-full">
+    <div className="flex flex-col gap-1">
       {label ? (
         <label htmlFor={selectId} className="text-sm font-medium text-text">
           {label}
