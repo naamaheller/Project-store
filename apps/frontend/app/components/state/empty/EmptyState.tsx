@@ -17,30 +17,32 @@ export function EmptyState({
   onAction,
 }: Props) {
   return (
-    <div className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
-
+    <div
+      className="
+        col-span-full
+        flex
+        items-center
+        justify-center
+        min-h-[65vh]
+        w-full
+      "
+    >
       <motion.div
-        initial={{ opacity: 0, y: 12 }}
+        initial={{ opacity: 0, y: 32 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="
-          relative z-10
           text-center
-          max-w-md
-          px-6
+          max-w-2xl
+          px-10
         "
       >
-        <motion.div
-          animate={{ y: [0, -6, 0] }}
-          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-          className="mb-6"
-        >
-          <span className="text-7xl">🌿</span>
-        </motion.div>
 
-        <h2 className="text-2xl font-semibold mb-3">{title}</h2>
+        <h2 className="text-5xl font-semibold mb-6">{title}</h2>
 
-        <p className="text-text-muted mb-8 leading-relaxed">{description}</p>
+        <p className="text-xl text-muted-foreground mb-12 leading-relaxed">
+          {description}
+        </p>
 
         {onAction && <Button onClick={onAction}>{actionLabel}</Button>}
       </motion.div>
