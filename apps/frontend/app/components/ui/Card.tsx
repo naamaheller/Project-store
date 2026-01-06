@@ -26,7 +26,6 @@ export function Card({ children, className, onClick }: CardProps) {
             tabIndex={isClickable ? 0 : undefined}
             className={[
                 "bg-surface border-2 border-primary/40 rounded-xl shadow-md",
-                // focus (keyboard only) רק אם קליקבילי
                 isClickable
                     ? "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                     : "",

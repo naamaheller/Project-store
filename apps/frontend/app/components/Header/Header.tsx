@@ -35,9 +35,7 @@ export default function Header() {
 
     return (
         <header className="sticky top-0 z-40 w-full h-16 /80 backdrop-blur border-b border-border">
-            {/* FULL WIDTH CONTAINER */}
             <div className="w-full h-full px-6 flex items-center">
-                {/* הכי שמאלה */}
                 <div className="flex items-center gap-3">
                     {user && (
                         <>
@@ -61,10 +59,8 @@ export default function Header() {
                     )}
                 </div>
 
-                {/* דוחף את הכותרת הכי ימינה */}
                 <div className="flex-1" />
 
-                {/* הכי ימינה */}
                 <h1 className="text-lg font-semibold text-text tracking-wide">
                     Store
                 </h1>
