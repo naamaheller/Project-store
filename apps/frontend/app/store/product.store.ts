@@ -113,7 +113,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     const { filters, absoluteMaxPrice } = get();
 
     set({
-      page: 1,
+      // page: 1,
       filtersApplied: hasActiveFilters(filters, absoluteMaxPrice),
     });
 

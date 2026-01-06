@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "./store/auth.store";
+import LoadingText from "./components/state/loading/Loading";
 
 export default function HomePage() {
   const router = useRouter();
@@ -20,8 +21,6 @@ export default function HomePage() {
   }, [loading, user, router]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <span>Loading...</span>
-    </div>
+    <LoadingText />
   );
 }
