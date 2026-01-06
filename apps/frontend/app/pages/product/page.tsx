@@ -48,10 +48,10 @@ export default function ProductPage() {
 
   const initializedFromUrlRef = useRef(false);
 
-  useEffect(() => {
-    if (!ready) return;
-    if (!user) router.replace("/pages/login");
-  }, [ready, user, router]);
+  // useEffect(() => {
+  //   if (!ready) return;
+  //   if (!user) router.replace("/pages/login");
+  // }, [ready, user, router]);
 
   useEffect(() => {
     if (!ready || !user) return;
@@ -75,7 +75,7 @@ export default function ProductPage() {
     });
 
     initializedFromUrlRef.current = true;
-    applyFilters();
+    // applyFilters();
   }, [ready, user, searchParams, setFilters, applyFilters]);
 
   useEffect(() => {

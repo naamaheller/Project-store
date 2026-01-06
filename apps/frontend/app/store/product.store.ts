@@ -4,7 +4,9 @@ import ProductFiltersState from "@/app/models/product-filters.model";
 import { fetchMaxPrice, fetchProducts } from "@/app/services/product.service";
 import { Category } from "../models/category.model";
 import { fetchCategories } from "../services/category.service";
-
+import { adminAddProduct, adminDeleteProduct, adminEditProduct } from "../api/product.api";
+const normalizeProduct = (payload: any): Product =>
+  payload?.data?.product ?? payload?.product ?? payload;
 type ProductStore = {
   products: Product[];
   selectedProduct: Product | null;
@@ -22,6 +24,11 @@ type ProductStore = {
   categories: Category[];
   loadingCategories: boolean;
   loadingMaxPrice: boolean;
+  deletingId: number | null;
+  saving: boolean;
+  updateProduct: (id: number, data: Partial<Product>) => Promise<Product>;
+
+  
 
   setPage: (page: number) => Promise<void>;
   setPageSize: (size: number) => Promise<void>;
@@ -30,11 +37,12 @@ type ProductStore = {
   loadProducts: () => Promise<void>;
   loadProductById: (id: number) => Promise<void>;
   loadFiltersData: () => Promise<void>;
-
+  createProduct: (data: any) => Promise<Product>;
   applyFilters: () => Promise<void>;
   clearFilters: () => Promise<void>;
-
+  clearSelectedProduct: () => void;
   selectProduct: (product: Product | null) => void;
+  deleteProduct: (id: number) => Promise<void>;
 };
 
 const hasActiveFilters = (filters: ProductFiltersState, absoluteMaxPrice: number) =>
@@ -66,6 +74,8 @@ export const useProductStore = create<ProductStore>((set, get) => ({
   categories: [],
   loadingCategories: false,
   loadingMaxPrice: false,
+  
+
 
   setPage: async (page) => {
     set({ page });
@@ -171,5 +181,93 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     }
   },
     clearSelectedProduct: () => set({ selectedProduct: null }),
+    deletingId: null,
+
+    deleteProduct: async (id: number) => {
+      try {
+    set({ deletingId: id });
+
+    const res = await adminDeleteProduct(id);
+    console.log("Delete response:", res);
+    if (res.status !== 200) {
+      throw new Error("Failed to delete product");
+    }
+
+  set((state) => ({
+        products: state.products.filter((p) => p.id !== id),
+        total: Math.max(0, state.total - 1),
+        selectedProduct: state.selectedProduct?.id === id ? null : state.selectedProduct,
+      }));
+  } finally {
+    set({ deletingId: null });
+  }
+},
+createProduct: async (data) => {
+  set({ saving: true });
+  try {
+    const res = await adminAddProduct(data);
+
+    if (res.status !== 201) {
+      const text = await res.text().catch(() => "");
+      throw new Error(text || "Failed to create product");
+    }
+
+
+
+    const created: Product = normalizeProduct(res);
+
+      set((state) => {
+      const next = [created, ...state.products];
+      
+      const capped = next.slice(0, state.pageSize);
+
+      return {
+        selectedProduct: created,
+        products: capped,
+        total: state.total + 1,
+      };
+    });
+
+    return created;
+  } finally {
+    set({ saving: false });
+  }
+},
+
+  saving: false,
+  updateProduct: async (id, data) => {
+    set({ saving: true });
+
+    try {
+     
+      const res = await adminEditProduct(id, data);
+      console.log("Updated product:", res);
+      
+      if (res.status !== 200) {
+        
+        const text = await res.text().catch(() => "");
+       
+        throw new Error(text || "Failed to update product");
+      }  
+      const updated: Product = normalizeProduct(res);
+      console.log("Updated product:", updated);
+    set((state) => {
+      const exists = state.products.some((p) => p.id === updated.id);
+
+      return {
+        selectedProduct: updated,
+        products: exists
+          ? state.products.map((p) => (p.id === updated.id ? updated : p))
+          : [updated, ...state.products], 
+      };
+    });
+
+    return updated;
+  
+    } finally {
+      set({ saving: false });
+    }
+  },
+
 
 }));
