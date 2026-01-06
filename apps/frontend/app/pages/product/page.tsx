@@ -14,6 +14,7 @@ import { Drawer } from "@/app/components/ui/Drawer";
 import { Button } from "@/app/components/ui/Button";
 import { useProductStore } from "@/app/store/product.store";
 import LoadingText from "@/app/components/state/loading/Loading";
+import { EmptyState } from "@/app/components/state/empty/EmptyState";
 
 export default function ProductPage() {
   const router = useRouter();
@@ -160,13 +161,33 @@ export default function ProductPage() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
-              {loadingPage
-                ? Array.from({ length: pageSize }).map((_, i) => (
+              {loadingPage &&
+                Array.from({ length: pageSize }).map((_, i) => (
                   <ProductCardSkeleton key={i} />
-                ))
-                : products.map((p) => (
+                ))}
+
+              {!loadingPage &&
+                products.length > 0 &&
+                products.map((p) => (
                   <ProductCard key={p.id} product={p} onClick={selectProduct} />
                 ))}
+
+              {!loadingPage && products.length === 0 && (
+                <EmptyState
+                  title={
+                    filtersApplied
+                      ? "No products match your filters"
+                      : "No products available"
+                  }
+                  description={
+                    filtersApplied
+                      ? "Try adjusting or clearing the filters to see more products."
+                      : "Products will appear here once they are available."
+                  }
+                  actionLabel="Clear filters"
+                  onAction={filtersApplied ? clearFilters : undefined}
+                />
+              )}
             </div>
           </main>
         </div>
@@ -185,7 +206,7 @@ export default function ProductPage() {
         </div>
       </footer>
 
-      <ProductShowModal/>
+      <ProductShowModal />
 
       <Drawer
         open={filtersOpen}
