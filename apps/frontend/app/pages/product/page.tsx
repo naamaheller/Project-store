@@ -51,7 +51,7 @@ export default function ProductPage() {
 
   // useEffect(() => {
   //   if (!ready) return;
-  //   if (!user) router.replace("/pages/login");
+  //   if (!user) router.replace("/pages/auth/login");
   // }, [ready, user, router]);
 
   useEffect(() => {
@@ -106,7 +106,8 @@ export default function ProductPage() {
     const params = new URLSearchParams();
 
     if (filters.search) params.set("search", filters.search);
-    if (filters.minPrice !== null) params.set("min-price", String(filters.minPrice));
+    if (filters.minPrice !== null)
+      params.set("min-price", String(filters.minPrice));
 
     if (filters.maxPrice !== null && filters.maxPrice < absoluteMaxPrice) {
       params.set("max-price", String(filters.maxPrice));

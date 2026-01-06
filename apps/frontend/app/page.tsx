@@ -17,7 +17,7 @@ export default function HomePage() {
     if (loading) return;
 
     if (user) router.replace("/pages/product");
-    else router.replace("/pages/login");
+    else router.replace("/pages/auth/login");
   }, [loading, user, router]);
 
   return (

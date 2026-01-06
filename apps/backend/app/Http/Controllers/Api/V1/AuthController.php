@@ -34,11 +34,22 @@ class AuthController extends Controller
                 ->cookie(
                     'access_token',
                     $token,
-                    60 * 24 * 2, // 2 ימים
+                    60 * 24 * 2,
                     '/',
                     null,
-                    false, // true בפרודקשן עם https
-                    true,  // httpOnly
+                    false,
+                    true,
+                    false,
+                    'Lax'
+                )
+                ->cookie(
+                    'role',
+                    $user->role,
+                    60 * 24 * 2,
+                    '/',
+                    null,
+                    false,
+                    false,
                     false,
                     'Lax'
                 );
@@ -135,7 +146,8 @@ class AuthController extends Controller
 
             return response()
                 ->json(['message' => 'Logged out'])
-                ->cookie('access_token', '', -1, '/');
+                ->cookie('access_token', '', -1, '/')
+                ->cookie('role', '', -1, '/');
 
         } catch (Throwable $th) {
             report($th);
