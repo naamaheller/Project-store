@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import { Button } from "@/app/components/ui/Button";
-import { PackageX } from "lucide-react";
 
 type Props = {
   title?: string;
