@@ -4,7 +4,8 @@ import "./globals.css";
 
 import { ToastProvider } from "./components/ui/Toast";
 import Header from "./components/Header/Header";
-import AuthBootstrap from "./components/AuthBootstrap";
+import { AuthProvider } from "./components/auth/AuthProvider";
+import AuthBootstrap from "./components/auth/AuthBootstrap";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

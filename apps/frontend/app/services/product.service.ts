@@ -3,9 +3,12 @@ import { ProductFilters } from "../models/product.model";
 
 type ApiCall = (params: Record<string, any>) => Promise<{ data: any }>;
 
+//check if role is user or admin
 export function fetchProducts(filters?: ProductFilters) {
   return fetchProductsBase(getProducts, filters);
+
 }
+
 
 export function fetchAdminProducts(filters?: ProductFilters) {
   return fetchProductsBase(getAdminProducts, filters);

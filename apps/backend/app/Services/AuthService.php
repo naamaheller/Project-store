@@ -23,8 +23,11 @@ class AuthService
                 'email' => ['Incorrect email or password'],
             ]);
         }
+        $role = $user->role; 
 
-        $token = $user->createToken('api')->accessToken;
+
+        $token = $user->createToken('api', [$role])->accessToken;
+
 
         return [$user, $token];
     }

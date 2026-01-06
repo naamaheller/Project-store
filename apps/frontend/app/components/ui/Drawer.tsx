@@ -45,7 +45,8 @@ export function Drawer({
                 />
 
                 <div
-                    className="absolute left-0 top-0 z-10 h-full shadow-xl flex flex-col"
+                    className="  absolute left-0 top-0 h-full bg-surface shadow-xl flex flex-col
+        animate-in slide-in-from-left duration-300"
                     style={{ width }}
                     role="dialog"
                     aria-modal="true"
