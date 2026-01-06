@@ -7,15 +7,20 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Throwable;
 use App\Services\ProductService;
+use App\Services\MinioUploadService;
 
 
 class ProductController extends Controller
 {
     private ProductService $productService;
+    private MinioUploadService $minioUploadService;
 
-    public function __construct(ProductService $productService)
-    {
+    public function __construct(
+        ProductService $productService,
+        MinioUploadService $minioUploadService
+    ) {
         $this->productService = $productService;
+        $this->minioUploadService = $minioUploadService;
     }
 
     /**
@@ -25,13 +30,13 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         try {
-        $products = $this->productService->getActiveProducts($request);
-        return response()->json($products, 200);
+            $products = $this->productService->getActiveProducts($request);
+            return response()->json($products, 200);
 
         } catch (Throwable $e) {
             return response()->json([
                 'message' => 'Failed to fetch products',
-                'error'   => $e->getMessage(),
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -42,14 +47,14 @@ class ProductController extends Controller
      */
     public function adminIndex(Request $request)
     {
-         try {
+        try {
             $products = $this->productService->getAllProductsForAdmin($request);
             return response()->json($products, 200);
 
         } catch (Throwable $e) {
             return response()->json([
                 'message' => 'Failed to fetch admin products',
-                'error'   => $e->getMessage(),
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -57,21 +62,21 @@ class ProductController extends Controller
     {
         try {
             $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'is_active' => 'required|boolean',
-            'category' => 'required|string|max:255',
-            'img_url' => 'nullable|string|max:2048',
-    ]);
-           
+                'name' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'price' => 'required|numeric|min:0',
+                'stock' => 'required|integer|min:0',
+                'is_active' => 'required|boolean',
+                'category' => 'required|string|max:255',
+                'img_url' => 'nullable|string|max:2048',
+            ]);
+
             $this->productService->addProductByAdmin($data);
             return response()->json([
                 'message' => 'Product added successfully',
             ], 201);
 
-        }catch (\Throwable $e) {
+        } catch (\Throwable $e) {
             return response()->json([
                 'message' => 'Failed to add product',
             ], 500);
@@ -91,7 +96,7 @@ class ProductController extends Controller
         } catch (Throwable $e) {
             return response()->json([
                 'message' => 'Failed to fetch max price',
-                'error'   => $e->getMessage(),
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -103,10 +108,10 @@ class ProductController extends Controller
      */
     public function adminDeleteProduct(int $productId)
     {
-  
+
         try {
-           $this->productService->deleteProductByAdmin($productId);
-             
+            $this->productService->deleteProductByAdmin($productId);
+
 
             return response()->json([
                 'message' => 'Product deleted successfully',
@@ -129,26 +134,39 @@ class ProductController extends Controller
      */
     public function adminEditProduct(int $productId, Request $request)
     {
-    
+
         try {
-             $this->productService->editProductByAdmin($productId, $request);
+            $this->productService->editProductByAdmin($productId, $request);
             return response()->json([
                 'message' => 'Product edited successfully',
             ], 200);
 
-        
-        }
-        catch (ModelNotFoundException $e) {
+
+        } catch (ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Product not found',
             ], 404);
 
-        }
-        catch (\Throwable $e) {
+        } catch (\Throwable $e) {
             return response()->json([
                 'message' => 'Failed to edit product',
             ], 500);
         }
     }
-    
+    public function uploadImage(Request $request)
+    {
+        $request->validate([
+            'image' => ['required', 'image', 'max:5120'],
+        ]);
+
+        $path = $this->minioUploadService->handle(
+            $request->file('image'),
+            null
+        );
+
+        return response()->json([
+            'path' => $path,
+        ], 201);
+    }
+
 }
