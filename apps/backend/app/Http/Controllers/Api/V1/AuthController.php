@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Mail\WelcomeMail;
 use App\Services\AuthService;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Mail;
 use Throwable;
 
 class AuthController extends Controller
@@ -56,7 +58,6 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         try {
-            // ✅ כאן אנחנו מגדירים הודעה מותאמת ל-unique
             $data = $request->validate(
                 [
                     'name' => ['required', 'string', 'max:255'],
@@ -71,6 +72,11 @@ class AuthController extends Controller
 
             $user = $this->authService->register($data);
 
+            try {
+                Mail::to($user->email)->send(new WelcomeMail($user));
+            } catch (Throwable $e) {
+                report($e);
+            }
             return response()->json([
                 'message' => 'User registered successfully',
                 'user' => $this->authService->userPayload($user),
