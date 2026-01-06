@@ -119,6 +119,16 @@ export default function ProductPage() {
     router.replace(`?${params.toString()}`, { scroll: false });
   }, [filtersApplied, filters, absoluteMaxPrice, router]);
 
+  const handleApplyFilters = () => {
+    applyFilters();
+    setFiltersOpen(false);
+  };
+
+  const handleClearFilters = () => {
+    clearFilters();
+    setFiltersOpen(false);
+  };
+
   if (!ready || checking) {
     return (
       <div className="min-h-[calc(100vh-64px)] flex items-center justify-center">
@@ -221,8 +231,8 @@ export default function ProductPage() {
           absoluteMaxPrice={absoluteMaxPrice}
           loadingCategories={loadingCategories}
           loadingMaxPrice={loadingMaxPrice}
-          onApply={applyFilters}
-          onClear={clearFilters}
+          onApply={handleApplyFilters}
+          onClear={handleClearFilters}
           applied={filtersApplied}
         />
       </Drawer>

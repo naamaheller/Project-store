@@ -1,6 +1,4 @@
 'use client';
-// מערכת Toast גלובלית להצגת הודעות זמניות.
-// מבוססת על Alert, מנוהלת דרך Context ומוצגת באמצעות Portal.
 
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { Portal } from './Portal';

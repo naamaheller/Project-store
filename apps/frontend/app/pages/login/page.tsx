@@ -36,15 +36,15 @@ export default function LoginPage() {
   }
 
     return (
-      <div className="min-h-screen flex items-center justify-center px-4">
+      <div className="flex flex-1 flex items-center justify-center px-4">
         <BackgroundBubbles />
         <div className="relative z-10 w-full max-w-md">
           <Card className="w-full max-w-md p-10 min-h-[440px] border-2 border-primary/50">
             <div className="mx-auto w-full max-w-sm">
               <h1 className="text-2xl font-semibold text-center mb-8">Login</h1>
 
-                    <form onSubmit={onSubmit} className="grid gap-6">
-                        {error && <Alert variant="error">{error}</Alert>}
+              <form onSubmit={onSubmit} className="grid gap-6">
+                {error && <Alert variant="error">{error}</Alert>}
 
                 <div className="grid gap-2">
                   <label className="text-sm font-medium">Email</label>
