@@ -20,9 +20,6 @@ export function FilterCategory({
   onChange,
 }: CategoryProps) {
   
-  useEffect(() => {
-    console.log(categories);
-  }, [categories]);
 
   return (
     <div>

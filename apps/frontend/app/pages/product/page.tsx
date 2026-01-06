@@ -5,8 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { SlidersHorizontal } from "lucide-react";
 
 import { useAuthStore } from "../../store/auth.store";
-import { useProductStore } from "@/app/store/product.store";
-
 import { ProductCardSkeleton } from "@/app/components/pruduct/ProductCardSkeleton";
 import { ProductCard } from "@/app/components/pruduct/Product";
 import { Pagination } from "@/app/components/ui/Pagination";
@@ -14,6 +12,9 @@ import { ProductShowModal } from "@/app/components/pruduct/productShow";
 import { FiltersProduct } from "@/app/components/filters/ProductFilters";
 import { Drawer } from "@/app/components/ui/Drawer";
 import { Button } from "@/app/components/ui/Button";
+import { useProductStore } from "@/app/store/product.store";
+import LoadingText from "@/app/components/state/loading/Loading";
+import { EmptyState } from "@/app/components/state/empty/EmptyState";
 
 export default function ProductPage() {
   const router = useRouter();
@@ -118,10 +119,20 @@ export default function ProductPage() {
     router.replace(`?${params.toString()}`, { scroll: false });
   }, [filtersApplied, filters, absoluteMaxPrice, router]);
 
+  const handleApplyFilters = () => {
+    applyFilters();
+    setFiltersOpen(false);
+  };
+
+  const handleClearFilters = () => {
+    clearFilters();
+    setFiltersOpen(false);
+  };
+
   if (!ready || checking) {
     return (
       <div className="min-h-[calc(100vh-64px)] flex items-center justify-center">
-        <span>Loading...</span>
+        <LoadingText />
       </div>
     );
   }
@@ -160,13 +171,33 @@ export default function ProductPage() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
-              {loadingPage
-                ? Array.from({ length: pageSize }).map((_, i) => (
+              {loadingPage &&
+                Array.from({ length: pageSize }).map((_, i) => (
                   <ProductCardSkeleton key={i} />
-                ))
-                : products.map((p) => (
+                ))}
+
+              {!loadingPage &&
+                products.length > 0 &&
+                products.map((p) => (
                   <ProductCard key={p.id} product={p} onClick={selectProduct} />
                 ))}
+
+              {!loadingPage && products.length === 0 && (
+                <EmptyState
+                  title={
+                    filtersApplied
+                      ? "No products match your filters"
+                      : "No products available"
+                  }
+                  description={
+                    filtersApplied
+                      ? "Try adjusting or clearing the filters to see more products."
+                      : "Products will appear here once they are available."
+                  }
+                  actionLabel="Clear filters"
+                  onAction={filtersApplied ? clearFilters : undefined}
+                />
+              )}
             </div>
           </main>
         </div>
@@ -185,11 +216,7 @@ export default function ProductPage() {
         </div>
       </footer>
 
-      <ProductShowModal
-        open={!!selectedProduct}
-        product={selectedProduct}
-        onClose={() => selectProduct(null)}
-      />
+      <ProductShowModal />
 
       <Drawer
         open={filtersOpen}
@@ -204,8 +231,8 @@ export default function ProductPage() {
           absoluteMaxPrice={absoluteMaxPrice}
           loadingCategories={loadingCategories}
           loadingMaxPrice={loadingMaxPrice}
-          onApply={applyFilters}
-          onClear={clearFilters}
+          onApply={handleApplyFilters}
+          onClear={handleClearFilters}
           applied={filtersApplied}
         />
       </Drawer>

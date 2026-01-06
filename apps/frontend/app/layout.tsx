@@ -29,13 +29,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         className={[
           geistSans.variable,
           geistMono.variable,
-          "antialiased bg-background text-text",
+          "antialiased bg-background text-text min-h-screen flex flex-col",
         ].join(" ")}
       >
         <ToastProvider>
           <AuthBootstrap />
           <Header />
-          <main className="pt-8">{children}</main>
+          <main className="flex flex-1 pt-8">{children}</main>
         </ToastProvider>
       </body>
     </html>

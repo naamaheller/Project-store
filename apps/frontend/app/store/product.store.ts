@@ -79,12 +79,12 @@ export const useProductStore = create<ProductStore>((set, get) => ({
 
   setPage: async (page) => {
     set({ page });
-    await get().loadProducts();
+    await get().applyFilters();
   },
 
   setPageSize: async (pageSize) => {
     set({ pageSize, page: 1 });
-    await get().loadProducts();
+    await get().applyFilters();
   },
 
   setFilters: (partial) =>
@@ -95,7 +95,9 @@ export const useProductStore = create<ProductStore>((set, get) => ({
   selectProduct: (product) => set({ selectedProduct: product }),
 
   loadProducts: async () => {
-    const { page, pageSize, filters } = get();
+    const { loading, page, pageSize, filters } = get();
+    if (loading) return;
+    console.log("FETCH PRODUCTS");
 
     try {
       set({ loading: true });
@@ -122,7 +124,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     const { filters, absoluteMaxPrice } = get();
 
     set({
-      page: 1,
+      // page: 1,
       filtersApplied: hasActiveFilters(filters, absoluteMaxPrice),
     });
 

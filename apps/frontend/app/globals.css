@@ -1,23 +1,23 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-primary: #6FAE3E;
-  --color-primary-hover: #5C9434;
-  --color-primary-soft: #EAF4E3;
-  --color-background-soft: #F7FBF4;
+  --color-primary: #6fae3e;
+  --color-primary-hover: #5c9434;
+  --color-primary-soft: #eaf4e3;
+  --color-background-soft: #f7fbf4;
 
   --color-background: #ffffff;
-  --color-background-muted: #F6F7F5;
+  --color-background-muted: #f6f7f5;
   --color-surface: #ffffff;
 
-  --color-text: #1F2937;
-  --color-text-muted: #6B7280;
+  --color-text: #1f2937;
+  --color-text-muted: #6b7280;
   --color-text-inverted: #ffffff;
 
-  --color-border: #E5E7EB;
-  --color-success: #6FAE3E;
-  --color-warning: #F59E0B;
-  --color-error: #DC2626;
+  --color-border: #e5e7eb;
+  --color-success: #6fae3e;
+  --color-warning: #f59e0b;
+  --color-error: #dc2626;
 }
 
 body {
@@ -52,12 +52,30 @@ input[type="range"]::-moz-range-thumb {
    Global focus states 
   */
 
-:where(a, button, input, textarea, select, summary, [role="button"], [tabindex]:not([tabindex="-1"])):focus-visible {
+:where(
+    a,
+    button,
+    input,
+    textarea,
+    select,
+    summary,
+    [role="button"],
+    [tabindex]:not([tabindex="-1"])
+  ):focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
-:where(a, button, input, textarea, select, summary, [role="button"], [tabindex]:not([tabindex="-1"])):focus {
+:where(
+    a,
+    button,
+    input,
+    textarea,
+    select,
+    summary,
+    [role="button"],
+    [tabindex]:not([tabindex="-1"])
+  ):focus {
   outline: none;
 }
 
@@ -106,5 +124,46 @@ input[type="range"]::-moz-range-thumb {
 
   100% {
     transform: translateX(100%);
+  }
+}
+
+@layer utilities {
+  @keyframes riseUp {
+    0% {
+      transform: translateY(0);
+      opacity: 0;
+    }
+    10% {
+      opacity: 0.4;
+    }
+    100% {
+      transform: translateY(-120vh);
+      opacity: 0;
+    }
+  }
+
+  @keyframes fallDown {
+    0% {
+      transform: translateY(0);
+      opacity: 0;
+    }
+    10% {
+      opacity: 0.35;
+    }
+    100% {
+      transform: translateY(120vh);
+      opacity: 0;
+    }
+  }
+}
+
+@layer base {
+  a {
+    color: var(--color-primary);
+    transition: color 0.2s ease;
+  }
+
+  a:hover {
+    color: var(--color-primary-hover);
   }
 }
