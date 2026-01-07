@@ -1,7 +1,7 @@
 // components/CreateProductDrawer.tsx
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { Drawer } from "@/app/components/ui/Drawer";
 import { Button } from "@/app/components/ui/Button";
 import { Input } from "@/app/components/ui/Input";
@@ -21,15 +21,18 @@ export function CreateProductDrawer({ open, onClose }: Props) {
     saving,
     loadFiltersData, // loads categories already in your store
     createProduct,
+    uploadProductImage,
   } = useProductStore();
 
   const [name, setName] = useState("");
- 
+
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState<number>(0);
   const [stock, setStock] = useState<number>(0);
-  const [imgUrl, setImgUrl] = useState("");
   const [isActive, setIsActive] = useState(true);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
 
   // category
   const [useNewCategory, setUseNewCategory] = useState(false);
@@ -46,25 +49,25 @@ export function CreateProductDrawer({ open, onClose }: Props) {
   useEffect(() => {
     if (!open) return;
     setName("");
-    
+
     setDescription("");
     setPrice(0);
     setStock(0);
-    setImgUrl("");
     setIsActive(true);
 
     setUseNewCategory(false);
     setCategoryId("");
     setNewCategoryName("");
-
+    setImageFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
     setError(null);
   }, [open]);
 
   const canSubmit = useMemo(() => {
-    if (!name.trim() ) return false;
+    if (!name.trim()) return false;
     if (useNewCategory) return !!newCategoryName.trim() && !saving;
     return categoryId !== "" && !saving;
-  }, [name,  useNewCategory, newCategoryName, categoryId, saving]);
+  }, [name, useNewCategory, newCategoryName, categoryId, saving]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -73,12 +76,10 @@ export function CreateProductDrawer({ open, onClose }: Props) {
     try {
       const payload: any = {
         name,
-        
         description,
         price,
         stock,
-        img_url: imgUrl,
-        is_active: isActive ,
+        is_active: isActive ? 1 : 0, 
       };
 
       if (useNewCategory) {
@@ -87,14 +88,21 @@ export function CreateProductDrawer({ open, onClose }: Props) {
         if (categoryId === "") throw new Error("Please choose a category");
         payload.category_id = Number(categoryId);
       }
-      console.log(payload);
-      await createProduct(payload);
+
+      const created = await createProduct(payload); 
+
+      if (imageFile) {
+        await uploadProductImage(created.id, imageFile); 
+        setImageFile(null);
+        if (fileInputRef.current) fileInputRef.current.value = "";
+      }
 
       onClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create product");
     }
   }
+
 
   return (
     <Drawer open={open} onClose={onClose} title="Add Product">
@@ -103,7 +111,7 @@ export function CreateProductDrawer({ open, onClose }: Props) {
           {error ? <p className="text-sm text-error">{error}</p> : null}
 
           <Input label="Name" value={name} onChange={(e) => setName(e.target.value)} disabled={saving} />
-          
+
 
           <div className="flex w-full flex-col gap-1">
             <label className="text-sm font-medium text-text">Description</label>
@@ -196,7 +204,70 @@ export function CreateProductDrawer({ open, onClose }: Props) {
             />
           </div>
 
-          <Input label="Image URL" value={imgUrl} onChange={(e) => setImgUrl(e.target.value)} disabled={saving} />
+          {/* Upload Image */}
+          <div className="flex w-full flex-col gap-1.5">
+            <label className="text-sm font-medium text-text">Product Image</label>
+
+            <div className="flex flex-col items-center gap-2">
+              {/* Preview */}
+              <div className="aspect-[4/3] w-48 overflow-hidden rounded-md border border-border bg-background-muted flex items-center justify-center">
+                {imageFile ? (
+                  <img
+                    src={URL.createObjectURL(imageFile)}
+                    alt="preview"
+                    className="h-full w-full object-cover"
+                    onLoad={(e) => URL.revokeObjectURL((e.target as HTMLImageElement).src)}
+                  />
+                ) : (
+                  <span className="text-sm text-text-muted">No image selected</span>
+                )}
+              </div>
+
+              {/* Hidden input */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                disabled={saving}
+                onChange={(e) => setImageFile(e.target.files?.[0] ?? null)}
+              />
+
+              {/* Filename */}
+              <div className="text-xs text-text-muted truncate max-w-[180px] text-center">
+                {imageFile ? imageFile.name : "JPG / PNG / WebP"}
+              </div>
+
+              {/* Buttons under image */}
+              <div className="flex items-center justify-center gap-2">
+                <Button
+                  type="button"
+                  size="sm"
+                  className="h-8 px-3 text-xs"
+                  disabled={saving}
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  Choose image
+                </Button>
+
+                {imageFile && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="h-8 px-3 text-xs"
+                    disabled={saving}
+                    onClick={() => {
+                      setImageFile(null);
+                      if (fileInputRef.current) fileInputRef.current.value = "";
+                    }}
+                  >
+                    Remove
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
 
           <ToggleSwitch
             name="is_active"

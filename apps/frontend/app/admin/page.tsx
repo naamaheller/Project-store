@@ -46,8 +46,13 @@ export default function AdminProductsPage() {
       key: "image",
       header: "Image",
       cell: (p) => (
-        <img src={p.img_url} alt={p.name} className="w-16 h-16 object-cover rounded-md" />
+        <img
+          src={p.image_url ?? "/placeholder.png"}
+          alt={p.name}
+          className="w-16 h-16 object-cover rounded-md"
+        />
       ),
+
     },
     { key: "name", header: "Name", cell: (p) => <span className="font-medium">{p.name}</span> },
     { key: "price", header: "Price", cell: (p) => `₪${p.price}` },
