@@ -4,13 +4,13 @@ import ProductFiltersState from "@/app/models/product-filters.model";
 import { fetchMaxPrice, fetchProducts } from "@/app/services/product.service";
 import { Category } from "../models/category.model";
 import { fetchCategories } from "../services/category.service";
-import {
-  adminAddProduct,
-  adminDeleteProduct,
-  adminEditProduct,
-} from "../api/product.api";
+import { adminAddProduct, adminDeleteProduct, adminEditProduct } from "../api/product.api";
+import { uploadProductImage as uploadProductImageService } from "@/app/services/product-image.service";
+import { deleteProductImage as deleteProductImageService } from "@/app/services/product-image.service";
+
 const normalizeProduct = (payload: any): Product =>
   payload?.data?.product ?? payload?.product ?? payload;
+
 type ProductStore = {
   products: Product[];
   selectedProduct: Product | null;
@@ -29,9 +29,15 @@ type ProductStore = {
   categories: Category[];
   loadingCategories: boolean;
   loadingMaxPrice: boolean;
+
   deletingId: number | null;
   saving: boolean;
 
+  deleteProduct: (id: number) => Promise<void>;
+  createProduct: (data: any) => Promise<Product>;
+
+  uploadProductImage: (productId: number, file: File) => Promise<void>;
+  deleteProductImage: (productId: number) => Promise<void>;
   resetStore: () => void;
   updateProduct: (id: number, data: Partial<Product>) => Promise<Product>;
 
@@ -42,12 +48,10 @@ type ProductStore = {
   loadProducts: () => Promise<void>;
   loadProductById: (id: number) => Promise<void>;
   loadFiltersData: () => Promise<void>;
-  createProduct: (data: any) => Promise<Product>;
   applyFilters: () => Promise<void>;
   clearFilters: () => Promise<void>;
   clearSelectedProduct: () => void;
   selectProduct: (product: Product | null) => void;
-  deleteProduct: (id: number) => Promise<void>;
 };
 
 const hasActiveFilters = (
@@ -114,6 +118,9 @@ export const useProductStore = create<ProductStore>((set, get) => ({
   loadingCategories: false,
   loadingMaxPrice: false,
 
+  deletingId: null,
+  saving: false,
+
   setPage: async (page) => {
     set({ page });
     await get().applyFilters();
@@ -130,11 +137,11 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     })),
 
   selectProduct: (product) => set({ selectedProduct: product }),
+  clearSelectedProduct: () => set({ selectedProduct: null }),
 
   loadProducts: async () => {
     const { loading, page, pageSize, filters } = get();
     if (loading) return;
-    console.log("FETCH PRODUCTS");
 
     try {
       set({ loading: true });
@@ -184,6 +191,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
 
     await get().loadProducts();
   },
+
   loadProductById: async (id: number) => {
     set({ loading: true });
 
@@ -219,18 +227,24 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       set({ loadingCategories: false, loadingMaxPrice: false });
     }
   },
-  clearSelectedProduct: () => set({ selectedProduct: null }),
-  deletingId: null,
 
   deleteProduct: async (id: number) => {
     try {
       set({ deletingId: id });
 
-      const res = await adminDeleteProduct(id);
-      console.log("Delete response:", res);
-      if (res.status !== 200) {
-        throw new Error("Failed to delete product");
+      const product = get().products.find((p) => p.id === id) ?? null;
+      const hasImage = !!(product?.img_url || product?.image_url);
+
+      if (hasImage) {
+        try {
+          await get().deleteProductImage(id);
+        } catch (e) {
+          console.warn("Image delete failed, continuing to delete product...", e);
+        }
       }
+
+      const res = await adminDeleteProduct(id);
+      if (res.status !== 200) throw new Error("Failed to delete product");
 
       set((state) => ({
         products: state.products.filter((p) => p.id !== id),
@@ -242,6 +256,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       set({ deletingId: null });
     }
   },
+
   createProduct: async (data) => {
     set({ saving: true });
     try {
@@ -256,7 +271,6 @@ export const useProductStore = create<ProductStore>((set, get) => ({
 
       set((state) => {
         const next = [created, ...state.products];
-
         const capped = next.slice(0, state.pageSize);
 
         return {
@@ -272,21 +286,19 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     }
   },
 
-  saving: false,
   updateProduct: async (id, data) => {
     set({ saving: true });
 
     try {
       const res = await adminEditProduct(id, data);
-      console.log("Updated product:", res);
 
       if (res.status !== 200) {
         const text = await res.text().catch(() => "");
-
         throw new Error(text || "Failed to update product");
       }
+
       const updated: Product = normalizeProduct(res);
-      console.log("Updated product:", updated);
+
       set((state) => {
         const exists = state.products.some((p) => p.id === updated.id);
 
@@ -303,5 +315,55 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       set({ saving: false });
     }
   },
-  resetStore: () => set(initialProductState),
+
+  uploadProductImage: async (productId, file) => {
+    const uploadRes = await uploadProductImageService(productId, file);
+
+    const path: string | null = uploadRes?.path ?? null;
+    const url: string | null = uploadRes?.url ?? null;
+
+    set((state) => {
+      const nextSelected =
+        state.selectedProduct?.id === productId
+          ? {
+            ...state.selectedProduct,
+            img_url: path ?? state.selectedProduct.img_url,
+            image_url: url ?? state.selectedProduct.image_url,
+          }
+          : state.selectedProduct;
+
+      const nextProducts = state.products.map((p) =>
+        p.id === productId
+          ? {
+            ...p,
+            img_url: path ?? p.img_url,
+            image_url: url ?? p.image_url,
+          }
+          : p
+      );
+
+      return {
+        selectedProduct: nextSelected,
+        products: nextProducts,
+      };
+    });
+  },
+  deleteProductImage: async (productId) => {
+    await deleteProductImageService(productId);
+
+    set((state) => {
+      const nextSelected =
+        state.selectedProduct?.id === productId
+          ? { ...state.selectedProduct, img_url: null, image_url: null }
+          : state.selectedProduct;
+
+      const nextProducts = state.products.map((p) =>
+        p.id === productId ? { ...p, img_url: null, image_url: null } : p
+      );
+
+      return { selectedProduct: nextSelected, products: nextProducts };
+    });
+  },
+  resetStore: () => set(() => ({ ...initialProductState })),
+
 }));

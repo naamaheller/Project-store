@@ -8,7 +8,8 @@ export interface Product {
   price: number;
   stock: number;
   is_active: boolean;
-  img_url: string;
+  img_url?: string | null;     
+  image_url?: string | null;
   category_id: number;
   category?: Category;
   created_at: string;

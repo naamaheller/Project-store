@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 import { Drawer } from "@/app/components/ui/Drawer";
 import { Button } from "@/app/components/ui/Button";
@@ -16,16 +16,17 @@ type Props = {
 };
 
 export function EditProductDrawer({ productId, open, onClose }: Props) {
-  const { selectedProduct, saving, updateProduct } = useProductStore();
+  const { selectedProduct, saving, updateProduct, uploadProductImage, deleteProductImage } = useProductStore();
 
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState<number>(0);
   const [stock, setStock] = useState<number>(0);
-  const [imgUrl, setImgUrl] = useState("");
   const [category, setCategory] = useState("");
   const [isActive, setIsActive] = useState<boolean>(true);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [error, setError] = useState<string | null>(null);
 
@@ -39,9 +40,9 @@ export function EditProductDrawer({ productId, open, onClose }: Props) {
     setDescription(selectedProduct.description ?? "");
     setPrice(Number(selectedProduct.price ?? 0));
     setStock(Number(selectedProduct.stock ?? 0));
-    setImgUrl(selectedProduct.img_url ?? "");
-    setCategory(selectedProduct.category?.name??"");
+    setCategory(selectedProduct.category?.name ?? "");
     setIsActive(Boolean(selectedProduct.is_active));
+    setImageFile(null);
     setError(null);
   }, [open, isCorrect, selectedProduct]);
 
@@ -58,12 +59,18 @@ export function EditProductDrawer({ productId, open, onClose }: Props) {
         description,
         price,
         stock,
-        img_url: imgUrl,
         is_active: isActive,
         category_name: category,
       });
+      if (imageFile) {
+        await uploadProductImage(selectedProduct.id, imageFile);
+
+        setImageFile(null);
+        if (fileInputRef.current) fileInputRef.current.value = "";
+      }
 
       onClose();
+
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to save");
     }
@@ -94,7 +101,6 @@ export function EditProductDrawer({ productId, open, onClose }: Props) {
               disabled={saving}
             />
 
-            {/* If you want textarea to match Input styling, we can make a Textarea component too */}
             <div className="flex w-full flex-col gap-1">
               <label className="text-sm font-medium text-text">Description</label>
               <textarea
@@ -114,13 +120,13 @@ export function EditProductDrawer({ productId, open, onClose }: Props) {
               />
             </div>
 
-           <Input
-                label="Category"
-                type="text"
-                value={category} 
-                onChange={(e) => setCategory(e.target.value)}
-                disabled={saving}
-              />
+            <Input
+              label="Category"
+              type="text"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              disabled={saving}
+            />
 
             <div className="grid grid-cols-2 gap-4">
               <Input
@@ -140,13 +146,89 @@ export function EditProductDrawer({ productId, open, onClose }: Props) {
               />
             </div>
 
-            <Input
-              label="Image URL"
-              type="text"
-              value={imgUrl}
-              onChange={(e) => setImgUrl(e.target.value)}
-              disabled={saving}
-            />
+            {/* Upload Image */}
+            <div className="flex w-full flex-col gap-1.5">
+              <label className="text-sm font-medium text-text">Product Image</label>
+
+              <div className="flex flex-col items-center gap-2">
+                {/* Preview */}
+                <div className="aspect-[4/3] w-48 overflow-hidden rounded-md border border-border bg-background-muted flex items-center justify-center">
+                  {imageFile ? (
+                    <img
+                      src={URL.createObjectURL(imageFile)}
+                      alt="preview"
+                      className="h-full w-full object-cover"
+                      onLoad={(e) => URL.revokeObjectURL((e.target as HTMLImageElement).src)}
+                    />
+                  ) : selectedProduct.image_url ? (
+                    <img
+                      src={selectedProduct.image_url}
+                      alt={selectedProduct.name}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-sm text-text-muted">No image</span>
+                  )}
+
+                </div>
+
+                {/* Hidden input */}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  disabled={saving}
+                  onChange={(e) => setImageFile(e.target.files?.[0] ?? null)}
+                />
+
+                {/* Filename */}
+                <div className="text-xs text-text-muted truncate max-w-[180px] text-center">
+                  {imageFile
+                    ? imageFile.name
+                    : selectedProduct.image_url
+                      ? "Current image"
+                      : "JPG / PNG / WebP"}
+                </div>
+
+
+                {/* Buttons under image */}
+                <div className="flex items-center justify-center gap-2">
+                  <Button
+                    type="button"
+                    className="h-8 px-3 text-xs"
+                    disabled={saving}
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    Choose image
+                  </Button>
+
+                  {(imageFile || selectedProduct.image_url) && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="h-8 px-3 text-xs"
+                      disabled={saving}
+                      onClick={async () => {
+                        if (imageFile) {
+                          setImageFile(null);
+                          if (fileInputRef.current) fileInputRef.current.value = "";
+                          return;
+                        }
+
+                        await deleteProductImage(selectedProduct.id);
+                        setImageFile(null);
+                        if (fileInputRef.current) fileInputRef.current.value = "";
+                      }}
+
+                    >
+                      {imageFile ? "Remove selected" : "Delete image"}
+                    </Button>
+                  )}
+
+                </div>
+              </div>
+            </div>
 
             {/* Toggle for Active */}
             <ToggleSwitch
@@ -156,11 +238,9 @@ export function EditProductDrawer({ productId, open, onClose }: Props) {
               onChange={(e) => setIsActive(e.target.checked)}
               disabled={saving}
               error={undefined}
-              
+
             />
           </div>
-          
-
 
           <div className="mt-auto flex justify-end gap-2">
             <Button variant="outline" onClick={onClose} type="button" disabled={saving}>

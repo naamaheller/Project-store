@@ -7,9 +7,6 @@ use Illuminate\Support\Facades\Storage;
 
 class MinioUploadService
 {
-    /**
-     * העלאה / החלפה של תמונה
-     */
     public function upload(?UploadedFile $file, ?string $existingPath): ?string
     {
         if (!$file) {
@@ -20,14 +17,19 @@ class MinioUploadService
 
         return Storage::disk('minio')->putFile('products', $file);
     }
-
-    /**
-     * מחיקה מפורשת מ-MinIO
-     */
     public function delete(?string $path): void
     {
-        if ($path && !$this->isExternalUrl($path)) {
+        if (!$path || $this->isExternalUrl($path)) {
+            return;
+        }
+
+        try {
             Storage::disk('minio')->delete($path);
+        } catch (\Throwable $e) {
+            logger()->warning('Failed to delete image from MinIO', [
+                'path' => $path,
+                'error' => $e->getMessage(),
+            ]);
         }
     }
 
@@ -40,7 +42,7 @@ class MinioUploadService
     public function temporaryUrl(?string $path): ?string
     {
         if (!$path || $this->isExternalUrl($path)) {
-            return $path; 
+            return $path;
         }
 
         return Storage::disk('minio')->temporaryUrl(
