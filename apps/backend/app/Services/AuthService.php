@@ -26,7 +26,8 @@ class AuthService
 
         $token = $user->createToken('api')->accessToken;
 
-
+        $role = $user->role;
+        $token = $user->createToken('api', [$role])->accessToken;
         return [$user, $token];
     }
 

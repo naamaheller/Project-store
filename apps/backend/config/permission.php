@@ -32,7 +32,6 @@ return [
 
     ],
 
-
     'table_names' => [
 
         /*

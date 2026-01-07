@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\ProductController;
 use App\Http\Middleware\CookieTokenToBearer;
 use App\Http\Controllers\Api\V1\CategoryController;
+use App\Http\Controllers\Api\V1\ProductImageController;
 
 Route::prefix('v1')->group(function () {
 
@@ -26,11 +27,8 @@ Route::prefix('v1')->group(function () {
             $request->user('api')?->only(['id', 'name', 'email', 'role'])
         );
 
-
         Route::get('/products', [ProductController::class, 'index']);
-
         Route::get('/categories', [CategoryController::class, 'index']);
-
         Route::get('/products/max-price', [ProductController::class, 'getMaxPrice']);
 
 
@@ -55,6 +53,17 @@ Route::prefix('v1')->group(function () {
                 '/admin/products/delete/{productId}',
                 [ProductController::class, 'adminDeleteProduct']
             );
+
+            Route::post(
+                '/admin/products/{productId}/image',
+                [ProductImageController::class, 'store']
+            );
+
+            Route::delete(
+                '/admin/products/{productId}/image',
+                [ProductImageController::class, 'destroy']
+            );
+            
         });
     });
 });

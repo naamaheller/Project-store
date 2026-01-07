@@ -14,9 +14,18 @@ export function ProductCard({ product, onClick }: Props) {
     >
       <CardContent className="flex flex-col gap-4 p-5">
         {/* image */}
-        <div className="aspect-[4/3] bg-background-muted rounded-md flex items-center justify-center text-text-muted text-sm">
-          IMG
+        <div className="aspect-[4/3] bg-background-muted rounded-md overflow-hidden flex items-center justify-center">
+          {product.image_url ? (
+            <img
+              src={product.image_url}
+              alt={product.name}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <span className="text-text-muted text-sm">No image</span>
+          )}
         </div>
+
 
         {/* text */}
         <div className="flex flex-col gap-1.5">
