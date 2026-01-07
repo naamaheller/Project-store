@@ -98,17 +98,17 @@ export default function AdminProductsPage() {
         emptyDescription="Start by creating your first product"
       />
 
-      <footer className="border-t border-border bg-background">
-        <div className="container mx-auto px-4 py-[2px]">
-          <Pagination
-            page={page}
-            pageSize={pageSize}
-            total={total}
-            onPageChange={setPage}
-            onPageSizeChange={setPageSize}
-          />
-        </div>
-      </footer>
+     <footer className="border-t border-border bg-background">
+            <div className="container mx-auto px-4 py-[2px]">
+              <Pagination
+                page={page}
+                pageSize={pageSize}
+                total={total}
+                onPageChange={setPage}
+                onPageSizeChange={setPageSize}
+              />
+            </div>
+          </footer>
 
       <CreateProductDrawer
         open={createOpen}
