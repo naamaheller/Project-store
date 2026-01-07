@@ -7,49 +7,47 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Throwable;
 use App\Services\ProductService;
+use App\Services\MinioUploadService;
 
 
 class ProductController extends Controller
 {
     private ProductService $productService;
+    private MinioUploadService $minioUploadService;
 
-    public function __construct(ProductService $productService)
-    {
+    public function __construct(
+        ProductService $productService,
+        MinioUploadService $minioUploadService
+    ) {
         $this->productService = $productService;
+        $this->minioUploadService = $minioUploadService;
     }
-
-    /**
-     * retrieve a list of products
-     * GET /api/v1/products
-     */
     public function index(Request $request)
     {
         try {
-        $products = $this->productService->getActiveProducts($request);
-        return response()->json($products, 200);
+            $products = $this->productService->getActiveProducts($request);
+            $products = $this->addImageUrls($products);
+            return response()->json($products, 200);
 
         } catch (Throwable $e) {
             return response()->json([
                 'message' => 'Failed to fetch products',
-                'error'   => $e->getMessage(),
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
-
-    /**
-     * retrieve a list of all products for admin users
-     * GET /api/v1/admin/products
-     */
     public function adminIndex(Request $request)
     {
-         try {
+        try {
             $products = $this->productService->getAllProductsForAdmin($request);
+            $products = $this->addImageUrls($products);
+
             return response()->json($products, 200);
 
         } catch (Throwable $e) {
             return response()->json([
                 'message' => 'Failed to fetch admin products',
-                'error'   => $e->getMessage(),
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -77,18 +75,12 @@ class ProductController extends Controller
                 'product' => $product,
             ], 201);
 
-        
-        }catch (\Throwable $e) {
+        } catch (\Throwable $e) {
             return response()->json([
                 'message' => $e->getMessage(),
             ], 500);
         }
     }
-
-    /**
-     * get the maximum price of all products
-     * GET /api/v1/products/max-price
-     */
     public function getMaxPrice()
     {
         try {
@@ -98,22 +90,17 @@ class ProductController extends Controller
         } catch (Throwable $e) {
             return response()->json([
                 'message' => 'Failed to fetch max price',
-                'error'   => $e->getMessage(),
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
 
-
-    /**
-     * delete a product by admin
-     * DELETE /api/v1/admin/products/delete
-     */
     public function adminDeleteProduct(int $productId)
     {
-  
+
         try {
-           $this->productService->deleteProductByAdmin($productId);
-             
+            $this->productService->deleteProductByAdmin($productId);
+
 
             return response()->json([
                 'message' => 'Product deleted successfully',
@@ -130,13 +117,10 @@ class ProductController extends Controller
             ], 500);
         }
     }
-    /**
-     * edit a product by admin
-     * PUT /api/v1/admin/products/edit
-     */
+
     public function adminEditProduct(int $productId, Request $request)
     {
-    
+
         try {
               $validated = $request->validate([
                 'name'          => 'sometimes|string|max:255',
@@ -158,19 +142,44 @@ class ProductController extends Controller
                 'product' => $product,
             ], 200);
 
-        
-        }
-        catch (ModelNotFoundException $e) {
+
+        } catch (ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Product not found',
             ], 404);
 
-        }
-        catch (\Throwable $e) {
+        } catch (\Throwable $e) {
             return response()->json([
                 'message' => $e->getMessage(),
             ], 500);
         }
     }
-    
+    private function addImageUrls($result)
+    {
+        if (is_object($result) && method_exists($result, 'getCollection')) {
+            $result->getCollection()->transform(function ($p) {
+                $p->image_url = $p->img_url
+                    ? $this->minioUploadService->temporaryUrl($p->img_url)
+                    : null;
+                return $p;
+            });
+
+            return $result;
+        }
+
+        if (is_object($result) && method_exists($result, 'transform')) {
+            $result->transform(function ($p) {
+                $p->image_url = $p->img_url
+                    ? $this->minioUploadService->temporaryUrl($p->img_url)
+                    : null;
+                return $p;
+            });
+
+            return $result;
+        }
+
+        return $result;
+    }
+
+
 }

@@ -35,7 +35,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ToastProvider>
           <AuthBootstrap />
           <Header />
-          <main className="flex flex-1 pt-8">{children}</main>
+          <main className="pt-8">{children}</main>
+          {/* <main className="flex flex-1 pt-8">{children}</main> */}
         </ToastProvider>
       </body>
     </html>

@@ -2,12 +2,12 @@
 
 import React, { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuthStore } from "../../store/auth.store";
+import { useAuthStore } from "../../../store/auth.store";
 
-import { Card } from "../../components/ui/Card";
-import { Input } from "../../components/ui/Input";
-import { Button } from "../../components/ui/Button";
-import { Alert } from "../../components/ui/Alert";
+import { Card } from "../../../components/ui/Card";
+import { Input } from "../../../components/ui/Input";
+import { Button } from "../../../components/ui/Button";
+import { Alert } from "../../../components/ui/Alert";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { BackgroundBubbles } from "@/app/components/state/loading/Bubbles";
 
@@ -55,7 +55,7 @@ export default function RegisterPage() {
 
     if (ok) {
       clearError();
-      router.push("/pages/login");
+      router.push("/pages/auth/login");
     }
   }
 
@@ -135,7 +135,7 @@ export default function RegisterPage() {
                 Already have an account?{" "}
                 <button
                   type="button"
-                  onClick={() => router.push("/pages/login")}
+                  onClick={() => router.push("/pages/auth/login")}
                   className="text-primary font-medium hover:underline"
                 >
                   Login
