@@ -18,16 +18,18 @@ export function AdminGuard({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (ready && !loading) {
+      console.log("USER: ",user);
+      
       if (!user) {
         router.replace("/pages/auth/login");
-      } else if (user.role !== "admin") {
+      } else if (!user.roles.includes("admin")) {
         router.replace("/");
       }
     }
   }, [ready, loading, user, router]);
 
   // Show loading state while checking auth
-  if (!ready || loading || !user || user.role !== "admin") {
+  if (!ready || loading || !user || !user.roles.includes("admin")) {
     return <LoadingText />;
   }
 
