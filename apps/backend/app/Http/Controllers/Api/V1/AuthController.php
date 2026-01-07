@@ -27,8 +27,6 @@ class AuthController extends Controller
 
             [$user, $token] = $this->authService->login($data['email'], $data['password']);
 
-            // dd($user, $token);
-
             return response()
                 ->json([
                     'user' => $this->authService->userPayload($user),
@@ -46,12 +44,12 @@ class AuthController extends Controller
                 )
                 ->cookie(
                     'role',
-                    $user->getRoleNames()->first(), 
+                    $user->role,
                     60 * 24 * 2,
                     '/',
                     null,
                     false,
-                    false, 
+                    false,
                     false,
                     'Lax'
                 );
@@ -76,6 +74,7 @@ class AuthController extends Controller
                     'name' => ['required', 'string', 'max:255'],
                     'email' => ['required', 'email', 'unique:users,email'],
                     'password' => ['required', 'string', 'min:6'],
+                    'role' => ['sometimes', 'string'],
                 ],
                 [
                     'email.unique' => 'The email already exists.',
@@ -83,7 +82,6 @@ class AuthController extends Controller
             );
 
             $user = $this->authService->register($data);
-            $user->assignRole('user');
 
             try {
                 Mail::to($user->email)->send(new WelcomeMail($user));
