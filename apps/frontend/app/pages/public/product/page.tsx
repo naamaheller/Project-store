@@ -2,7 +2,6 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { SlidersHorizontal } from "lucide-react";
 
 import { useAuthStore } from "../../../store/auth.store";
 import { ProductCardSkeleton } from "@/app/components/pruduct/ProductCardSkeleton";
@@ -15,12 +14,14 @@ import { Button } from "@/app/components/ui/Button";
 import { useProductStore } from "@/app/store/product.store";
 import LoadingText from "@/app/components/state/loading/Loading";
 import { EmptyState } from "@/app/components/state/empty/EmptyState";
+import { SlidersHorizontal, Settings } from "lucide-react";
 
 export default function ProductPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const { user, checking, ready } = useAuthStore();
+  const isAdmin = user?.role === "admin";
 
   const {
     products,
@@ -154,16 +155,23 @@ export default function ProductPage() {
             </div>
           </aside>
 
-          <main className="flex-1">
-            <div className="lg:hidden">
-              <Button
-                onClick={() => setFiltersOpen(true)}
-                className="mb-6 flex items-center gap-2"
-              >
-                <SlidersHorizontal className="h-4 w-4" />
-                <span>Filters</span>
-              </Button>
+          <main className="flex-1"> <div className="flex items-center justify-between gap-3 mb-6">
+            <div className="lg:hidden ">
+              <Button onClick={() => setFiltersOpen(true)} className="flex items-center gap-2" > <SlidersHorizontal className="h-4 w-4" /> <span>Filters</span> </Button>
             </div>
+            {isAdmin && (
+              <Button
+                variant="outline"
+                onClick={() => router.push("/admin")
+                }
+                className="flex items-center gap-2"
+                aria-label="Admin settings"
+              >
+                <Settings className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
+
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
               {loadingPage &&
@@ -177,7 +185,7 @@ export default function ProductPage() {
                   <ProductCard key={p.id} product={p} onClick={selectProduct} />
                 ))}
 
-              {!loadingPage && hasFetched &&  products.length === 0 && (
+              {!loadingPage && hasFetched && products.length === 0 && (
                 <EmptyState
                   title={
                     filtersApplied
