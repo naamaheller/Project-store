@@ -30,7 +30,7 @@ export default function NotFound() {
 
         <div className="mt-2">
           <Link
-            href="/pages/product"
+            href="/pages/public/product"
             className="text-base font-medium hover:underline underline-offset-4 transition"
           >
             ← Back to products

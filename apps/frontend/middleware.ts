@@ -7,18 +7,20 @@ export function middleware(req: NextRequest) {
   const role = req.cookies.get("role")?.value;
 
   if (
-    !token && (pathname.startsWith("/pages/product") || pathname.startsWith("/admin"))
+    !token &&
+    (pathname.startsWith("/pages/public/product") ||
+      pathname.startsWith("/admin"))
   ) {
     return NextResponse.redirect(new URL("/pages/auth/login", req.url));
   }
 
   if (token && (pathname === "/pages/auth/login" || pathname === "/pages/auth/register")) {
-    return NextResponse.redirect(new URL("/pages/product", req.url));
+    return NextResponse.redirect(new URL("/pages/public/product", req.url));
   }
 
 
   if (pathname.startsWith("/admin") && role !== "admin") {
-    return NextResponse.redirect(new URL("/pages/product", req.url));
+    return NextResponse.redirect(new URL("/pages/public/product", req.url));
   }
 
   return NextResponse.next();
@@ -29,7 +31,7 @@ export const config = {
   matcher: [
     "/pages/auth/login",
     "/pages/auth/register",
-    "/pages/product/:path*",
+    "/pages/public/product/:path*",
     "/admin/:path*",
   ],
 };
