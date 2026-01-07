@@ -24,6 +24,7 @@ type ProductStore = {
   absoluteMaxPrice: number;
 
   loading: boolean;
+  hasFetched: boolean;
 
   categories: Category[];
   loadingCategories: boolean;
@@ -32,12 +33,13 @@ type ProductStore = {
   deletingId: number | null;
   saving: boolean;
 
-  updateProduct: (id: number, data: Partial<Product>) => Promise<Product>;
   deleteProduct: (id: number) => Promise<void>;
   createProduct: (data: any) => Promise<Product>;
 
   uploadProductImage: (productId: number, file: File) => Promise<void>;
   deleteProductImage: (productId: number) => Promise<void>;
+  resetStore: () => void;
+  updateProduct: (id: number, data: Partial<Product>) => Promise<Product>;
 
   setPage: (page: number) => Promise<void>;
   setPageSize: (size: number) => Promise<void>;
@@ -63,6 +65,34 @@ const hasActiveFilters = (
     absoluteMaxPrice > 0 &&
     filters.maxPrice < absoluteMaxPrice);
 
+const initialProductState = {
+  products: [],
+  selectedProduct: null,
+
+  page: 1,
+  pageSize: 5,
+  total: 0,
+
+  filters: {
+    search: "",
+    minPrice: null,
+    maxPrice: null,
+    categories: [],
+  },
+
+  filtersApplied: false,
+  absoluteMaxPrice: 0,
+
+  loading: false,
+  hasFetched: false,
+
+  categories: [],
+  loadingCategories: false,
+  loadingMaxPrice: false,
+  deletingId: null,
+  saving: false,
+};
+
 export const useProductStore = create<ProductStore>((set, get) => ({
   products: [],
   selectedProduct: null,
@@ -82,6 +112,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
   absoluteMaxPrice: 0,
 
   loading: false,
+  hasFetched: false,
 
   categories: [],
   loadingCategories: false,
@@ -127,6 +158,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       set({
         products: result.data,
         total: result.total,
+        hasFetched: true,
       });
     } finally {
       set({ loading: false });
@@ -217,13 +249,13 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       set((state) => ({
         products: state.products.filter((p) => p.id !== id),
         total: Math.max(0, state.total - 1),
-        selectedProduct: state.selectedProduct?.id === id ? null : state.selectedProduct,
+        selectedProduct:
+          state.selectedProduct?.id === id ? null : state.selectedProduct,
       }));
     } finally {
       set({ deletingId: null });
     }
   },
-
 
   createProduct: async (data) => {
     set({ saving: true });
@@ -332,5 +364,6 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       return { selectedProduct: nextSelected, products: nextProducts };
     });
   },
+  resetStore: () => set(() => ({ ...initialProductState })),
 
 }));

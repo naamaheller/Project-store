@@ -22,7 +22,11 @@ export const metadata: Metadata = {
   description: "Modern store application",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en" dir="ltr">
       <body
@@ -34,9 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       >
         <ToastProvider>
           <AuthBootstrap />
-          <Header />
-          <main className="pt-8">{children}</main>
-          {/* <main className="flex flex-1 pt-8">{children}</main> */}
+          {children}
         </ToastProvider>
       </body>
     </html>

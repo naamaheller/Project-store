@@ -59,7 +59,7 @@ export function EditProductDrawer({ productId, open, onClose }: Props) {
         description,
         price,
         stock,
-        is_active: isActive ? 1 : 0,
+        is_active: isActive,
         category_name: category,
       });
       if (imageFile) {
@@ -196,7 +196,6 @@ export function EditProductDrawer({ productId, open, onClose }: Props) {
                 <div className="flex items-center justify-center gap-2">
                   <Button
                     type="button"
-                    size="sm"
                     className="h-8 px-3 text-xs"
                     disabled={saving}
                     onClick={() => fileInputRef.current?.click()}
@@ -208,7 +207,6 @@ export function EditProductDrawer({ productId, open, onClose }: Props) {
                     <Button
                       type="button"
                       variant="outline"
-                      size="sm"
                       className="h-8 px-3 text-xs"
                       disabled={saving}
                       onClick={async () => {

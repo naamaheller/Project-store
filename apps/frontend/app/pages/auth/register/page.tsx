@@ -60,7 +60,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex flex-1 items-center justify-center px-4">
+    <>
       <BackgroundBubbles />
       <div className="relative z-10 w-full max-w-md">
         <Card className="w-full max-w-md p-10 min-h-[440px] border-2 border-primary/50">
@@ -145,6 +145,6 @@ export default function RegisterPage() {
           </div>
         </Card>
       </div>
-    </div>
+    </>
   );
 }

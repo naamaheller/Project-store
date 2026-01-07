@@ -1,6 +1,6 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
-type ButtonVariant = "primary" | "secondary" | "outline" | "danger";
+type ButtonVariant = "primary" | "secondary" | "outline" | "danger" | "default";
 
 type ButtonProps = {
   children: ReactNode;
@@ -24,6 +24,9 @@ const variantStyles: Record<ButtonVariant, string> = {
 
   danger:
     "bg-error text-text-inverted hover:opacity-90 focus-visible:ring-error/20",
+  
+  default:  
+    "text-text hover:bg-default-hover",
 };
 
 export function Button({
