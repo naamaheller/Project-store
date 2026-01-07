@@ -20,6 +20,7 @@ type ProductStore = {
   absoluteMaxPrice: number;
 
   loading: boolean;
+  hasFetched:boolean;
   
   categories: Category[];
   loadingCategories: boolean;
@@ -70,12 +71,11 @@ export const useProductStore = create<ProductStore>((set, get) => ({
   absoluteMaxPrice: 0,
 
   loading: false,
+  hasFetched: false,
 
   categories: [],
   loadingCategories: false,
   loadingMaxPrice: false,
-  
-
 
   setPage: async (page) => {
     set({ page });
@@ -114,6 +114,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       set({
         products: result.data,
         total: result.total,
+        hasFetched:true,
       });
     } finally {
       set({ loading: false });
@@ -182,94 +183,88 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       set({ loadingCategories: false, loadingMaxPrice: false });
     }
   },
-    clearSelectedProduct: () => set({ selectedProduct: null }),
-    deletingId: null,
+  clearSelectedProduct: () => set({ selectedProduct: null }),
+  deletingId: null,
 
-    deleteProduct: async (id: number) => {
-      try {
-    set({ deletingId: id });
+  deleteProduct: async (id: number) => {
+    try {
+      set({ deletingId: id });
 
-    const res = await adminDeleteProduct(id);
-    console.log("Delete response:", res);
-    if (res.status !== 200) {
-      throw new Error("Failed to delete product");
-    }
+      const res = await adminDeleteProduct(id);
+      console.log("Delete response:", res);
+      if (res.status !== 200) {
+        throw new Error("Failed to delete product");
+      }
 
-  set((state) => ({
+      set((state) => ({
         products: state.products.filter((p) => p.id !== id),
         total: Math.max(0, state.total - 1),
-        selectedProduct: state.selectedProduct?.id === id ? null : state.selectedProduct,
+        selectedProduct:
+          state.selectedProduct?.id === id ? null : state.selectedProduct,
       }));
-  } finally {
-    set({ deletingId: null });
-  }
-},
-createProduct: async (data) => {
-  set({ saving: true });
-  try {
-    const res = await adminAddProduct(data);
-
-    if (res.status !== 201) {
-      const text = await res.text().catch(() => "");
-      throw new Error(text || "Failed to create product");
+    } finally {
+      set({ deletingId: null });
     }
+  },
+  createProduct: async (data) => {
+    set({ saving: true });
+    try {
+      const res = await adminAddProduct(data);
 
+      if (res.status !== 201) {
+        const text = await res.text().catch(() => "");
+        throw new Error(text || "Failed to create product");
+      }
 
-
-    const created: Product = normalizeProduct(res);
+      const created: Product = normalizeProduct(res);
 
       set((state) => {
-      const next = [created, ...state.products];
-      
-      const capped = next.slice(0, state.pageSize);
+        const next = [created, ...state.products];
 
-      return {
-        selectedProduct: created,
-        products: capped,
-        total: state.total + 1,
-      };
-    });
+        const capped = next.slice(0, state.pageSize);
 
-    return created;
-  } finally {
-    set({ saving: false });
-  }
-},
+        return {
+          selectedProduct: created,
+          products: capped,
+          total: state.total + 1,
+        };
+      });
+
+      return created;
+    } finally {
+      set({ saving: false });
+    }
+  },
 
   saving: false,
   updateProduct: async (id, data) => {
     set({ saving: true });
 
     try {
-     
       const res = await adminEditProduct(id, data);
       console.log("Updated product:", res);
-      
+
       if (res.status !== 200) {
-        
         const text = await res.text().catch(() => "");
-       
+
         throw new Error(text || "Failed to update product");
-      }  
+      }
       const updated: Product = normalizeProduct(res);
       console.log("Updated product:", updated);
-    set((state) => {
-      const exists = state.products.some((p) => p.id === updated.id);
+      set((state) => {
+        const exists = state.products.some((p) => p.id === updated.id);
 
-      return {
-        selectedProduct: updated,
-        products: exists
-          ? state.products.map((p) => (p.id === updated.id ? updated : p))
-          : [updated, ...state.products], 
-      };
-    });
+        return {
+          selectedProduct: updated,
+          products: exists
+            ? state.products.map((p) => (p.id === updated.id ? updated : p))
+            : [updated, ...state.products],
+        };
+      });
 
-    return updated;
-  
+      return updated;
     } finally {
       set({ saving: false });
     }
   },
-
-
 }));

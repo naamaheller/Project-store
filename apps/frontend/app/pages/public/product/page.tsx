@@ -31,10 +31,10 @@ export default function ProductPage() {
     filters,
     filtersApplied,
     absoluteMaxPrice,
-    selectedProduct,
     categories,
     loadingCategories,
     loadingMaxPrice,
+    hasFetched,
 
     setPage,
     setPageSize,
@@ -48,11 +48,6 @@ export default function ProductPage() {
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   const initializedFromUrlRef = useRef(false);
-
-  // useEffect(() => {
-  //   if (!ready) return;
-  //   if (!user) router.replace("/pages/auth/login");
-  // }, [ready, user, router]);
 
   useEffect(() => {
     if (!ready || !user) return;
@@ -76,7 +71,6 @@ export default function ProductPage() {
     });
 
     initializedFromUrlRef.current = true;
-    // applyFilters();
   }, [ready, user, searchParams, setFilters, applyFilters]);
 
   useEffect(() => {
@@ -183,7 +177,7 @@ export default function ProductPage() {
                   <ProductCard key={p.id} product={p} onClick={selectProduct} />
                 ))}
 
-              {!loadingPage && products.length === 0 && (
+              {!loadingPage && hasFetched &&  products.length === 0 && (
                 <EmptyState
                   title={
                     filtersApplied
