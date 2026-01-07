@@ -14,7 +14,7 @@ export interface ProductsResponse {
 export function getProducts<T = ProductsResponse>(params?: { page?: number; per_page?: number }) {
 
   const user = useAuthStore.getState().user;
-  const endpoint = user?.role === "admin"
+  const endpoint = user?.roles.includes("admin")
     ? "/admin/products"
     : "/products";
 
