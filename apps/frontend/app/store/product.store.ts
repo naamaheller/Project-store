@@ -4,7 +4,11 @@ import ProductFiltersState from "@/app/models/product-filters.model";
 import { fetchMaxPrice, fetchProducts } from "@/app/services/product.service";
 import { Category } from "../models/category.model";
 import { fetchCategories } from "../services/category.service";
-import { adminAddProduct, adminDeleteProduct, adminEditProduct } from "../api/product.api";
+import {
+  adminAddProduct,
+  adminDeleteProduct,
+  adminEditProduct,
+} from "../api/product.api";
 const normalizeProduct = (payload: any): Product =>
   payload?.data?.product ?? payload?.product ?? payload;
 type ProductStore = {
@@ -20,16 +24,16 @@ type ProductStore = {
   absoluteMaxPrice: number;
 
   loading: boolean;
-  hasFetched:boolean;
-  
+  hasFetched: boolean;
+
   categories: Category[];
   loadingCategories: boolean;
   loadingMaxPrice: boolean;
   deletingId: number | null;
   saving: boolean;
-  updateProduct: (id: number, data: Partial<Product>) => Promise<Product>;
 
-  
+  resetStore: () => void;
+  updateProduct: (id: number, data: Partial<Product>) => Promise<Product>;
 
   setPage: (page: number) => Promise<void>;
   setPageSize: (size: number) => Promise<void>;
@@ -46,11 +50,44 @@ type ProductStore = {
   deleteProduct: (id: number) => Promise<void>;
 };
 
-const hasActiveFilters = (filters: ProductFiltersState, absoluteMaxPrice: number) =>
+const hasActiveFilters = (
+  filters: ProductFiltersState,
+  absoluteMaxPrice: number
+) =>
   !!filters.search ||
   filters.categories.length > 0 ||
   filters.minPrice !== null ||
-  (filters.maxPrice !== null && absoluteMaxPrice > 0 && filters.maxPrice < absoluteMaxPrice);
+  (filters.maxPrice !== null &&
+    absoluteMaxPrice > 0 &&
+    filters.maxPrice < absoluteMaxPrice);
+
+const initialProductState = {
+  products: [],
+  selectedProduct: null,
+
+  page: 1,
+  pageSize: 5,
+  total: 0,
+
+  filters: {
+    search: "",
+    minPrice: null,
+    maxPrice: null,
+    categories: [],
+  },
+
+  filtersApplied: false,
+  absoluteMaxPrice: 0,
+
+  loading: false,
+  hasFetched: false,
+
+  categories: [],
+  loadingCategories: false,
+  loadingMaxPrice: false,
+  deletingId: null,
+  saving: false,
+};
 
 export const useProductStore = create<ProductStore>((set, get) => ({
   products: [],
@@ -114,7 +151,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       set({
         products: result.data,
         total: result.total,
-        hasFetched:true,
+        hasFetched: true,
       });
     } finally {
       set({ loading: false });
@@ -125,7 +162,6 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     const { filters, absoluteMaxPrice } = get();
 
     set({
-      // page: 1,
       filtersApplied: hasActiveFilters(filters, absoluteMaxPrice),
     });
 
@@ -267,4 +303,5 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       set({ saving: false });
     }
   },
+  resetStore: () => set(initialProductState),
 }));
