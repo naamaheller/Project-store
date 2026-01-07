@@ -32,11 +32,6 @@ Route::prefix('v1')->group(function () {
         Route::middleware('admin')->group(function () {
 
             Route::post(
-                '/admin/products/upload-image',
-                [ProductController::class, 'uploadImage']
-            );
-
-            Route::post(
                 '/admin/products/{productId}/image',
                 [ProductImageController::class, 'store']
             );

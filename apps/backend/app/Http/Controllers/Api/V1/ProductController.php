@@ -22,15 +22,11 @@ class ProductController extends Controller
         $this->productService = $productService;
         $this->minioUploadService = $minioUploadService;
     }
-
-    /**
-     * retrieve a list of products
-     * GET /api/v1/products
-     */
     public function index(Request $request)
     {
         try {
             $products = $this->productService->getActiveProducts($request);
+            $products = $this->addImageUrls($products);
             return response()->json($products, 200);
 
         } catch (Throwable $e) {
@@ -40,15 +36,12 @@ class ProductController extends Controller
             ], 500);
         }
     }
-
-    /**
-     * retrieve a list of all products for admin users
-     * GET /api/v1/admin/products
-     */
     public function adminIndex(Request $request)
     {
         try {
             $products = $this->productService->getAllProductsForAdmin($request);
+            $products = $this->addImageUrls($products);
+
             return response()->json($products, 200);
 
         } catch (Throwable $e) {
@@ -82,11 +75,6 @@ class ProductController extends Controller
             ], 500);
         }
     }
-
-    /**
-     * get the maximum price of all products
-     * GET /api/v1/products/max-price
-     */
     public function getMaxPrice()
     {
         try {
@@ -101,11 +89,6 @@ class ProductController extends Controller
         }
     }
 
-
-    /**
-     * delete a product by admin
-     * DELETE /api/v1/admin/products/delete
-     */
     public function adminDeleteProduct(int $productId)
     {
 
@@ -128,10 +111,7 @@ class ProductController extends Controller
             ], 500);
         }
     }
-    /**
-     * edit a product by admin
-     * PUT /api/v1/admin/products/edit
-     */
+
     public function adminEditProduct(int $productId, Request $request)
     {
 
@@ -153,20 +133,32 @@ class ProductController extends Controller
             ], 500);
         }
     }
-    public function uploadImage(Request $request)
+    private function addImageUrls($result)
     {
-        $request->validate([
-            'image' => ['required', 'image', 'max:5120'],
-        ]);
+        if (is_object($result) && method_exists($result, 'getCollection')) {
+            $result->getCollection()->transform(function ($p) {
+                $p->image_url = $p->img_url
+                    ? $this->minioUploadService->temporaryUrl($p->img_url)
+                    : null;
+                return $p;
+            });
 
-        $path = $this->minioUploadService->handle(
-            $request->file('image'),
-            null
-        );
+            return $result;
+        }
 
-        return response()->json([
-            'path' => $path,
-        ], 201);
+        if (is_object($result) && method_exists($result, 'transform')) {
+            $result->transform(function ($p) {
+                $p->image_url = $p->img_url
+                    ? $this->minioUploadService->temporaryUrl($p->img_url)
+                    : null;
+                return $p;
+            });
+
+            return $result;
+        }
+
+        return $result;
     }
+
 
 }

@@ -22,29 +22,31 @@ class ProductImageController extends Controller
     public function store(int $productId, Request $request)
     {
         $request->validate([
-            'image' => ['required', 'image', 'max:5120'], // עד 5MB
+            'image' => ['required', 'image', 'max:5120'],
         ]);
 
         try {
             $product = Product::findOrFail($productId);
 
-            // מעלה תמונה חדשה, ואם יש ישנה - מוחק אותה
-            $path = $this->minioUploadService->handle(
+            $path = $this->minioUploadService->upload(
                 $request->file('image'),
-                $product->img_url // שומר אצלך "path" בתוך img_url
+                $product->img_url
             );
-
             $product->update([
                 'img_url' => $path,
             ]);
+
+            $url = $this->minioUploadService->temporaryUrl($path);
 
             return response()->json([
                 'message' => 'Image updated successfully',
                 'productId' => $product->id,
                 'path' => $path,
+                'url' => $url,
             ], 201);
 
-        } catch (ModelNotFoundException $e) {
+
+        } catch (ModelNotFoundException) {
             return response()->json(['message' => 'Product not found'], 404);
 
         } catch (Throwable $e) {
@@ -62,10 +64,7 @@ class ProductImageController extends Controller
             $product = Product::findOrFail($productId);
 
             if ($product->img_url) {
-                // מוחק מה-MinIO
-                $this->minioUploadService->handle(null, $product->img_url);
-
-                // מאפס ב-DB
+                $this->minioUploadService->delete($product->img_url);
                 $product->update(['img_url' => null]);
             }
 
@@ -74,7 +73,7 @@ class ProductImageController extends Controller
                 'productId' => $product->id,
             ], 200);
 
-        } catch (ModelNotFoundException $e) {
+        } catch (ModelNotFoundException) {
             return response()->json(['message' => 'Product not found'], 404);
 
         } catch (Throwable $e) {
