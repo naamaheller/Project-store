@@ -3,6 +3,7 @@
 import { create } from "zustand";
 import { loginApi, logoutApi, meApi, registerApi } from "../api/auth.api";
 import type { User } from "../models/user.model";
+import { useProductStore } from "./product.store";
 
 type AuthState = {
     user: User | null;
@@ -85,6 +86,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         try {
             await logoutApi();
         } finally {
+            useProductStore.getState().resetStore();
             set({ user: null, loading: false, ready: true, error: null });
         }
     },
