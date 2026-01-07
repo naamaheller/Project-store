@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { BackgroundBubbles } from "./components/state/loading/Bubbles";
+import { BackgroundBubbles } from "../state/loading/Bubbles";
 
 type ErrorPageProps = {
   code?: number | string;

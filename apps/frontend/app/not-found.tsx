@@ -9,7 +9,7 @@ export default function NotFound() {
       title="Page not found"
       description="The page you’re looking for doesn’t exist or has been moved.Please
           check the URL or return to a safe place."
-      backHref="/pages/product"
+      backHref="/pages/public/product"
       backLabel="← Back to products"
     />
 
