@@ -124,15 +124,11 @@ class ProductController extends Controller
         try {
               $validated = $request->validate([
                 'name'          => 'sometimes|string|max:255',
-                // 'slug'          => 'sometimes|string|max:255|unique:products,slug,' . $productId,
                 'description'   => 'nullable|string',
                 'price'         => 'sometimes|numeric|min:0',
                 'stock'         => 'sometimes|integer|min:0',
                 'img_url'       => 'nullable|string|max:2048',
                 'is_active'     => 'sometimes|boolean',
-
-                // // category handling
-                // 'category_id'   => 'nullable|exists:categories,id',
                 'category_name' => 'nullable|string|max:255',
             ]);
             $product= $this->productService->editProductByAdmin($productId, $validated);

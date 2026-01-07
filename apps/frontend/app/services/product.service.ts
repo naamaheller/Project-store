@@ -1,5 +1,5 @@
-import { getAdminProducts, getMaxPrice, getProducts } from "../api/product.api";
-import { ProductFilters } from "../models/product.model";
+import { adminAddProduct, adminDeleteProduct, adminEditProduct, getAdminProducts, getMaxPrice, getProducts } from "../api/product.api";
+import { Product, ProductFilters, ProductUpsertInput } from "../models/product.model";
 
 type ApiCall = (params: Record<string, any>) => Promise<{ data: any }>;
 
@@ -27,7 +27,7 @@ async function fetchProductsBase(apiCall: ApiCall, filters?: ProductFilters) {
     if (filters?.categories?.length) {
       params.categories = filters.categories;
     }
-    
+
     Object.keys(params).forEach(
       (k) => params[k] === undefined && delete params[k]
     );
@@ -49,4 +49,32 @@ export async function fetchMaxPrice() {
     throw error;
   }
 }
+export const sanitizeProduct = (payload: any): Product => {
+  const data = payload?.data?.product ?? payload?.product ?? payload;
 
+  if (!data || typeof data.id === 'undefined') {
+    throw new Error("Invalid product data received from server");
+  }
+
+  return data as Product;
+};
+
+
+export const updateProductApi = async (id: number, data: ProductUpsertInput): Promise<Product> => {
+  const res = await adminEditProduct(id, data);
+
+  if (res.status !== 200) throw new Error("Update failed");
+
+  return sanitizeProduct(res);
+};
+export const addProductApi = async (data: ProductUpsertInput): Promise<Product> => {
+  const res = await adminAddProduct(data);
+
+  if (res.status !== 201) throw new Error("Add product failed");
+  return sanitizeProduct(res);
+};
+export const deleteProductApi = async (id: number): Promise<void> => {
+  const res = await adminDeleteProduct(id);
+  if (res.status !== 200) throw new Error("Delete product failed");
+  return;
+};

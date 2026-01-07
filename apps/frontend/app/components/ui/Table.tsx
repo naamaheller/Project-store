@@ -41,15 +41,15 @@ export function Table<T>({
                 className ?? '',
             ].join(' ')}
         >
-            <div className="w-full overflow-x-auto">
-                <table className="w-full text-right">
+            <div className="w-full overflow-auto">
+                <table className="w-full text-left">
                     <thead className="bg-background-muted">
                         <tr>
                             {columns.map((col) => (
                                 <th
                                     key={col.key}
                                     className={[
-                                        'px-4 py-3 text-sm font-semibold text-text border-b border-border',
+                                        'px-4 py-3 text-sm font-semibold text-text border-b border-border ',
                                         col.headerClassName ?? '',
                                     ].join(' ')}
                                 >
@@ -90,7 +90,7 @@ export function Table<T>({
                                         <td
                                             key={col.key}
                                             className={[
-                                                'px-4 py-3 text-sm text-text align-middle',
+                                                'px-4 py-3 text-sm text-text align-middle text-left',
                                                 col.className ?? '',
                                             ].join(' ')}
                                         >
