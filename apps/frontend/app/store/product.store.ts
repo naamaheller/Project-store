@@ -29,8 +29,6 @@ type ProductStore = {
 
   deletingId: number | null;
   saving: boolean;
-  updateProduct: (id: number, data: ProductUpsertInput) => Promise<Product>;
-
   deleteProduct: (id: number) => Promise<void>;
   createProduct: (data: any) => Promise<Product>;
 
