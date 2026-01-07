@@ -1,5 +1,5 @@
 import apiClient from "./axios";
-import { Product } from "@/app/models/product.model";
+import { Product, ProductUpsertInput } from "@/app/models/product.model";
 import { useAuthStore } from "@/app/store/auth.store";
 
 
@@ -31,7 +31,7 @@ export function getAdminProducts(params?: { page?: number; per_page?: number }) 
 export function getMaxPrice() {
   return apiClient.get<{ max_price: number }>("/products/max-price");
 }
-export function adminAddProduct(productData: FormData) {
+export function adminAddProduct(productData: ProductUpsertInput) {
   return apiClient.post("/admin/products/add", productData, );
 }
 export function adminDeleteProduct(productId: number) {

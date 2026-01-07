@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Product } from "@/app/models/product.model";
+import { Product,ProductUpsertInput } from "@/app/models/product.model";
 import ProductFiltersState from "@/app/models/product-filters.model";
 import { fetchMaxPrice, fetchProducts } from "@/app/services/product.service";
 import { Category } from "../models/category.model";
@@ -26,7 +26,7 @@ type ProductStore = {
   loadingMaxPrice: boolean;
   deletingId: number | null;
   saving: boolean;
-  updateProduct: (id: number, data: Partial<Product>) => Promise<Product>;
+  updateProduct: (id: number, data: ProductUpsertInput) => Promise<Product>;
 
   
 
@@ -244,13 +244,7 @@ createProduct: async (data) => {
      
       const res = await adminEditProduct(id, data);
       console.log("Updated product:", res);
-      
-      if (res.status !== 200) {
-        
-        const text = await res.text().catch(() => "");
-       
-        throw new Error(text || "Failed to update product");
-      }  
+  
       const updated: Product = normalizeProduct(res);
       console.log("Updated product:", updated);
     set((state) => {

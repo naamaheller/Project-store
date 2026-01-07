@@ -14,6 +14,9 @@ export interface Product {
   created_at: string;
   updated_at: string;
 }
+export type ProductUpsertInput = Partial<Omit<Product, "id">> & {
+  category_name?: string; 
+}
 
 export interface ProductFilters {
   page?: number;
