@@ -16,7 +16,7 @@ export default function HomePage() {
   useEffect(() => {
     if (loading) return;
 
-    if (user) router.replace("/pages/product");
+    if (user) router.replace("/pages/public/product");
     else router.replace("/pages/auth/login");
   }, [loading, user, router]);
 
