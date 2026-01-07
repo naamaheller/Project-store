@@ -78,7 +78,7 @@ class ProductController extends Controller
             ], 201);
 
         
-        }catch (\Throwable $e) {
+        }catch (Throwable $e) {
             return response()->json([
                 'message' => $e->getMessage(),
             ], 500);
@@ -124,7 +124,7 @@ class ProductController extends Controller
                 'message' => 'Product not found',
             ], 404);
 
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return response()->json([
                 'message' => 'Failed to delete product',
             ], 500);
@@ -170,7 +170,7 @@ class ProductController extends Controller
             ], 404);
 
         }
-        catch (\Throwable $e) {
+        catch (Throwable $e) {
             return response()->json([
                 'message' => $e->getMessage(),
             ], 500);

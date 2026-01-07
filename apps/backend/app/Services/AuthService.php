@@ -23,10 +23,8 @@ class AuthService
                 'email' => ['Incorrect email or password'],
             ]);
         }
-        $role = $user->role; 
 
-
-        $token = $user->createToken('api', [$role])->accessToken;
+        $token = $user->createToken('api')->accessToken;
 
 
         return [$user, $token];
@@ -50,7 +48,6 @@ class AuthService
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'role' => $data['role'] ?? 'user',
         ]);
     }
 
@@ -63,13 +60,14 @@ class AuthService
 
     public function userPayload(User $user): array
     {
-        return $user->only([
-            'id',
-            'name',
-            'email',
-            'role',
-            'created_at',
-            'updated_at',
-        ]);
+        return [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'roles' => $user->getRoleNames(),        
+            'permissions' => $user->getAllPermissions()->pluck('name'),
+            'created_at' => $user->created_at,
+            'updated_at' => $user->updated_at,
+        ];
     }
 }
