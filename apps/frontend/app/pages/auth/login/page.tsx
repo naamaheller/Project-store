@@ -32,11 +32,11 @@ export default function LoginPage() {
     clearError();
 
     const ok = await login(email.trim(), password);
-    if (ok) router.push("/pages/product");
+    if (ok) router.push("/pages/public/product");
   }
 
   return (
-    <div className="flex flex-1 flex items-center justify-center px-4">
+    <>
       <BackgroundBubbles />
       <div className="relative z-10 w-full max-w-md">
         <Card className="w-full max-w-md p-10 min-h-[440px] border-2 border-primary/50">
@@ -103,6 +103,6 @@ export default function LoginPage() {
           </div>
         </Card>
       </div>
-    </div>
+    </>
   );
 }

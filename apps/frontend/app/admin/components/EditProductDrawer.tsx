@@ -60,7 +60,7 @@ export function EditProductDrawer({ productId, open, onClose }: Props) {
         price,
         stock,
         img_url: imgUrl,
-        is_active: isActive ? 1 : 0, 
+        is_active: isActive,
         category_name: category,
       });
 

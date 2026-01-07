@@ -84,8 +84,7 @@ export default function AdminProductsPage() {
       cell: (p) => (
         <div className="flex items-center justify-end gap-2">
           <Button
-            size="icon"
-            variant="destructive"
+            variant="default"
             onClick={() => {
               selectProduct(p);
               setEditingId(p.id);
@@ -95,18 +94,19 @@ export default function AdminProductsPage() {
             <Pencil className="h-4 w-4" />
           </Button>
 
-          <Button
-            size="icon"
-            variant="destructive"
-            onClick={() => setDeletingModalId(p.id)}
-            aria-label={`Delete ${p.name}`}
-          >
-            <Trash2 className="h-4 w-4 text-error" />
-          </Button>
-        </div>
-      ),
-    },
-  ], [selectProduct]);
+            <Button
+              variant="default"
+              onClick={() => setDeletingModalId(p.id)}
+              aria-label={`Delete ${p.name}`}
+            >
+              <Trash2 className="h-4 w-4 text-error" />
+            </Button>
+          </div>
+        ),
+      },
+    ],
+    [selectProduct]
+  );
 
  return (
   <div className="min-h-screen flex flex-col">
