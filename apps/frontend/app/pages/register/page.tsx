@@ -60,7 +60,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
+    <div className="flex flex-1 items-center justify-center px-4">
       <BackgroundBubbles />
       <div className="relative z-10 w-full max-w-md">
         <Card className="w-full max-w-md p-10 min-h-[440px] border-2 border-primary/50">

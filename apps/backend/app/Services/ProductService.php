@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
 class ProductService
@@ -66,31 +67,27 @@ class ProductService
     public function addProductByAdmin(array $data)
     {
         return DB::transaction(function () use ($data) {
+        $categoryName = trim((string)($data['category_name'] ?? ''));
 
-        $categoryName = trim($data['category']);
+        if ($categoryName !== '') {
+            $category = Category::firstOrCreate(
+                ['slug' => Str::slug($categoryName)],
+                ['name' => ucfirst($categoryName)]
+            );
 
-        $category = Category::firstOrCreate(
-            ['slug' => Str::slug($categoryName)],
-            ['name' => ucfirst($categoryName)]
-        );
+            $data['category_id'] = $category->id;
+        }
+        unset($data['category_name']);
+
 
         $slug = Str::slug($data['name']);
 
         if (Product::where('slug', $slug)->exists()) {
             $slug .= '-' . uniqid();
         }
-        
-        return Product::create([
-            'name' => $data['name'],
-            'slug' => $slug,
-            'description' => $data['description'] ?? null,
-            'price' => $data['price'],
-            'stock' => $data['stock'],
-            'is_active' => $data['is_active'],
-            'img_url' => $data['img_url'] ?? null,
-            'category_id' => $category->id,
-        ]);
-    });
+        $data['slug'] = $slug;
+        return Product::create($data);
+        });
     }
 
     private function buildFilteredQuery(Request $request)
@@ -151,12 +148,44 @@ class ProductService
     /*
      * only for admin users
      * edit a product
+     * also category if needed
      */
-    public function editProductByAdmin(int $productId, Request $request)
-    { 
-        $product = Product::findOrFail($productId);
-        $product->update($request->all());
-        return $product;
+    public function editProductByAdmin(int $productId, array $data): Product
+    {   
+
+        $product = Product::query()->findOrFail($productId);
+
+       
+        $categoryName = trim((string) Arr::get($data, 'category_name', ''));
+        if ($categoryName !== '') {
+            $category = Category::query()->firstOrCreate(
+                ['name' => $categoryName],
+                ['slug' => Str::slug($categoryName)]
+            );
+            $data['category_id'] = $category->id;
+        }
+
+        unset($data['category_name']);
+        $data['slug'] = Str::slug($data['name'] ?? $product->name);
+
+       
+
+        
+        $allowed = [
+            'name',
+            'slug',
+            'description',
+            'price',
+            'stock',
+            'img_url',
+            'is_active',
+            'category_id',
+        ];
+
+        $product->update(Arr::only($data, $allowed));
+
+        return $product->fresh(['category']);
+   
     }
 
     /*`

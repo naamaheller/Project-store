@@ -49,10 +49,10 @@ export default function ProductPage() {
 
   const initializedFromUrlRef = useRef(false);
 
-  useEffect(() => {
-    if (!ready) return;
-    if (!user) router.replace("/pages/login");
-  }, [ready, user, router]);
+  // useEffect(() => {
+  //   if (!ready) return;
+  //   if (!user) router.replace("/pages/login");
+  // }, [ready, user, router]);
 
   useEffect(() => {
     if (!ready || !user) return;
@@ -76,7 +76,7 @@ export default function ProductPage() {
     });
 
     initializedFromUrlRef.current = true;
-    applyFilters();
+    // applyFilters();
   }, [ready, user, searchParams, setFilters, applyFilters]);
 
   useEffect(() => {
@@ -118,6 +118,16 @@ export default function ProductPage() {
 
     router.replace(`?${params.toString()}`, { scroll: false });
   }, [filtersApplied, filters, absoluteMaxPrice, router]);
+
+  const handleApplyFilters = () => {
+    applyFilters();
+    setFiltersOpen(false);
+  };
+
+  const handleClearFilters = () => {
+    clearFilters();
+    setFiltersOpen(false);
+  };
 
   if (!ready || checking) {
     return (
@@ -221,8 +231,8 @@ export default function ProductPage() {
           absoluteMaxPrice={absoluteMaxPrice}
           loadingCategories={loadingCategories}
           loadingMaxPrice={loadingMaxPrice}
-          onApply={applyFilters}
-          onClear={clearFilters}
+          onApply={handleApplyFilters}
+          onClear={handleClearFilters}
           applied={filtersApplied}
         />
       </Drawer>

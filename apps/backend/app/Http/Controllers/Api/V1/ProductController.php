@@ -55,23 +55,29 @@ class ProductController extends Controller
     {
         try {
             $data = $request->validate([
-                'name' => 'required|string|max:255',
-                'description' => 'nullable|string',
-                'price' => 'required|numeric|min:0',
-                'stock' => 'required|integer|min:0',
-                'is_active' => 'required|boolean',
-                'category' => 'required|string|max:255',
-                'img_url' => 'nullable|string|max:2048',
-            ]);
-
-            $this->productService->addProductByAdmin($data);
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'is_active' => 'required|boolean',
+            'category_name' => 'nullable|string|min:1|max:255',
+            'category_id' => 'nullable|exists:categories,id',
+            'img_url' => 'nullable|string|max:2048',
+    ]);
+            if (!$request->filled('category_id') && !$request->filled('category_name')) {
+                return response()->json(['message' => 'category_id or category_name is required'], 422);
+                }
+           
+            $product = $this->productService->addProductByAdmin($data);
+            
             return response()->json([
                 'message' => 'Product added successfully',
+                'product' => $product,
             ], 201);
 
         } catch (\Throwable $e) {
             return response()->json([
-                'message' => 'Failed to add product',
+                'message' => $e->getMessage(),
             ], 500);
         }
     }
@@ -116,9 +122,28 @@ class ProductController extends Controller
     {
 
         try {
-            $this->productService->editProductByAdmin($productId, $request);
+              $validated = $request->validate([
+                'name'          => 'sometimes|string|max:255',
+                // 'slug'          => 'sometimes|string|max:255|unique:products,slug,' . $productId,
+                'description'   => 'nullable|string',
+                'price'         => 'sometimes|numeric|min:0',
+                'stock'         => 'sometimes|integer|min:0',
+                'img_url'       => 'nullable|string|max:2048',
+                'is_active'     => 'sometimes|boolean',
+
+                // // category handling
+                // 'category_id'   => 'nullable|exists:categories,id',
+                'category_name' => 'nullable|string|max:255',
+            ]);
+            $product= $this->productService->editProductByAdmin($productId, $validated);
+            
+            if (!$product) {
+                
+                throw new ModelNotFoundException();
+            }
             return response()->json([
                 'message' => 'Product edited successfully',
+                'product' => $product,
             ], 200);
 
 
@@ -129,7 +154,7 @@ class ProductController extends Controller
 
         } catch (\Throwable $e) {
             return response()->json([
-                'message' => 'Failed to edit product',
+                'message' => $e->getMessage(),
             ], 500);
         }
     }
