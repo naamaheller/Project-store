@@ -51,7 +51,7 @@ class ProductFactory extends Factory
         ['name' => 'Herbal Green Tea Box', 'category' => 'food', 'price' => [15, 45]],
     ];
 
-     public function definition(): array
+    public function definition(): array
     {
         $product = $this->products[self::$index++ % count($this->products)];
 
@@ -61,13 +61,13 @@ class ProductFactory extends Factory
         );
 
         return [
-            'name'        => $product['name'],
-            'slug'        => Str::slug($product['name']),
+            'name' => $product['name'],
+            'slug' => Str::slug($product['name']),
             'description' => fake()->sentence(12),
-            'price'       => fake()->randomFloat(2, $product['price'][0], $product['price'][1]),
-            'img_url'     => fake()->imageUrl(640, 480, 'product'),
-            'stock'       => fake()->numberBetween(0, 100),
-            'is_active'   => fake()->boolean(85),
+            'price' => fake()->randomFloat(2, $product['price'][0], $product['price'][1]),
+            'img_url' => null,
+            'stock' => fake()->numberBetween(0, 100),
+            'is_active' => fake()->boolean(85),
             'category_id' => $category->id,
         ];
     }
