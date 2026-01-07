@@ -8,6 +8,7 @@ import { Input } from "@/app/components/ui/Input";
 import { ToggleSwitch } from "@/app/components/ui/ToggleSwitch"; // adjust path if different
 import { useProductStore } from "@/app/store/product.store";
 import { Check } from "lucide-react";
+import { ToastProvider } from "@/app/components/ui/Toast";
 
 type Props = {
   productId: number | null;
@@ -64,6 +65,7 @@ export function EditProductDrawer({ productId, open, onClose }: Props) {
       });
 
       onClose();
+
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to save");
     }

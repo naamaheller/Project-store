@@ -39,7 +39,7 @@ export function adminDeleteProduct(productId: number) {
 }
 export function adminEditProduct(
   productId: number,
-  productData: FormData
+  productData: ProductUpsertInput
 ) {
   return apiClient.put(`/admin/products/edit/${productId}`, productData);
 }
