@@ -132,7 +132,6 @@ export function CreateProductDrawer({ open, onClose }: Props) {
               <Button
                 type="button"
                 variant="outline"
-                size="sm"
                 onClick={() => {
                   setUseNewCategory((v) => !v);
                   setError(null);

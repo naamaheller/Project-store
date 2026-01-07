@@ -41,47 +41,60 @@ export default function AdminProductsPage() {
     loadProducts();
   }, [loadProducts]);
 
-  const columns = useMemo<Column<Product>[]>(() => [
-    {
-      key: "image",
-      header: "Image",
-      cell: (p) => (
-        <img src={p.img_url} alt={p.name} className="w-16 h-16 object-cover rounded-md" />
-      ),
-    },
-    { key: "name", header: "Name", cell: (p) => <span className="font-medium">{p.name}</span> },
-    { key: "price", header: "Price", cell: (p) => `₪${p.price}` },
-    { key: "category", header: "Category", cell: (p) => p.category?.name ?? "-" },
-    {
-      key: "actions",
-      header: "Actions",
-      className: "space-x-2",
-      cell: (p) => (
-        <div className="flex items-center gap-2">
-          <Button
-            size="icon"
-            variant="destructive"
-            onClick={() => {
-              selectProduct(p);
-              setEditingId(p.id);
-            }}
-            aria-label={`Edit ${p.name}`}
-          >
-            <Pencil className="h-4 w-4" />
-          </Button>
+  const columns = useMemo<Column<Product>[]>(
+    () => [
+      {
+        key: "image",
+        header: "Image",
+        cell: (p) => (
+          <img
+            src={p.img_url}
+            alt={p.name}
+            className="w-16 h-16 object-cover rounded-md"
+          />
+        ),
+      },
+      {
+        key: "name",
+        header: "Name",
+        cell: (p) => <span className="font-medium">{p.name}</span>,
+      },
+      { key: "price", header: "Price", cell: (p) => `₪${p.price}` },
+      {
+        key: "category",
+        header: "Category",
+        cell: (p) => p.category?.name ?? "-",
+      },
+      {
+        key: "actions",
+        header: "Actions",
+        className: "space-x-2",
+        cell: (p) => (
+          <div className="flex items-center gap-2">
+            <Button
+              variant="default"
+              onClick={() => {
+                selectProduct(p);
+                setEditingId(p.id);
+              }}
+              aria-label={`Edit ${p.name}`}
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
 
-          <Button
-            size="icon"
-            variant="destructive"
-            onClick={() => setDeletingModalId(p.id)}
-            aria-label={`Delete ${p.name}`}
-          >
-            <Trash2 className="h-4 w-4 text-error" />
-          </Button>
-        </div>
-      ),
-    },
-  ], [selectProduct]);
+            <Button
+              variant="default"
+              onClick={() => setDeletingModalId(p.id)}
+              aria-label={`Delete ${p.name}`}
+            >
+              <Trash2 className="h-4 w-4 text-error" />
+            </Button>
+          </div>
+        ),
+      },
+    ],
+    [selectProduct]
+  );
 
   return (
     <div className="flex flex-col min-h-screen gap-6">
