@@ -11,17 +11,14 @@ export interface ProductsResponse {
   total: number;
 }
 
+export function getProducts<T = ProductsResponse>(params?: { page?: number; per_page?: number }) {
 
-
-export function getProducts<T= ProductsResponse>(params?: { page?: number; per_page?: number }) {
- 
   const user = useAuthStore.getState().user;
-  const endpoint = user?.role === "admin" 
-    ? "/admin/products" 
+  const endpoint = user?.role === "admin"
+    ? "/admin/products"
     : "/products";
 
   return apiClient.get<T>(endpoint, { params });
-  // return apiClient.get<ProductsResponse>("/products", { params });
 }
 
 export function getAdminProducts(params?: { page?: number; per_page?: number }) {
@@ -34,12 +31,25 @@ export function getMaxPrice() {
 export function adminAddProduct(productData: ProductUpsertInput) {
   return apiClient.post("/admin/products/add", productData, );
 }
+
 export function adminDeleteProduct(productId: number) {
   return apiClient.delete(`/admin/products/delete/${productId}`);
 }
+
 export function adminEditProduct(
   productId: number,
   productData: ProductUpsertInput
 ) {
   return apiClient.put(`/admin/products/edit/${productId}`, productData);
 }
+
+export function uploadAdminProductImage(productId: number, formData: FormData) {
+  return apiClient.post(`/admin/products/${productId}/image`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+}
+
+export function deleteAdminProductImage(productId: number) {
+  return apiClient.delete(`/admin/products/${productId}/image`);
+}
+

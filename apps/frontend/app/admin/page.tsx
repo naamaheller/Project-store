@@ -46,23 +46,27 @@ export default function AdminProductsPage() {
       key: "image",
       header: "Image",
       cell: (p) => (
-        <img src={p.img_url} alt={p.name} className="w-16 h-16 object-cover rounded-md" />
+        <img
+          src={p.image_url ?? "/placeholder.png"}
+          alt={p.name}
+          className="w-16 h-16 object-cover rounded-md"
+        />
       ),
     },
     {
-  key: "name",
-  header: "Name",
-  className: "text-left",
-  cell: (p) => (
-    <span className="font-medium text-left block">
-      {p.name}
-    </span>
-  ),
-},
-    {key:"description", header:"Description", cell:(p) => p.description},
+      key: "name",
+      header: "Name",
+      className: "text-left",
+      cell: (p) => (
+        <span className="font-medium text-left block">
+          {p.name}
+        </span>
+      ),
+    },
+    { key: "description", header: "Description", cell: (p) => p.description },
     { key: "price", header: "Price", cell: (p) => `₪${p.price}` },
     { key: "category", header: "Category", cell: (p) => p.category?.name ?? "-" },
-      {
+    {
       key: "is_active",
       header: "Active",
       cell: (p) => (
@@ -80,7 +84,7 @@ export default function AdminProductsPage() {
     {
       key: "actions",
       header: "Actions",
-      className: "text-right w-[140px]", 
+      className: "text-right w-[140px]",
       cell: (p) => (
         <div className="flex items-center justify-end gap-2">
           <Button
@@ -94,80 +98,80 @@ export default function AdminProductsPage() {
             <Pencil className="h-4 w-4" />
           </Button>
 
-            <Button
-              variant="default"
-              onClick={() => setDeletingModalId(p.id)}
-              aria-label={`Delete ${p.name}`}
-            >
-              <Trash2 className="h-4 w-4 text-error" />
-            </Button>
-          </div>
-        ),
-      },
-    ],
+          <Button
+            variant="default"
+            onClick={() => setDeletingModalId(p.id)}
+            aria-label={`Delete ${p.name}`}
+          >
+            <Trash2 className="h-4 w-4 text-error" />
+          </Button>
+        </div>
+      ),
+    },
+  ],
     [selectProduct]
   );
 
- return (
-  <div className="min-h-screen flex flex-col">
-    {/* Top controls */}
-    <div className="px-4 pt-4">
-      <div className="flex justify-center">
-        <Button
-          variant="outline"
-          onClick={() => setCreateOpen(true)}
-          
-          aria-label="Create product"
-        >
-          <Plus className="h-4 w-4" />
-          <span> Create Product </span>
-        </Button>
-      </div>
-    </div>
+  return (
+    <div className="min-h-screen flex flex-col">
+      {/* Top controls */}
+      <div className="px-4 pt-4">
+        <div className="flex justify-center">
+          <Button
+            variant="outline"
+            onClick={() => setCreateOpen(true)}
 
-    {/* Content grows to push footer down */}
-    <main className="flex-1 px-4 py-4 overflow-hidden">
-  <div className="h-full overflow-auto">
-      <Table<Product>
-        columns={columns}
-        rows={products}
-        rowKey={(p) => p.id}
-        loading={loading}
-        emptyTitle="No products"
-        emptyDescription="Start by creating your first product"
+            aria-label="Create product"
+          >
+            <Plus className="h-4 w-4" />
+            <span> Create Product </span>
+          </Button>
+        </div>
+      </div>
+
+      {/* Content grows to push footer down */}
+      <main className="flex-1 px-4 py-4 overflow-hidden">
+        <div className="h-full overflow-auto">
+          <Table<Product>
+            columns={columns}
+            rows={products}
+            rowKey={(p) => p.id}
+            loading={loading}
+            emptyTitle="No products"
+            emptyDescription="Start by creating your first product"
+          />
+        </div>
+      </main>
+
+      {/* Footer always at bottom */}
+      <footer className="mt-auto  bottom-0 z-10 border-t border-border bg-background">
+        <div className="container mx-auto px-4 py-2">
+          <Pagination
+            page={page}
+            pageSize={pageSize}
+            total={total}
+            onPageChange={setPage}
+            onPageSizeChange={setPageSize}
+          />
+        </div>
+      </footer>
+
+      <CreateProductDrawer open={createOpen} onClose={() => setCreateOpen(false)} />
+
+      <EditProductDrawer
+        open={editingId !== null}
+        productId={editingId}
+        onClose={() => {
+          setEditingId(null);
+          clearSelectedProduct();
+        }}
       />
-      </div>
-    </main>
 
-    {/* Footer always at bottom */}
-   <footer className="mt-auto  bottom-0 z-10 border-t border-border bg-background">
-  <div className="container mx-auto px-4 py-2">
-    <Pagination
-      page={page}
-      pageSize={pageSize}
-      total={total}
-      onPageChange={setPage}
-      onPageSizeChange={setPageSize}
-    />
-  </div>
-</footer>
-
-    <CreateProductDrawer open={createOpen} onClose={() => setCreateOpen(false)} />
-
-    <EditProductDrawer
-      open={editingId !== null}
-      productId={editingId}
-      onClose={() => {
-        setEditingId(null);
-        clearSelectedProduct();
-      }}
-    />
-
-    <DeleteProductModal
-      open={deletingModalId !== null}
-      productId={deletingModalId}
-      onClose={() => setDeletingModalId(null)}
-    />
-  </div>
-);
+      <DeleteProductModal
+        open={deletingModalId !== null}
+        productId={deletingModalId}
+        onClose={() => setDeletingModalId(null)}
+      />
+    </div>
+  );
 }
