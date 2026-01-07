@@ -9,17 +9,13 @@ class CookieTokenToBearer
 {
     public function handle(Request $request, Closure $next)
     {
-        if ($request->headers->has('Authorization')) {
-            return $next($request);
+        if (!$request->headers->has('Authorization')) {
+            $token = $request->cookie('access_token');
+
+            if ($token) {
+                $request->headers->set('Authorization', 'Bearer ' . $token);
+            }
         }
-
-        $token = $request->cookie('access_token');
-        if (!$token) {
-            return $next($request); 
-        }
-
-        $request->headers->set('Authorization', 'Bearer ' . $token);
-
         \Log::info('cookieAuth debug', [
             'cookie_token_exists' => (bool) $request->cookie('access_token'),
             'cookie_token_first10' => substr((string) $request->cookie('access_token'), 0, 10),
