@@ -47,7 +47,7 @@ export default function Header() {
                                 onClick={async () => {
                                     if (loading) return;
                                     await logout();
-                                    router.replace("/pages/login");
+                                    router.replace("/pages/auth/login");
                                 }}
                                 aria-label="Logout"
                                 title="Logout"
