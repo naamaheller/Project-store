@@ -21,7 +21,7 @@ export default function ProductPage() {
   const searchParams = useSearchParams();
 
   const { user, checking, ready } = useAuthStore();
-  const isAdmin = user?.role === "admin";
+  const isAdmin = user?.roles.includes("admin");
 
   const {
     products,
@@ -173,7 +173,11 @@ export default function ProductPage() {
           </div>
 
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
+            <div className="grid gap-4 sm:gap-6 lg:gap-8
+                grid-cols-1
+                sm:grid-cols-2
+                md:grid-cols-3
+                lg:grid-cols-4">
               {loadingPage &&
                 Array.from({ length: pageSize }).map((_, i) => (
                   <ProductCardSkeleton key={i} />

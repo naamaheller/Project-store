@@ -29,7 +29,6 @@ type ProductStore = {
 
   deletingId: number | null;
   saving: boolean;
-  updateProduct: (id: number, data: ProductUpsertInput) => Promise<Product>;
 
   deleteProduct: (id: number) => Promise<void>;
   createProduct: (data: any) => Promise<Product>;
@@ -66,7 +65,7 @@ const initialProductState = {
   selectedProduct: null,
 
   page: 1,
-  pageSize: 5,
+  pageSize: 12,
   total: 0,
 
   filters: {
@@ -94,7 +93,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
   selectedProduct: null,
 
   page: 1,
-  pageSize: 5,
+  pageSize: 12,
   total: 0,
 
   filters: {

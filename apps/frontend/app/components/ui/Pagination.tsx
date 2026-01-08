@@ -89,7 +89,7 @@ export function Pagination({
     total,
     onPageChange,
     onPageSizeChange,
-    pageSizeOptions = [5, 10, 20, 50],
+    pageSizeOptions = [12, 20, 24, 40],
     className,
 }: PaginationProps) {
     const totalPages = Math.max(1, Math.ceil(total / pageSize));
