@@ -12,6 +12,7 @@ import type { Product } from "@/app/models/product.model";
 import { EditProductDrawer } from "./components/EditProductDrawer";
 import { DeleteProductModal } from "./components/DeleteProductModal";
 import { CreateProductDrawer } from "./components/CreateProductDrawer";
+import { ROUTES } from "../config/routes.config";
 
 export default function AdminProductsPage() {
   const router = useRouter();
@@ -117,7 +118,7 @@ export default function AdminProductsPage() {
       <div className="px-4 pt-4">
         <div className="flex items-center justify-between gap-3">
           <button
-            onClick={() => router.push("/pages/public/product")}
+            onClick={() => router.push(ROUTES.public.products)}
             className="
     p-1
     text-text-muted
