@@ -21,7 +21,7 @@ export default function ProductPage() {
   const searchParams = useSearchParams();
 
   const { user, checking, ready } = useAuthStore();
-  const isAdmin = user?.role === "admin";
+  const isAdmin = user?.roles.includes("admin");
 
   const {
     products,
