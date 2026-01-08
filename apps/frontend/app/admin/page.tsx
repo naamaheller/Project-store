@@ -11,7 +11,7 @@ import { Pagination } from "@/app/components/ui/Pagination";
 import type { Product } from "@/app/models/product.model";
 import { EditProductDrawer } from "./components/EditProductDrawer";
 import { DeleteProductModal } from "./components/DeleteProductModal";
-import { CreateProductDrawer } from "./components/CreateProductDrawer"; 
+import { CreateProductDrawer } from "./components/CreateProductDrawer";
 
 export default function AdminProductsPage() {
   const router = useRouter();
@@ -116,15 +116,21 @@ export default function AdminProductsPage() {
       {/* Top controls */}
       <div className="px-4 pt-4">
         <div className="flex items-center justify-between gap-3">
-          <Button
-            variant="outline"
-            onClick={() => router.push("/pages/public/product")} 
-            className="flex items-center gap-2"
+          <button
+            onClick={() => router.push("/pages/public/product")}
+            className="
+    p-1
+    text-text-muted
+hover:text-primary
+    transition
+    focus:outline-none
+  "
             aria-label="Back to products"
+            title="Back to products"
           >
-            <ArrowLeft className="h-4 w-4" />
-            <span>Back to Products</span>
-          </Button>
+            <ArrowLeft className="h-6 w-6" />
+          </button>
+
 
           <Button
             variant="outline"
@@ -141,14 +147,16 @@ export default function AdminProductsPage() {
 
       {/* Content grows to push footer down */}
       <main className="flex-1 px-4 py-4 overflow-hidden">
-        <div className="h-full overflow-auto">
+        <div className="h-full">
           <Table<Product>
             columns={columns}
             rows={products}
             rowKey={(p) => p.id}
             loading={loading}
+            skeletonRows={12}
             emptyTitle="No products"
             emptyDescription="Start by creating your first product"
+            className="h-full"
           />
         </div>
       </main>

@@ -9,31 +9,36 @@ interface Props {
 export function ProductCard({ product, onClick }: Props) {
   return (
     <Card
-      className="hover:shadow-lg transition cursor-pointer"
+      className="
+  group w-full cursor-pointer
+  transition-all duration-300 ease-out
+  hover:-translate-y-1
+  hover:shadow-xl
+  hover:scale-[1.02]
+"
       onClick={() => onClick(product)}
     >
-      <CardContent className="flex flex-col gap-4 p-5">
+      <CardContent className="flex flex-col gap-3 p-4 sm:p-5">
         {/* image */}
-        <div className="aspect-[4/3] bg-background-muted rounded-md overflow-hidden flex items-center justify-center">
+        <div className="h-32 sm:h-40 md:h-44 flex items-center justify-center">
           {product.image_url ? (
             <img
               src={product.image_url}
               alt={product.name}
-              className="h-full w-full object-cover"
+              className="max-h-full w-auto object-contain"
             />
           ) : (
             <span className="text-text-muted text-sm">No image</span>
           )}
         </div>
 
-
         {/* text */}
-        <div className="flex flex-col gap-1.5">
-          <h2 className="text-lg font-semibold text-text leading-snug line-clamp-2">
+        <div className="flex flex-col gap-1">
+          <h2 className="text-base sm:text-lg font-semibold text-text leading-snug line-clamp-2">
             {product.name}
           </h2>
 
-          <p className="text-base font-medium text-text-muted">
+          <p className="text-sm sm:text-base font-medium text-text-muted">
             ₪{product.price}
           </p>
         </div>
@@ -41,3 +46,4 @@ export function ProductCard({ product, onClick }: Props) {
     </Card>
   );
 }
+

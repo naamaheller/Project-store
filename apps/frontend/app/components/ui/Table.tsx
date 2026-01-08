@@ -29,7 +29,7 @@ export function Table<T>({
     rows,
     rowKey,
     loading = false,
-    skeletonRows = 5,
+    skeletonRows = 12,
     emptyTitle = 'אין נתונים להצגה',
     emptyDescription = 'נסי לשנות פילטרים או להוסיף פריטים חדשים.',
     className,
@@ -37,11 +37,11 @@ export function Table<T>({
     return (
         <div
             className={[
-                'w-full overflow-hidden rounded-lg border border-border bg-surface',
+                'relative w-full h-full min-h-[520px] overflow-hidden rounded-lg border border-border bg-surface',
                 className ?? '',
             ].join(' ')}
         >
-            <div className="w-full overflow-auto">
+            <div className="w-full h-full overflow-auto">
                 <table className="w-full text-left">
                     <thead className="bg-background-muted">
                         <tr>
@@ -49,7 +49,7 @@ export function Table<T>({
                                 <th
                                     key={col.key}
                                     className={[
-                                        'px-4 py-3 text-sm font-semibold text-text border-b border-border ',
+                                        'px-4 py-4 text-sm font-semibold text-text border-b border-border ',
                                         col.headerClassName ?? '',
                                     ].join(' ')}
                                 >
@@ -64,8 +64,8 @@ export function Table<T>({
                             Array.from({ length: skeletonRows }).map((_, i) => (
                                 <tr key={`sk-${i}`} className="border-b border-border last:border-b-0">
                                     {columns.map((col) => (
-                                        <td key={`${col.key}-${i}`} className="px-4 py-3">
-                                            <Skeleton className="h-4 w-full" />
+                                        <td key={`${col.key}-${i}`} className="px-4 py-5">
+                                            <Skeleton className="h-6 w-full" />
                                         </td>
                                     ))}
                                 </tr>
@@ -73,11 +73,7 @@ export function Table<T>({
                         ) : rows.length === 0 ? (
                             <tr>
                                 <td colSpan={columns.length} className="px-6 py-10">
-                                    <EmptyState
-                                        icon="📭"
-                                        title={emptyTitle}
-                                        description={emptyDescription}
-                                    />
+                                    <EmptyState icon="📭" title={emptyTitle} description={emptyDescription} />
                                 </td>
                             </tr>
                         ) : (
@@ -90,9 +86,9 @@ export function Table<T>({
                                         <td
                                             key={col.key}
                                             className={[
-                                                'px-4 py-3 text-sm text-text align-middle text-left',
-                                                col.className ?? '',
-                                            ].join(' ')}
+                                                "px-4 py-5 text-sm text-text align-middle text-left",
+                                                col.className ?? "",
+                                            ].join(" ")}
                                         >
                                             {col.cell(row)}
                                         </td>
