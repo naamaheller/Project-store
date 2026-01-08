@@ -22,7 +22,7 @@ export function AdminGuard({ children }: { children: React.ReactNode }) {
     if (!ready || loading) return;
 
     if (!user) {
-      router.replace("/pages/auth/login");
+      router.replace(ROUTES.auth.login);
     } else if (!isAdmin) {
       router.replace("/");
     }
