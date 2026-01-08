@@ -22,7 +22,7 @@ export function DeleteProductModal({ open, productId, onClose }: Props) {
   return (
     <Modal
       open={open}
-      onClose={isDeleting ? () => {} : onClose}
+      onClose={isDeleting ? () => { } : onClose}
       title="Delete product"
       footer={
         <>

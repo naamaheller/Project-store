@@ -1,6 +1,4 @@
 'use client';
-// קומפוננטת Alert להצגת הודעות מערכת קבועות בתוך העמוד.
-// תומכת בוריאנטים (success / warning / error / info) ובסגירה ידנית.
 
 import type { ReactNode } from 'react';
 

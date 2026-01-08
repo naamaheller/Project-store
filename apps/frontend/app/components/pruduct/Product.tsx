@@ -19,7 +19,6 @@ export function ProductCard({ product, onClick }: Props) {
       onClick={() => onClick(product)}
     >
       <CardContent className="flex flex-col gap-3 p-4 sm:p-5">
-        {/* image */}
         <div className="h-32 sm:h-40 md:h-44 flex items-center justify-center">
           {product.image_url ? (
             <img
@@ -32,7 +31,6 @@ export function ProductCard({ product, onClick }: Props) {
           )}
         </div>
 
-        {/* text */}
         <div className="flex flex-col gap-1">
           <h2 className="text-base sm:text-lg font-semibold text-text leading-snug line-clamp-2">
             {product.name}

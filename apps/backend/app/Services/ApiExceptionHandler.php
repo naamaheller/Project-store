@@ -23,13 +23,14 @@ class ApiExceptionHandler
         private ApiErrorFormatter $formatter,
         private ExceptionReporter $reporter,
         private array $config
-    ) {}
+    ) {
+    }
 
     public function handle(Throwable $e, Request $request): JsonResponse
     {
         $rule = $this->matchRule($e);
-        $logLevel = (string)($rule['log'] ?? 'warning');
-        $logMessage = (string)($rule['log_message'] ?? 'API exception');
+        $logLevel = (string) ($rule['log'] ?? 'warning');
+        $logMessage = (string) ($rule['log_message'] ?? 'API exception');
 
         [$status, $type, $message, $extraPayload, $extraLogContext] = $this->resolvePayload($e, $request, $rule);
 
@@ -48,7 +49,6 @@ class ApiExceptionHandler
             message: $message
         );
 
-        // Merge in parity fields like validation_errors / allowed_methods
         $payload = array_merge($payload, $extraPayload);
 
         return $this->responses->json($payload, $status);
@@ -71,22 +71,17 @@ class ApiExceptionHandler
             'log_message' => 'Unhandled exception',
         ];
     }
-
-    /**
-     * Returns: [status, type, message, extraPayload, extraLogContext]
-     */
     private function resolvePayload(Throwable $e, Request $request, array $rule): array
     {
         $default = $this->config['default'] ?? [];
 
         $type = $this->getExceptionType($e, $rule, $default);
 
-        // Validation (parity: validation_errors flattened list)
         if ($e instanceof ValidationException) {
             $errors = $this->flattenValidationErrors($e);
 
             $status = 422;
-            $message = (string)($rule['message'] ?? 'The provided data is invalid.');
+            $message = (string) ($rule['message'] ?? 'The provided data is invalid.');
 
             return [
                 $status,
@@ -97,23 +92,20 @@ class ApiExceptionHandler
             ];
         }
 
-        // Authentication (AuthenticationException OR AccessDeniedHttpException treated as 401)
         if ($e instanceof AuthenticationException || $e instanceof AccessDeniedHttpException) {
             $status = 401;
-            $message = (string)($rule['message'] ?? 'Authentication required. Please provide valid credentials.');
+            $message = (string) ($rule['message'] ?? 'Authentication required. Please provide valid credentials.');
 
             return [$status, $type, $message, [], []];
         }
 
-        // AuthorizationException => 403
         if ($e instanceof AuthorizationException) {
             $status = 403;
-            $message = (string)($rule['message'] ?? 'You do not have permission to perform this action.');
+            $message = (string) ($rule['message'] ?? 'You do not have permission to perform this action.');
 
             return [$status, $type, $message, [], []];
         }
 
-        // Not found: ModelNotFoundException / NotFoundHttpException
         if ($e instanceof ModelNotFoundException || $e instanceof NotFoundHttpException) {
             $status = 404;
 
@@ -124,7 +116,6 @@ class ApiExceptionHandler
             return [$status, $type, $message, [], []];
         }
 
-        // Method not allowed: parity includes allowed_methods
         if ($e instanceof MethodNotAllowedHttpException) {
             $status = 405;
             $message = "The {$request->method()} method is not allowed for this endpoint.";
@@ -139,7 +130,6 @@ class ApiExceptionHandler
             ];
         }
 
-        // QueryException: parity branching by MySQL error codes, log sql
         if ($e instanceof QueryException) {
             $sql = method_exists($e, 'getSql') ? $e->getSql() : null;
             $errorCode = $e->errorInfo[1] ?? null;
@@ -178,7 +168,6 @@ class ApiExceptionHandler
             ];
         }
 
-        // HttpException: parity uses status code and message fallback
         if ($e instanceof HttpException) {
             $status = $e->getStatusCode();
             $message = $e->getMessage() ?: 'An HTTP error occurred.';
@@ -186,17 +175,14 @@ class ApiExceptionHandler
             return [$status, $type, $message, [], []];
         }
 
-        // Default fallback
-        $status = (int)($rule['status'] ?? $default['status'] ?? 500);
-        $message = (string)($rule['message'] ?? $default['message'] ?? 'Server Error');
+        $status = (int) ($rule['status'] ?? $default['status'] ?? 500);
+        $message = (string) ($rule['message'] ?? $default['message'] ?? 'Server Error');
 
         return [$status, $type, $message, [], []];
     }
 
     private function getExceptionType(Throwable $e, array $rule, array $default): string
     {
-        // Maintain parity with your original handler: class basename
-        // (rule 'type' exists but we keep original behavior as source of truth)
         $className = basename(str_replace('\\', '/', get_class($e)));
         return $className;
     }

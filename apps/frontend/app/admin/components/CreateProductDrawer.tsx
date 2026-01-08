@@ -1,4 +1,3 @@
-// components/CreateProductDrawer.tsx
 "use client";
 
 import { useEffect, useMemo, useState, useRef } from "react";
@@ -19,7 +18,7 @@ export function CreateProductDrawer({ open, onClose }: Props) {
     categories,
     loadingCategories,
     saving,
-    loadFiltersData, // loads categories already in your store
+    loadFiltersData,
     createProduct,
     uploadProductImage,
   } = useProductStore();
@@ -32,18 +31,14 @@ export function CreateProductDrawer({ open, onClose }: Props) {
   const [isActive, setIsActive] = useState(true);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-
-  // category
   const [useNewCategory, setUseNewCategory] = useState(false);
   const [categoryId, setCategoryId] = useState<number | "">("");
   const [newCategoryName, setNewCategoryName] = useState("");
-
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!open) return;
-    loadFiltersData(); // ensures categories are loaded
+    loadFiltersData();
   }, [open, loadFiltersData]);
 
   useEffect(() => {
@@ -79,7 +74,7 @@ export function CreateProductDrawer({ open, onClose }: Props) {
         description,
         price,
         stock,
-        is_active: isActive ? 1 : 0, 
+        is_active: isActive ? 1 : 0,
       };
 
       if (useNewCategory) {
@@ -89,10 +84,10 @@ export function CreateProductDrawer({ open, onClose }: Props) {
         payload.category_id = Number(categoryId);
       }
 
-      const created = await createProduct(payload); 
+      const created = await createProduct(payload);
 
       if (imageFile) {
-        await uploadProductImage(created.id, imageFile); 
+        await uploadProductImage(created.id, imageFile);
         setImageFile(null);
         if (fileInputRef.current) fileInputRef.current.value = "";
       }
@@ -132,7 +127,6 @@ export function CreateProductDrawer({ open, onClose }: Props) {
             />
           </div>
 
-          {/* Category chooser */}
           <div className="flex w-full flex-col gap-2">
             <div className="flex items-center justify-between">
               <label className="text-sm font-medium text-text">Category</label>
@@ -203,12 +197,10 @@ export function CreateProductDrawer({ open, onClose }: Props) {
             />
           </div>
 
-          {/* Upload Image */}
           <div className="flex w-full flex-col gap-1.5">
             <label className="text-sm font-medium text-text">Product Image</label>
 
             <div className="flex flex-col items-center gap-2">
-              {/* Preview */}
               <div className="aspect-[4/3] w-48 overflow-hidden rounded-md border border-border bg-background-muted flex items-center justify-center">
                 {imageFile ? (
                   <img
@@ -222,7 +214,6 @@ export function CreateProductDrawer({ open, onClose }: Props) {
                 )}
               </div>
 
-              {/* Hidden input */}
               <input
                 ref={fileInputRef}
                 type="file"
@@ -232,12 +223,10 @@ export function CreateProductDrawer({ open, onClose }: Props) {
                 onChange={(e) => setImageFile(e.target.files?.[0] ?? null)}
               />
 
-              {/* Filename */}
               <div className="text-xs text-text-muted truncate max-w-[180px] text-center">
                 {imageFile ? imageFile.name : "JPG / PNG / WebP"}
               </div>
 
-              {/* Buttons under image */}
               <div className="flex items-center justify-center gap-2">
                 <Button
                   type="button"

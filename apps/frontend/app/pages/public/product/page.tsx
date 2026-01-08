@@ -165,7 +165,6 @@ export default function ProductPage() {
 
           <main className="flex-1">
             <div className="flex items-center gap-3 mb-6">
-              {/* צד שמאל – Filters במובייל */}
               <div className="lg:hidden">
                 <Button
                   onClick={() => setFiltersOpen(true)}
@@ -233,7 +232,6 @@ export default function ProductPage() {
         </div>
       </div>
 
-      {/* footer */}
       <footer className="border-t border-border bg-background">
         <div className="container mx-auto px-4 py-[2px]">
           <Pagination

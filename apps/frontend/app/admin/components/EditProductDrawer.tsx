@@ -5,7 +5,7 @@ import { useEffect, useState, useRef } from "react";
 import { Drawer } from "@/app/components/ui/Drawer";
 import { Button } from "@/app/components/ui/Button";
 import { Input } from "@/app/components/ui/Input";
-import { ToggleSwitch } from "@/app/components/ui/ToggleSwitch"; // adjust path if different
+import { ToggleSwitch } from "@/app/components/ui/ToggleSwitch";
 import { useProductStore } from "@/app/store/product.store";
 import { Check } from "lucide-react";
 import { ToastProvider } from "@/app/components/ui/Toast";
@@ -17,7 +17,7 @@ type Props = {
 };
 
 export function EditProductDrawer({ productId, open, onClose }: Props) {
-  const { selectedProduct, saving, uploadProductImage, deleteProductImage,updateProduct } = useProductStore();
+  const { selectedProduct, saving, uploadProductImage, deleteProductImage, updateProduct } = useProductStore();
 
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
@@ -147,12 +147,10 @@ export function EditProductDrawer({ productId, open, onClose }: Props) {
               />
             </div>
 
-            {/* Upload Image */}
             <div className="flex w-full flex-col gap-1.5">
               <label className="text-sm font-medium text-text">Product Image</label>
 
               <div className="flex flex-col items-center gap-2">
-                {/* Preview */}
                 <div className="aspect-[4/3] w-48 overflow-hidden rounded-md border border-border bg-background-muted flex items-center justify-center">
                   {imageFile ? (
                     <img
@@ -173,7 +171,6 @@ export function EditProductDrawer({ productId, open, onClose }: Props) {
 
                 </div>
 
-                {/* Hidden input */}
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -183,7 +180,6 @@ export function EditProductDrawer({ productId, open, onClose }: Props) {
                   onChange={(e) => setImageFile(e.target.files?.[0] ?? null)}
                 />
 
-                {/* Filename */}
                 <div className="text-xs text-text-muted truncate max-w-[180px] text-center">
                   {imageFile
                     ? imageFile.name
@@ -192,8 +188,6 @@ export function EditProductDrawer({ productId, open, onClose }: Props) {
                       : "JPG / PNG / WebP"}
                 </div>
 
-
-                {/* Buttons under image */}
                 <div className="flex items-center justify-center gap-2">
                   <Button
                     type="button"
@@ -231,7 +225,6 @@ export function EditProductDrawer({ productId, open, onClose }: Props) {
               </div>
             </div>
 
-            {/* Toggle for Active */}
             <ToggleSwitch
               name="is_active"
               label="Active"

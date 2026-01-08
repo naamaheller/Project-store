@@ -12,10 +12,6 @@ use Illuminate\Support\Facades\DB;
 
 class ProductService
 {
-    /**
-     * only for admin users
-     * get all products with no restrictions
-     */
     public function getAllProductsForAdmin(Request $request)
     {
         try {
@@ -35,11 +31,6 @@ class ProductService
             ], 500);
         }
     }
-
-    /**
-     * only for regular users
-     * only active products in stock 
-     */
     public function getActiveProducts(Request $request)
     {
         try {
@@ -59,34 +50,29 @@ class ProductService
             ], 500);
         }
     }
-    /**
-     * only for admin users
-     * add a new product
-     * 
-     */
     public function addProductByAdmin(array $data)
     {
         return DB::transaction(function () use ($data) {
-        $categoryName = trim((string)($data['category_name'] ?? ''));
+            $categoryName = trim((string) ($data['category_name'] ?? ''));
 
-        if ($categoryName !== '') {
-            $category = Category::firstOrCreate(
-                ['slug' => Str::slug($categoryName)],
-                ['name' => ucfirst($categoryName)]
-            );
+            if ($categoryName !== '') {
+                $category = Category::firstOrCreate(
+                    ['slug' => Str::slug($categoryName)],
+                    ['name' => ucfirst($categoryName)]
+                );
 
-            $data['category_id'] = $category->id;
-        }
-        unset($data['category_name']);
+                $data['category_id'] = $category->id;
+            }
+            unset($data['category_name']);
 
 
-        $slug = Str::slug($data['name']);
+            $slug = Str::slug($data['name']);
 
-        if (Product::where('slug', $slug)->exists()) {
-            $slug .= '-' . uniqid();
-        }
-        $data['slug'] = $slug;
-        return Product::create($data);
+            if (Product::where('slug', $slug)->exists()) {
+                $slug .= '-' . uniqid();
+            }
+            $data['slug'] = $slug;
+            return Product::create($data);
         });
     }
 
@@ -131,31 +117,20 @@ class ProductService
 
         return $query;
     }
-
-    /*
-     * only for admin users
-     * delete a product
-     */
     public function deleteProductByAdmin(int $productId)
-    { 
-        
+    {
+
         $product = Product::findOrFail($productId);
         $product->delete();
-           
-       
-    }
 
-    /*
-     * only for admin users
-     * edit a product
-     * also category if needed
-     */
+
+    }
     public function editProductByAdmin(int $productId, array $data): Product
-    {   
+    {
 
         $product = Product::query()->findOrFail($productId);
 
-       
+
         $categoryName = trim((string) Arr::get($data, 'category_name', ''));
         if ($categoryName !== '') {
             $category = Category::query()->firstOrCreate(
@@ -168,9 +143,9 @@ class ProductService
         unset($data['category_name']);
         $data['slug'] = Str::slug($data['name'] ?? $product->name);
 
-       
 
-        
+
+
         $allowed = [
             'name',
             'slug',
@@ -185,12 +160,8 @@ class ProductService
         $product->update(Arr::only($data, $allowed));
 
         return $product->fresh(['category']);
-   
-    }
 
-    /*`
-     * get max price of products
-     */
+    }
     public function getMaxPrice()
     {
         try {
@@ -199,7 +170,7 @@ class ProductService
         } catch (Throwable $e) {
             return response()->json([
                 'message' => 'Failed to fetch max price',
-                'error'   => $e->getMessage(),
+                'error' => $e->getMessage(),
             ], 500);
         }
     }

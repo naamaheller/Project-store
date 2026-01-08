@@ -8,7 +8,7 @@ export interface Product {
   price: number;
   stock: number;
   is_active: boolean;
-  img_url?: string | null;     
+  img_url?: string | null;
   image_url?: string | null;
   category_id: number;
   category?: Category;
@@ -16,7 +16,7 @@ export interface Product {
   updated_at: string;
 }
 export type ProductUpsertInput = Partial<Omit<Product, "id">> & {
-  category_name?: string; 
+  category_name?: string;
 }
 
 export interface ProductFilters {

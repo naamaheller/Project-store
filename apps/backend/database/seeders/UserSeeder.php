@@ -8,16 +8,12 @@ use App\Models\User;
 
 class UserSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         User::factory()
             ->admin()
             ->create();
 
-        // Create 10 normal users
         User::factory()
             ->count(10)
             ->create();

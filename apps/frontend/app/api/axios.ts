@@ -1,5 +1,3 @@
-// app/api/axios.ts
-
 import axios from "axios";
 import { normalizeApiError } from "./normalize-api-error";
 
@@ -14,7 +12,6 @@ const apiClient = axios.create({
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Attach normalized error for all callers
     (error as any).apiError = normalizeApiError(error);
     return Promise.reject(error);
   }

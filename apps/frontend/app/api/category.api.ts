@@ -9,7 +9,7 @@ export async function getCategories() {
     try {
         return await apiClient.get<Category[]>("/categories");
     } catch (err: any) {
-        throw err.apiError; 
+        throw err.apiError;
     }
-    
+
 }

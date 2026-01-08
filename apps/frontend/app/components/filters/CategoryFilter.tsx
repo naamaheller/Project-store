@@ -18,7 +18,7 @@ export function FilterCategory({
   selected,
   onChange,
 }: CategoryProps) {
-  
+
 
   return (
     <div>

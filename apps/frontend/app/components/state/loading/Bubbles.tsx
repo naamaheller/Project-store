@@ -11,10 +11,9 @@ export function BackgroundBubbles() {
           className={`
             absolute rounded-full
             bg-[rgba(111,174,62,0.35)]
-            ${
-              bubble.from === "top"
-                ? "top-[-120px] animate-[fallDown_linear_infinite]"
-                : "bottom-[-120px] animate-[riseUp_linear_infinite]"
+            ${bubble.from === "top"
+              ? "top-[-120px] animate-[fallDown_linear_infinite]"
+              : "bottom-[-120px] animate-[riseUp_linear_infinite]"
             }
           `}
           style={{

@@ -1,6 +1,4 @@
 'use client';
-// קומפוננטת Select כללית עם label, placeholder וטיפול בשגיאות.
-// תומכת ברשימת אפשרויות ונגישות מלאה.
 
 import type { SelectHTMLAttributes } from 'react';
 

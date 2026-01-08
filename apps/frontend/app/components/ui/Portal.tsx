@@ -1,6 +1,4 @@
 'use client';
-// קומפוננטת Portal לציור תוכן מחוץ לעץ הרגיל של React.
-// מאפשרת הצגת Modal / Drawer / Toast מעל כל התוכן.
 
 import { createPortal } from 'react-dom';
 import { ReactNode, useEffect, useState } from 'react';

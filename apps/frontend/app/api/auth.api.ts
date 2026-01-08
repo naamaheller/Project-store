@@ -27,29 +27,29 @@ export async function loginApi(payload: LoginPayload) {
 export async function registerApi(payload: RegisterPayload) {
   try {
     const { data } = await apiClient.post<{ message: string; user: User }>(
-    "/auth/register",
-    payload
-  );
-  return data;
+      "/auth/register",
+      payload
+    );
+    return data;
   } catch (err: any) {
     throw err.apiError;
   }
-  
+
 }
 
 export async function meApi() {
   try {
-  const { data } = await apiClient.get<{ user: User }>("/auth/me");
-  return data;
+    const { data } = await apiClient.get<{ user: User }>("/auth/me");
+    return data;
   } catch (err: any) {
     throw err.apiError;
   }
 }
 
 export async function logoutApi() {
-  try{
-  const { data } = await apiClient.post<{ message: string }>("/auth/logout");
-  return data;
+  try {
+    const { data } = await apiClient.post<{ message: string }>("/auth/logout");
+    return data;
   } catch (err: any) {
     throw err.apiError;
   }

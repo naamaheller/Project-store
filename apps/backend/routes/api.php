@@ -63,11 +63,11 @@ Route::prefix('v1')->group(function () {
                 '/admin/products/{productId}/image',
                 [ProductImageController::class, 'destroy']
             );
-            
+
         });
     });
 });
-Route::get('/test/401', fn () => abort(401, 'Unauthenticated'));
-Route::get('/test/403', fn () => abort(403, 'Forbidden'));
-Route::get('/test/404', fn () => abort(404, 'Not Found'));
-Route::get('/test/500', fn () => throw new Exception('Boom'));
+Route::get('/test/401', fn() => abort(401, 'Unauthenticated'));
+Route::get('/test/403', fn() => abort(403, 'Forbidden'));
+Route::get('/test/404', fn() => abort(404, 'Not Found'));
+Route::get('/test/500', fn() => throw new Exception('Boom'));

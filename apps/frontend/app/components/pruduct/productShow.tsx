@@ -22,7 +22,6 @@ export function ProductShowModal() {
   return (
     <Modal open={true} onClose={() => selectProduct(null)} title={product.name}>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Image */}
         <div className="rounded-lg border border-border bg-background-muted/60 p-4">
           <div className="aspect-square rounded-md bg-background-muted flex items-center justify-center text-text-muted overflow-hidden">
             {product.image_url ? (
@@ -38,9 +37,7 @@ export function ProductShowModal() {
           </div>
         </div>
 
-        {/* Details */}
         <div className="flex flex-col gap-4">
-          {/* Title + Category badge */}
           <div className="flex flex-col gap-2">
             <h2 className="text-2xl font-semibold text-text leading-snug">
               {product.name}
@@ -55,10 +52,8 @@ export function ProductShowModal() {
             )}
           </div>
 
-          {/* Price */}
           <p className="text-xl font-bold text-primary">₪{price}</p>
 
-          {/* Description */}
           {product.description ? (
             <p className="text-sm text-text-muted leading-relaxed">
               {product.description}
@@ -67,7 +62,6 @@ export function ProductShowModal() {
             <p className="text-sm text-text-muted">No description available.</p>
           )}
 
-          {/* Nothing else here (no stock, no footer) */}
         </div>
       </div>
     </Modal>
