@@ -9,7 +9,13 @@ interface Props {
 export function ProductCard({ product, onClick }: Props) {
   return (
     <Card
-      className="w-full hover:shadow-lg transition cursor-pointer"
+      className="
+  group w-full cursor-pointer
+  transition-all duration-300 ease-out
+  hover:-translate-y-1
+  hover:shadow-xl
+  hover:scale-[1.02]
+"
       onClick={() => onClick(product)}
     >
       <CardContent className="flex flex-col gap-3 p-4 sm:p-5">
