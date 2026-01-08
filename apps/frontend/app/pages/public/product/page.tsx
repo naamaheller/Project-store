@@ -21,7 +21,10 @@ export default function ProductPage() {
   const searchParams = useSearchParams();
 
   const { user, checking, ready } = useAuthStore();
-  const isAdmin = user?.roles.includes("admin");
+  const isAdmin = Array.isArray(user?.roles) && user.roles.includes("admin");
+  const filtersLoadedRef = useRef(false);
+  const initialFetchDoneRef = useRef(false);
+  const lastSearchRef = useRef<string | null>(null);
 
   const {
     products,
@@ -52,8 +55,11 @@ export default function ProductPage() {
 
   useEffect(() => {
     if (!ready || !user) return;
+    if (filtersLoadedRef.current) return;
+
+    filtersLoadedRef.current = true;
     loadFiltersData();
-  }, [ready, user, loadFiltersData]);
+  }, [ready, user]);
 
   useEffect(() => {
     if (!ready || !user) return;
@@ -70,25 +76,27 @@ export default function ProductPage() {
       maxPrice: maxPrice ? Number(maxPrice) : null,
       categories: cats ? cats.split(",").map(Number) : [],
     });
-
+    lastSearchRef.current = search;
     initializedFromUrlRef.current = true;
-  }, [ready, user, searchParams, setFilters, applyFilters]);
-
-  useEffect(() => {
-    if (!ready || !user) return;
-    if (!initializedFromUrlRef.current) return;
+    applyFilters().finally(() => {
+      initialFetchDoneRef.current = true;
+    });
   }, [ready, user]);
 
   useEffect(() => {
     if (!ready || !user) return;
-    if (!initializedFromUrlRef.current) return;
+    if (!initialFetchDoneRef.current) return;
+
+    if (filters.search === lastSearchRef.current) return;
+
+    lastSearchRef.current = filters.search;
 
     const timeout = setTimeout(() => {
       applyFilters();
     }, 400);
 
     return () => clearTimeout(timeout);
-  }, [filters.search, ready, user, applyFilters]);
+  }, [filters.search]);
 
   useEffect(() => {
     if (!initializedFromUrlRef.current) return;
@@ -155,25 +163,44 @@ export default function ProductPage() {
             </div>
           </aside>
 
-          <main className="flex-1"> <div className="flex items-center justify-between gap-3 mb-6">
-            <div className="lg:hidden ">
-              <Button onClick={() => setFiltersOpen(true)} className="flex items-center gap-2" > <SlidersHorizontal className="h-4 w-4" /> <span>Filters</span> </Button>
+          <main className="flex-1">
+            <div className="flex items-center gap-3 mb-6">
+              {/* צד שמאל – Filters במובייל */}
+              <div className="lg:hidden">
+                <Button
+                  onClick={() => setFiltersOpen(true)}
+                  className="flex items-center gap-2"
+                >
+                  <SlidersHorizontal className="h-4 w-4" />
+                  <span>Filters</span>
+                </Button>
+              </div>
+
+              <div className="flex-1" />
+
+              {isAdmin && (
+                <button
+                  onClick={() => router.push("/admin")}
+                  className="
+        p-1
+        text-text-muted
+        hover:text-primary
+        transition
+        focus:outline-none
+      "
+                  aria-label="Admin settings"
+                  title="Admin settings"
+                >
+                  <Settings className="h-6 w-6" />
+                </button>
+              )}
             </div>
-            {isAdmin && (
-              <Button
-                variant="outline"
-                onClick={() => router.push("/admin")
-                }
-                className="flex items-center gap-2"
-                aria-label="Admin settings"
-              >
-                <Settings className="h-4 w-4" />
-              </Button>
-            )}
-          </div>
 
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
+            <div className="grid gap-4 sm:gap-6 lg:gap-8
+                grid-cols-1
+                sm:grid-cols-2
+                md:grid-cols-3
+                lg:grid-cols-4">
               {loadingPage &&
                 Array.from({ length: pageSize }).map((_, i) => (
                   <ProductCardSkeleton key={i} />

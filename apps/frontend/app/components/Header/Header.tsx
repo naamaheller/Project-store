@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "../../store/auth.store";
+import { ROUTES } from "@/app/config/routes.config";
 
 function LogoutIcon({ size = 18 }: { size?: number }) {
     return (
@@ -47,7 +48,7 @@ export default function Header() {
                                 onClick={async () => {
                                     if (loading) return;
                                     await logout();
-                                    router.replace("/pages/auth/login");
+                                    router.replace(ROUTES.auth.login);
                                 }}
                                 aria-label="Logout"
                                 title="Logout"

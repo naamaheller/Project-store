@@ -11,6 +11,7 @@ import { Alert } from "../../../components/ui/Alert";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { BackgroundBubbles } from "@/app/components/state/loading/Bubbles";
 import {  toastRef } from "@/app/components/ui/Toast";
+import { ROUTES } from "@/app/config/routes.config";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -34,7 +35,8 @@ export default function LoginPage() {
 
     const ok = await login(email.trim(), password);
     toastRef.success("Logged in successfully", "Welcome");
-    if (ok) router.push("/pages/public/product");
+    
+    if (ok) router.push(ROUTES.public.products);
   }
 
   return (
@@ -95,7 +97,7 @@ export default function LoginPage() {
                 Don’t have an account?{" "}
                 <button
                   type="button"
-                  onClick={() => router.push("/pages/auth/register")}
+                  onClick={() => router.push(ROUTES.auth.register)}
                   className="text-primary font-medium hover:underline"
                 >
                   Sign up
