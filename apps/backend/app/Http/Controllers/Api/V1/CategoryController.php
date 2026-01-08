@@ -23,15 +23,10 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
-        try {
+        
             $categories = $this->categoryService->getAllCategories($request);
             return response()->json($categories, 200);
-        } catch (Throwable $e) {
-            return response()->json([
-                'message' => 'Failed to fetch categories',
-                'error'   => $e->getMessage(),
-            ], 500);
-        }
+       
     }
 
 }
