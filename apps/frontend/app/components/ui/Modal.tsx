@@ -35,15 +35,12 @@ export function Modal({ open, onClose, title, children, footer }: ModalProps) {
         role="dialog"
         aria-modal="true"
       >
-        {/* Backdrop */}
         <div
           className="absolute inset-0 bg-black/45 backdrop-blur-[2px]"
           onClick={onClose}
         />
 
-        {/* Panel */}
         <div className="relative z-10 w-full max-w-2xl overflow-hidden rounded-xl border-[3px] border-primary/50 bg-surface shadow-lg animate-modalIn">
-          {/* Header */}
           <div className="flex items-center justify-between gap-3 px-6 py-4 border-b border-border">
             <div className="min-w-0">
               {title && (
@@ -53,7 +50,6 @@ export function Modal({ open, onClose, title, children, footer }: ModalProps) {
               )}
             </div>
 
-            {/* Close - only X (big + motion) */}
             <button
               onClick={onClose}
               aria-label="Close modal"
@@ -69,10 +65,8 @@ export function Modal({ open, onClose, title, children, footer }: ModalProps) {
             </button>
           </div>
 
-          {/* Body */}
           <div className="p-6">{children}</div>
 
-          {/* Footer (only if provided) */}
           {footer && (
             <div className="px-6 py-4 border-t border-border flex justify-end gap-3 bg-background-muted/30">
               {footer}

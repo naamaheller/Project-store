@@ -1,5 +1,3 @@
-// app/api/api-error.ts
-
 export type ValidationErrorItem = {
   field: string;
   message: string;

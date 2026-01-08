@@ -7,7 +7,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const fetchMe = useAuthStore((state) => state.fetchMe);
 
   useEffect(() => {
-    // Check for user session on mount
     fetchMe();
   }, [fetchMe]);
 

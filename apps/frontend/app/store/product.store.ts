@@ -207,10 +207,6 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       set((state) => ({
         categories,
         absoluteMaxPrice: maxPrice,
-        // filters: {
-        //   ...state.filters,
-        //   maxPrice: state.filters.maxPrice ?? maxPrice,
-        // },
       }));
     } catch (e) {
       console.error("Failed to load filters data", e);
@@ -299,19 +295,19 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       const nextSelected =
         state.selectedProduct?.id === productId
           ? {
-              ...state.selectedProduct,
-              img_url: path ?? state.selectedProduct.img_url,
-              image_url: url ?? state.selectedProduct.image_url,
-            }
+            ...state.selectedProduct,
+            img_url: path ?? state.selectedProduct.img_url,
+            image_url: url ?? state.selectedProduct.image_url,
+          }
           : state.selectedProduct;
 
       const nextProducts = state.products.map((p) =>
         p.id === productId
           ? {
-              ...p,
-              img_url: path ?? p.img_url,
-              image_url: url ?? p.image_url,
-            }
+            ...p,
+            img_url: path ?? p.img_url,
+            image_url: url ?? p.image_url,
+          }
           : p
       );
 

@@ -9,7 +9,6 @@ type ButtonProps = {
 
 const baseStyles =
   "px-4 py-2 rounded-md font-medium transition inline-flex items-center justify-center " +
-  // focus (keyboard only)
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
 const variantStyles: Record<ButtonVariant, string> = {
@@ -24,8 +23,8 @@ const variantStyles: Record<ButtonVariant, string> = {
 
   danger:
     "bg-error text-text-inverted hover:opacity-90 focus-visible:ring-error/20",
-  
-  default:  
+
+  default:
     "text-text hover:bg-default-hover",
 };
 

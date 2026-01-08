@@ -31,18 +31,14 @@ export function Input({
                 id={inputId}
                 disabled={disabled}
                 className={[
-                    // base
                     "w-full rounded-md px-3 py-2 text-base transition",
                     "bg-background text-text placeholder:text-text-muted",
 
-                    // border
                     "border-2 border-primary/40",
 
-                    // focus (keyboard only)
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary",
                     "focus-visible:ring-offset-2 focus-visible:ring-offset-background",
 
-                    // states
                     error &&
                     "border-error focus-visible:border-error focus-visible:ring-error/20",
                     disabled && "opacity-50 cursor-not-allowed bg-background-muted",

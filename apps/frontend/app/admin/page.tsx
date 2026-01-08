@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Trash2, Pencil, Plus, ArrowLeft } from "lucide-react";
-
 import { useProductStore } from "../store/product.store";
 import { Table, type Column } from "@/app/components/ui/Table";
 import { Button } from "@/app/components/ui/Button";
@@ -114,7 +113,6 @@ export default function AdminProductsPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Top controls */}
       <div className="px-4 pt-4">
         <div className="flex items-center justify-between gap-3">
           <button
@@ -132,7 +130,6 @@ hover:text-primary
             <ArrowLeft className="h-6 w-6" />
           </button>
 
-
           <Button
             variant="outline"
             onClick={() => setCreateOpen(true)}
@@ -145,8 +142,6 @@ hover:text-primary
         </div>
       </div>
 
-
-      {/* Content grows to push footer down */}
       <main className="flex-1 px-4 py-4 overflow-hidden">
         <div className="h-full">
           <Table<Product>
@@ -162,7 +157,6 @@ hover:text-primary
         </div>
       </main>
 
-      {/* Footer always at bottom */}
       <footer className="mt-auto  bottom-0 z-10 border-t border-border bg-background">
         <div className="container mx-auto px-4 py-2">
           <Pagination
