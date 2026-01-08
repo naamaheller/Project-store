@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "./store/auth.store";
-import LoadingText from "./components/state/loading/Loading";
+import { ROUTES } from "./config/routes.config";
 
 export default function HomePage() {
   const router = useRouter();
@@ -15,12 +15,8 @@ export default function HomePage() {
 
   useEffect(() => {
     if (loading) return;
-
-    if (user) router.replace("/pages/public/product");
-    else router.replace("/pages/auth/login");
+    router.replace(ROUTES.auth.login);
   }, [loading, user, router]);
 
-  return (
-    <LoadingText />
-  );
+  return null;
 }

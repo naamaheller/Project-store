@@ -17,7 +17,7 @@ type Props = {
 };
 
 export function EditProductDrawer({ productId, open, onClose }: Props) {
-  const { selectedProduct, saving, updateProduct, uploadProductImage, deleteProductImage } = useProductStore();
+  const { selectedProduct, saving, uploadProductImage, deleteProductImage,updateProduct } = useProductStore();
 
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");

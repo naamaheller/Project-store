@@ -1,4 +1,5 @@
 export const ROUTES = {
+  base: '/',
   auth: {
     login: "/pages/auth/login",
     register: "/pages/auth/register",

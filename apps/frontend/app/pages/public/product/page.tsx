@@ -53,6 +53,7 @@ export default function ProductPage() {
   useEffect(() => {
     if (!ready || !user) return;
     loadFiltersData();
+    console.log("i'm here 123");
   }, [ready, user, loadFiltersData]);
 
   useEffect(() => {
@@ -84,6 +85,8 @@ export default function ProductPage() {
     if (!initializedFromUrlRef.current) return;
 
     const timeout = setTimeout(() => {
+      console.log("i'm in applyfilters");
+      
       applyFilters();
     }, 400);
 
@@ -155,24 +158,29 @@ export default function ProductPage() {
             </div>
           </aside>
 
-          <main className="flex-1"> <div className="flex items-center justify-between gap-3 mb-6">
-            <div className="lg:hidden ">
-              <Button onClick={() => setFiltersOpen(true)} className="flex items-center gap-2" > <SlidersHorizontal className="h-4 w-4" /> <span>Filters</span> </Button>
+          <main className="flex-1">
+            {" "}
+            <div className="flex items-center justify-between gap-3 mb-6">
+              <div className="lg:hidden ">
+                <Button
+                  onClick={() => setFiltersOpen(true)}
+                  className="flex items-center gap-2"
+                >
+                  {" "}
+                  <SlidersHorizontal className="h-4 w-4" /> <span>Filters</span>{" "}
+                </Button>
+              </div>
+              {isAdmin && (
+                <Button
+                  variant="outline"
+                  onClick={() => router.push("/admin")}
+                  className="flex items-center gap-2"
+                  aria-label="Admin settings"
+                >
+                  <Settings className="h-4 w-4" />
+                </Button>
+              )}
             </div>
-            {isAdmin && (
-              <Button
-                variant="outline"
-                onClick={() => router.push("/admin")
-                }
-                className="flex items-center gap-2"
-                aria-label="Admin settings"
-              >
-                <Settings className="h-4 w-4" />
-              </Button>
-            )}
-          </div>
-
-
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
               {loadingPage &&
                 Array.from({ length: pageSize }).map((_, i) => (

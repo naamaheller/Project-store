@@ -1,12 +1,17 @@
 import { create } from "zustand";
 import { Product, ProductUpsertInput } from "@/app/models/product.model";
 import ProductFiltersState from "@/app/models/product-filters.model";
-import { addProductApi, deleteProductApi, fetchMaxPrice, fetchProducts, updateProductApi } from "@/app/services/product.service";
+import {
+  addProductApi,
+  deleteProductApi,
+  fetchMaxPrice,
+  fetchProducts,
+  updateProductApi,
+} from "@/app/services/product.service";
 import { Category } from "../models/category.model";
 import { fetchCategories } from "../services/category.service";
 import { uploadProductImage as uploadProductImageService } from "@/app/services/product-image.service";
 import { deleteProductImage as deleteProductImageService } from "@/app/services/product-image.service";
-
 
 type ProductStore = {
   products: Product[];
@@ -30,6 +35,7 @@ type ProductStore = {
   deletingId: number | null;
   saving: boolean;
 
+  updateProduct: (id: number, data: ProductUpsertInput) => Promise<Product>;
   deleteProduct: (id: number) => Promise<void>;
   createProduct: (data: any) => Promise<Product>;
 
@@ -64,7 +70,7 @@ const initialProductState = {
   selectedProduct: null,
 
   page: 1,
-  pageSize: 5,
+  pageSize: 12,
   total: 0,
 
   filters: {
@@ -92,7 +98,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
   selectedProduct: null,
 
   page: 1,
-  pageSize: 5,
+  pageSize: 12,
   total: 0,
 
   filters: {
@@ -186,8 +192,10 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     await get().loadProducts();
   },
 
-
   loadFiltersData: async () => {
+    const { loadingCategories, loadingMaxPrice } = get();
+    if (loadingCategories || loadingMaxPrice) return;
+
     try {
       set({ loadingCategories: true, loadingMaxPrice: true });
 
@@ -222,7 +230,10 @@ export const useProductStore = create<ProductStore>((set, get) => ({
         try {
           await get().deleteProductImage(id);
         } catch (e) {
-          console.warn("Image delete failed, continuing to delete product...", e);
+          console.warn(
+            "Image delete failed, continuing to delete product...",
+            e
+          );
         }
       }
       set((state) => ({
@@ -259,7 +270,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     }
   },
 
-  updateProduct: async (id, data) => {
+  updateProduct: async (id: number, data: ProductUpsertInput) => {
     set({ saving: true });
     try {
       const updated: Product = await updateProductApi(id, data);
@@ -288,19 +299,19 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       const nextSelected =
         state.selectedProduct?.id === productId
           ? {
-            ...state.selectedProduct,
-            img_url: path ?? state.selectedProduct.img_url,
-            image_url: url ?? state.selectedProduct.image_url,
-          }
+              ...state.selectedProduct,
+              img_url: path ?? state.selectedProduct.img_url,
+              image_url: url ?? state.selectedProduct.image_url,
+            }
           : state.selectedProduct;
 
       const nextProducts = state.products.map((p) =>
         p.id === productId
           ? {
-            ...p,
-            img_url: path ?? p.img_url,
-            image_url: url ?? p.image_url,
-          }
+              ...p,
+              img_url: path ?? p.img_url,
+              image_url: url ?? p.image_url,
+            }
           : p
       );
 
@@ -327,5 +338,4 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     });
   },
   resetStore: () => set(() => ({ ...initialProductState })),
-
 }));

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/app/store/auth.store";
 import { Skeleton } from "@/app/components/ui/Skeleton";
 import LoadingText from "../state/loading/Loading";
+import { ROUTES } from "@/app/config/routes.config";
 
 export function AdminGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -21,9 +22,9 @@ export function AdminGuard({ children }: { children: React.ReactNode }) {
       console.log("USER: ",user);
       
       if (!user) {
-        router.replace("/pages/auth/login");
+        router.replace(ROUTES.auth.login);
       } else if (!user.roles.includes("admin")) {
-        router.replace("/");
+        router.replace(ROUTES.base);
       }
     }
   }, [ready, loading, user, router]);
