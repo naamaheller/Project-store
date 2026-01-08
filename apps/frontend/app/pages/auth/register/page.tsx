@@ -10,7 +10,6 @@ import { Button } from "../../../components/ui/Button";
 import { Alert } from "../../../components/ui/Alert";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { BackgroundBubbles } from "@/app/components/state/loading/Bubbles";
-import { toastRef } from "@/app/components/ui/Toast";
 import { ROUTES } from "@/app/config/routes.config";
 
 export default function RegisterPage() {
@@ -57,8 +56,6 @@ export default function RegisterPage() {
 
     if (ok) {
       clearError();
-      toastRef.success("Registration successful. Please log in.");
-     
       router.push(ROUTES.auth.login);
     }
   }
