@@ -11,8 +11,10 @@ use App\Http\Controllers\Api\V1\ProductImageController;
 
 Route::prefix('v1')->group(function () {
 
+
     Route::post('/auth/login', [AuthController::class, 'login']);
     Route::post('/auth/register', [AuthController::class, 'register']);
+
 
     Route::middleware([CookieTokenToBearer::class, 'auth:api'])->group(function () {
 
@@ -29,17 +31,8 @@ Route::prefix('v1')->group(function () {
         Route::get('/categories', [CategoryController::class, 'index']);
         Route::get('/products/max-price', [ProductController::class, 'getMaxPrice']);
 
-        Route::middleware('admin')->group(function () {
 
-            Route::post(
-                '/admin/products/{productId}/image',
-                [ProductImageController::class, 'store']
-            );
-
-            Route::delete(
-                '/admin/products/{productId}/image',
-                [ProductImageController::class, 'destroy']
-            );
+        Route::middleware('permission:manage products')->group(function () {
 
             Route::post(
                 '/admin/products/add',
@@ -51,15 +44,26 @@ Route::prefix('v1')->group(function () {
                 [ProductController::class, 'adminIndex']
             );
 
+            Route::put(
+                '/admin/products/edit/{productId}',
+                [ProductController::class, 'adminEditProduct']
+            );
+
             Route::delete(
                 '/admin/products/delete/{productId}',
                 [ProductController::class, 'adminDeleteProduct']
             );
 
-            Route::put(
-                '/admin/products/edit/{productId}',
-                [ProductController::class, 'adminEditProduct']
+            Route::post(
+                '/admin/products/{productId}/image',
+                [ProductImageController::class, 'store']
             );
+
+            Route::delete(
+                '/admin/products/{productId}/image',
+                [ProductImageController::class, 'destroy']
+            );
+            
         });
     });
 });
