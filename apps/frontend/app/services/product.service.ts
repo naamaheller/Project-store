@@ -77,7 +77,6 @@ export const addProductApi = async (data: ProductUpsertInput): Promise<Product> 
   const res = await adminAddProduct(data);
 
   if (res.status !== 201) throw new Error("Add product failed");
-  
   return sanitizeProduct(res);
   } catch (error) {
     throw error as ApiError;
