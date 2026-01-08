@@ -21,8 +21,7 @@ export default function ProductPage() {
   const searchParams = useSearchParams();
 
   const { user, checking, ready } = useAuthStore();
-  const isAdmin = user?.roles.includes("admin");
-
+  const isAdmin = Array.isArray(user?.roles) && user.roles.includes("admin");
   const {
     products,
     page,
@@ -168,10 +167,8 @@ export default function ProductPage() {
                 </Button>
               </div>
 
-              {/* spacer – דוחף את ההגדרות לימין */}
               <div className="flex-1" />
 
-              {/* צד ימין – הגדרות */}
               {isAdmin && (
                 <button
                   onClick={() => router.push("/admin")}
