@@ -16,27 +16,18 @@ class WelcomeMail extends Mailable
 
     public User $user;
 
-    /**
-     * Create a new message instance.
-     */
     public function __construct(User $user)
     {
         $this->user = $user;
     }
 
-    /**
-     * Get the message envelope.
-     */
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Welcome '.$this->user->name.' to Our Application',
+            subject: 'Welcome ' . $this->user->name . ' to Our Application',
         );
     }
 
-    /**
-     * Get the message content definition.
-     */
     public function content(): Content
     {
         return new Content(

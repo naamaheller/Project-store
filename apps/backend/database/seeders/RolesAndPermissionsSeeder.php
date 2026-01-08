@@ -10,20 +10,14 @@ use Spatie\Permission\Models\Role;
 
 class RolesAndPermissionsSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // Permissions
         $viewProducts = Permission::firstOrCreate(['name' => 'view products']);
         $manageProducts = Permission::firstOrCreate(['name' => 'manage products']);
 
-        // Roles
         $admin = Role::firstOrCreate(['name' => 'admin']);
         $user = Role::firstOrCreate(['name' => 'user']);
 
-        // Attach permissions
         $admin->givePermissionTo([$viewProducts, $manageProducts]);
         $user->givePermissionTo([$viewProducts]);
 
@@ -33,10 +27,10 @@ class RolesAndPermissionsSeeder extends Seeder
             }
         });
 
-        $adminUser  = User::where('email', 'admin@example.com')->first();
-        if ($adminUser ) {
-            $adminUser ->syncRoles(['admin']);
+        $adminUser = User::where('email', 'admin@example.com')->first();
+        if ($adminUser) {
+            $adminUser->syncRoles(['admin']);
         }
-        
+
     }
 }
