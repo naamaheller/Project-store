@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/app/store/auth.store";
 import LoadingText from "../state/loading/Loading";
+import { ROUTES } from "@/app/config/routes.config";
 
 export function AdminGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
