@@ -140,8 +140,12 @@ export const useProductStore = create<ProductStore>((set, get) => ({
   clearSelectedProduct: () => set({ selectedProduct: null }),
 
   loadProducts: async () => {
-    const { loading, page, pageSize, filters } = get();
+    const { loading, page, pageSize, filters, products } = get();
     if (loading) return;
+    if (products.length !== 0) {
+      set({ loading: false });
+      return;
+    }
 
     try {
       set({ loading: true });
@@ -242,11 +246,22 @@ export const useProductStore = create<ProductStore>((set, get) => ({
         selectedProduct:
           state.selectedProduct?.id === id ? null : state.selectedProduct,
       }));
-      const { products, page } = get();
+      const { products, page, pageSize, total } = get();
       if (products.length === 0 && page > 1) {
         await get().setPage(page - 1);
+        return;
+
       }
-    } finally {
+      const shouldHaveMore = total > (page - 1) * pageSize + products.length;
+      if (products.length < pageSize && shouldHaveMore) {
+        await get().applyFilters(); // or await get().loadProducts()
+      }
+
+    }
+    catch(e){
+      
+    }
+     finally {
       set({ deletingId: null });
     }
   },

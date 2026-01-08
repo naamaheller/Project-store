@@ -10,6 +10,7 @@ import { Button } from "../../../components/ui/Button";
 import { Alert } from "../../../components/ui/Alert";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { BackgroundBubbles } from "@/app/components/state/loading/Bubbles";
+import {  toastRef } from "@/app/components/ui/Toast";
 import { ROUTES } from "@/app/config/routes.config";
 
 export default function LoginPage() {
@@ -33,6 +34,8 @@ export default function LoginPage() {
     clearError();
 
     const ok = await login(email.trim(), password);
+    toastRef.success("Logged in successfully", "Welcome");
+    
     if (ok) router.push(ROUTES.public.products);
   }
 

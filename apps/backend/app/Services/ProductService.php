@@ -18,7 +18,7 @@ class ProductService
      */
     public function getAllProductsForAdmin(Request $request)
     {
-        try {
+        
             $perPage = $request->input('per_page', 15);
             $perPage = min($perPage, 100);
 
@@ -28,12 +28,7 @@ class ProductService
                 ->orderBy('created_at', 'desc')
                 ->paginate($perPage);
 
-        } catch (Throwable $e) {
-            return response()->json([
-                'message' => 'Failed to fetch products',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
+       
     }
 
     /**
@@ -42,7 +37,7 @@ class ProductService
      */
     public function getActiveProducts(Request $request)
     {
-        try {
+        
             $perPage = $request->input('per_page', 15);
             $perPage = min($perPage, 100);
 
@@ -52,12 +47,7 @@ class ProductService
                 ->orderBy('created_at', 'desc')
                 ->paginate($perPage);
 
-        } catch (Throwable $e) {
-            return response()->json([
-                'message' => 'Failed to fetch products',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
+        
     }
     /**
      * only for admin users
@@ -86,7 +76,10 @@ class ProductService
             $slug .= '-' . uniqid();
         }
         $data['slug'] = $slug;
-        return Product::create($data);
+        //create produuct and return it with category relation
+        return Product::create($data)->fresh(['category']);
+       
+
         });
     }
 
