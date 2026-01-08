@@ -62,7 +62,9 @@ class ProductController extends Controller
         }
 
         $product = $this->productService->addProductByAdmin($data);
-
+        $product->image_url = $product->img_url
+            ? $this->minioUploadService->temporaryUrl($product->img_url)
+            : null;
         return response()->json([
             'message' => 'Product added successfully',
             'product' => $product,
@@ -112,10 +114,15 @@ class ProductController extends Controller
 
             throw new ModelNotFoundException();
         }
+        $product->image_url = $product->img_url
+            ? $this->minioUploadService->temporaryUrl($product->img_url)
+            : null;
+
         return response()->json([
             'message' => 'Product edited successfully',
             'product' => $product,
         ], 200);
+
 
 
 
