@@ -10,6 +10,7 @@ import { Button } from "../../../components/ui/Button";
 import { Alert } from "../../../components/ui/Alert";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { BackgroundBubbles } from "@/app/components/state/loading/Bubbles";
+import { toastRef } from "@/app/components/ui/Toast";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -55,6 +56,7 @@ export default function RegisterPage() {
 
     if (ok) {
       clearError();
+      toastRef.success("Registration successful. Please log in.");
       router.push("/pages/auth/login");
     }
   }

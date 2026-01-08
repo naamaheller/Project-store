@@ -247,7 +247,11 @@ export const useProductStore = create<ProductStore>((set, get) => ({
         await get().applyFilters(); // or await get().loadProducts()
       }
 
-    } finally {
+    }
+    catch(e){
+      
+    }
+     finally {
       set({ deletingId: null });
     }
   },

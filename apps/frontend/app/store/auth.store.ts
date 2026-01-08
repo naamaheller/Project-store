@@ -4,6 +4,7 @@ import { create } from "zustand";
 import { loginApi, logoutApi, meApi, registerApi } from "../api/auth.api";
 import type { User } from "../models/user.model";
 import { useProductStore } from "./product.store";
+import { toastRef } from "../components/ui/Toast";
 
 type AuthState = {
     user: User | null;
