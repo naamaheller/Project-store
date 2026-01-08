@@ -36,7 +36,6 @@ type ProductStore = {
   uploadProductImage: (productId: number, file: File) => Promise<void>;
   deleteProductImage: (productId: number) => Promise<void>;
   resetStore: () => void;
-  updateProduct: (id: number, data: Partial<Product>) => Promise<Product>;
 
   setPage: (page: number) => Promise<void>;
   setPageSize: (size: number) => Promise<void>;

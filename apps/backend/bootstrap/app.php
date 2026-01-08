@@ -1,17 +1,22 @@
 <?php
 
-use App\Http\Middleware\AdminMiddleware;
-use App\Http\Middleware\Authenticate;
-use App\Http\Middleware\CookieTokenToBearer;
+use App\Services\ApiExceptionHandler;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+
+use Illuminate\Http\Request;
+use App\Http\Middleware\AdminMiddleware;
+use App\Http\Middleware\Authenticate;
+use App\Http\Middleware\CookieTokenToBearer;
+
 use Illuminate\Auth\AuthenticationException;
 use Laravel\Sanctum\Http\Middleware\CheckForAnyScope;
 use Laravel\Sanctum\Http\Middleware\CheckScopes;
 use Spatie\Permission\Middleware\PermissionMiddleware;
 use Spatie\Permission\Middleware\RoleMiddleware;
 use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
+
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -29,24 +34,26 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ]);
 
-        $middleware->alias([
-            'auth' => Authenticate::class,
-            'cookieAuth' => CookieTokenToBearer::class,
-            'admin' => AdminMiddleware::class,
-            'scopes' => CheckScopes::class,
-            'scope' => CheckForAnyScope::class,
+    $middleware->alias([
+        'auth' => \App\Http\Middleware\Authenticate::class,
+        'cookieAuth' => \App\Http\Middleware\CookieTokenToBearer::class,
+        'admin' => \App\Http\Middleware\AdminMiddleware::class,    
+        'permission' => PermissionMiddleware::class,
+        'role' => RoleMiddleware::class,
+        'role_or_permission' => RoleOrPermissionMiddleware::class,
 
-            'permission' => PermissionMiddleware::class,
-            'role' => RoleMiddleware::class,
-            'role_or_permission' => RoleOrPermissionMiddleware::class,
-
-        ]);
+   
+        
+    ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
 
         // כל פעם ש-auth נכשל -> להחזיר 401 JSON ולא redirect
-        $exceptions->render(function (AuthenticationException $e, $request) {
-            return response()->json(['message' => 'Unauthenticated'], 401);
-        });
+        // $exceptions->render(function (AuthenticationException $e, $request) {
+        //     return response()->json(['message' => 'Unauthenticated'], 401);
+        // });
+       $exceptions->render(function (Throwable $e, Request $request) {
+    return app(ApiExceptionHandler::class)->handle($e, $request);
+});
     })
     ->create();

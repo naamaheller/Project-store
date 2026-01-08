@@ -5,6 +5,11 @@ export interface CategoriesResponse {
     data: Category[];
 }
 
-export function getCategories() {
-    return apiClient.get<Category[]>("/categories");
+export async function getCategories() {
+    try {
+        return await apiClient.get<Category[]>("/categories");
+    } catch (err: any) {
+        throw err.apiError; 
+    }
+    
 }

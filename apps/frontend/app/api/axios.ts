@@ -1,4 +1,7 @@
-import axios from 'axios';
+// app/api/axios.ts
+
+import axios from "axios";
+import { normalizeApiError } from "./normalize-api-error";
 
 const apiClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
@@ -7,4 +10,14 @@ const apiClient = axios.create({
     "Content-Type": "application/json",
   },
 });
+
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Attach normalized error for all callers
+    (error as any).apiError = normalizeApiError(error);
+    return Promise.reject(error);
+  }
+);
+
 export default apiClient;
