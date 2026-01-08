@@ -182,7 +182,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       filters: {
         search: "",
         minPrice: null,
-        maxPrice: max > 0 ? max : null,
+        maxPrice: null,
         categories: [],
       },
       filtersApplied: false,
@@ -207,10 +207,10 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       set((state) => ({
         categories,
         absoluteMaxPrice: maxPrice,
-        filters: {
-          ...state.filters,
-          maxPrice: state.filters.maxPrice ?? maxPrice,
-        },
+        // filters: {
+        //   ...state.filters,
+        //   maxPrice: state.filters.maxPrice ?? maxPrice,
+        // },
       }));
     } catch (e) {
       console.error("Failed to load filters data", e);
