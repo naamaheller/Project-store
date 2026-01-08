@@ -155,28 +155,41 @@ export default function ProductPage() {
             </div>
           </aside>
 
-          <main className="flex-1"> <div className="flex items-center justify-between gap-3 mb-6">
-            <div className="lg:hidden ">
-              <Button onClick={() => setFiltersOpen(true)} className="flex items-center gap-2" > <SlidersHorizontal className="h-4 w-4" /> <span>Filters</span> </Button>
-            </div>
-            {isAdmin && (
-              <button
-                onClick={() => router.push("/admin")}
-                className="
-  p-1
-  text-text-muted
-  hover:text-primary
-  transition
-  focus:outline-none
-"
-                aria-label="Admin settings"
-                title="Admin settings"
-              >
-                <Settings className="h-6 w-6" />
-              </button>
-            )}
+          <main className="flex-1">
+            <div className="flex items-center gap-3 mb-6">
+              {/* צד שמאל – Filters במובייל */}
+              <div className="lg:hidden">
+                <Button
+                  onClick={() => setFiltersOpen(true)}
+                  className="flex items-center gap-2"
+                >
+                  <SlidersHorizontal className="h-4 w-4" />
+                  <span>Filters</span>
+                </Button>
+              </div>
 
-          </div>
+              {/* spacer – דוחף את ההגדרות לימין */}
+              <div className="flex-1" />
+
+              {/* צד ימין – הגדרות */}
+              {isAdmin && (
+                <button
+                  onClick={() => router.push("/admin")}
+                  className="
+        p-1
+        text-text-muted
+        hover:text-primary
+        transition
+        focus:outline-none
+      "
+                  aria-label="Admin settings"
+                  title="Admin settings"
+                >
+                  <Settings className="h-6 w-6" />
+                </button>
+              )}
+            </div>
+
             <div className="grid gap-4 sm:gap-6 lg:gap-8
                 grid-cols-1
                 sm:grid-cols-2
