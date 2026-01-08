@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Trash2, Pencil, Plus, ArrowLeft } from "lucide-react";
 
 import { useProductStore } from "../store/product.store";
 import { Table, type Column } from "@/app/components/ui/Table";
@@ -9,7 +10,6 @@ import { Button } from "@/app/components/ui/Button";
 import { Pagination } from "@/app/components/ui/Pagination";
 import type { Product } from "@/app/models/product.model";
 import { EditProductDrawer } from "./components/EditProductDrawer";
-import { Trash2, Pencil, Plus } from "lucide-react";
 import { DeleteProductModal } from "./components/DeleteProductModal";
 import { CreateProductDrawer } from "./components/CreateProductDrawer"; 
 
@@ -115,18 +115,29 @@ export default function AdminProductsPage() {
     <div className="min-h-screen flex flex-col">
       {/* Top controls */}
       <div className="px-4 pt-4">
-        <div className="flex justify-center">
+        <div className="flex items-center justify-between gap-3">
+          <Button
+            variant="outline"
+            onClick={() => router.push("/pages/public/product")} 
+            className="flex items-center gap-2"
+            aria-label="Back to products"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span>Back to Products</span>
+          </Button>
+
           <Button
             variant="outline"
             onClick={() => setCreateOpen(true)}
-
+            className="flex items-center gap-2"
             aria-label="Create product"
           >
             <Plus className="h-4 w-4" />
-            <span> Create Product </span>
+            <span>Create Product</span>
           </Button>
         </div>
       </div>
+
 
       {/* Content grows to push footer down */}
       <main className="flex-1 px-4 py-4 overflow-hidden">
