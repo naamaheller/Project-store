@@ -1,4 +1,3 @@
-// AdminProductsPage.tsx
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -12,7 +11,7 @@ import { Pagination } from "@/app/components/ui/Pagination";
 import type { Product } from "@/app/models/product.model";
 import { EditProductDrawer } from "./components/EditProductDrawer";
 import { DeleteProductModal } from "./components/DeleteProductModal";
-import { CreateProductDrawer } from "./components/CreateProductDrawer"; // NEW
+import { CreateProductDrawer } from "./components/CreateProductDrawer"; 
 
 export default function AdminProductsPage() {
   const router = useRouter();
