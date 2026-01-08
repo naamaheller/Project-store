@@ -33,8 +33,18 @@ export function EditProductDrawer({ productId, open, onClose }: Props) {
 
   const isCorrect = !!productId && selectedProduct?.id === productId;
 
+  function handleClose() {
+    onClose();
+  }
+
   useEffect(() => {
-    if (!open || !isCorrect || !selectedProduct) return;
+    if (!open) {
+      setImageFile(null);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
+
+    if (!isCorrect || !selectedProduct) return;
 
     setName(selectedProduct.name ?? "");
     setSlug(selectedProduct.slug ?? "");
@@ -43,7 +53,6 @@ export function EditProductDrawer({ productId, open, onClose }: Props) {
     setStock(Number(selectedProduct.stock ?? 0));
     setCategory(selectedProduct.category?.name ?? "");
     setIsActive(Boolean(selectedProduct.is_active));
-    setImageFile(null);
     setError(null);
   }, [open, isCorrect, selectedProduct]);
 
@@ -66,19 +75,15 @@ export function EditProductDrawer({ productId, open, onClose }: Props) {
       if (imageFile) {
         await uploadProductImage(selectedProduct.id, imageFile);
 
-        setImageFile(null);
-        if (fileInputRef.current) fileInputRef.current.value = "";
       }
-
-      onClose();
-
+      handleClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to save");
     }
   }
 
   return (
-    <Drawer open={open} onClose={onClose} title="Edit Product">
+    <Drawer open={open} onClose={handleClose} title="Edit Product">
       {!isCorrect || !selectedProduct ? (
         <div className="text-sm text-muted-foreground">Loading...</div>
       ) : (
@@ -237,7 +242,7 @@ export function EditProductDrawer({ productId, open, onClose }: Props) {
           </div>
 
           <div className="mt-auto flex justify-end gap-2">
-            <Button variant="outline" onClick={onClose} type="button" disabled={saving}>
+            <Button variant="outline" onClick={handleClose} type="button" disabled={saving}>
               Cancel
             </Button>
 
