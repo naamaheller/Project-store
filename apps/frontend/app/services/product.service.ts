@@ -1,5 +1,6 @@
 import { adminAddProduct, adminDeleteProduct, adminEditProduct, getAdminProducts, getMaxPrice, getProducts } from "../api/product.api";
 import { Product, ProductFilters, ProductUpsertInput } from "../models/product.model";
+import type { ApiError } from "../api/api-error";
 
 type ApiCall = (params: Record<string, any>) => Promise<{ data: any }>;
 
@@ -36,7 +37,7 @@ async function fetchProductsBase(apiCall: ApiCall, filters?: ProductFilters) {
     return response.data;
   } catch (error) {
     console.error("Error fetching products:", error);
-    throw error;
+    throw error as ApiError;
   }
 }
 
@@ -46,7 +47,7 @@ export async function fetchMaxPrice() {
     return response.data.max_price;
   } catch (error) {
     console.error("Error fetching max price:", error);
-    throw error;
+    throw error as ApiError;
   }
 }
 export const sanitizeProduct = (payload: any): Product => {
@@ -61,20 +62,31 @@ export const sanitizeProduct = (payload: any): Product => {
 
 
 export const updateProductApi = async (id: number, data: ProductUpsertInput): Promise<Product> => {
+  try {
   const res = await adminEditProduct(id, data);
 
   if (res.status !== 200) throw new Error("Update failed");
 
   return sanitizeProduct(res);
+  } catch (error) {
+    throw error as ApiError;
+  }
 };
 export const addProductApi = async (data: ProductUpsertInput): Promise<Product> => {
+  try {
   const res = await adminAddProduct(data);
 
   if (res.status !== 201) throw new Error("Add product failed");
   return sanitizeProduct(res);
+  } catch (error) {
+    throw error as ApiError;
+  }
 };
 export const deleteProductApi = async (id: number): Promise<void> => {
+  try {
   const res = await adminDeleteProduct(id);
-  if (res.status !== 200) throw new Error("Delete product failed");
   return;
+  } catch (error) {
+    throw error as ApiError;
+  }
 };
