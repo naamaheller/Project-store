@@ -21,6 +21,9 @@ export default function ProductPage() {
   const searchParams = useSearchParams();
 
   const { user, checking, ready } = useAuthStore();
+  const filtersLoadedRef = useRef(false);
+  const initialFetchDoneRef = useRef(false);
+  const lastSearchRef = useRef<string | null>(null);
   const isAdmin = user?.roles.includes("admin");
 
   const {
@@ -52,8 +55,11 @@ export default function ProductPage() {
 
   useEffect(() => {
     if (!ready || !user) return;
+    if (filtersLoadedRef.current) return;
+
+    filtersLoadedRef.current = true;
     loadFiltersData();
-  }, [ready, user, loadFiltersData]);
+  }, [ready, user]);
 
   useEffect(() => {
     if (!ready || !user) return;
@@ -70,25 +76,27 @@ export default function ProductPage() {
       maxPrice: maxPrice ? Number(maxPrice) : null,
       categories: cats ? cats.split(",").map(Number) : [],
     });
-
+    lastSearchRef.current = search;
     initializedFromUrlRef.current = true;
-  }, [ready, user, searchParams, setFilters, applyFilters]);
-
-  useEffect(() => {
-    if (!ready || !user) return;
-    if (!initializedFromUrlRef.current) return;
+    applyFilters().finally(() => {
+      initialFetchDoneRef.current = true;
+    });
   }, [ready, user]);
 
   useEffect(() => {
     if (!ready || !user) return;
-    if (!initializedFromUrlRef.current) return;
+    if (!initialFetchDoneRef.current) return;
+
+    if (filters.search === lastSearchRef.current) return;
+
+    lastSearchRef.current = filters.search;
 
     const timeout = setTimeout(() => {
       applyFilters();
     }, 400);
 
     return () => clearTimeout(timeout);
-  }, [filters.search, ready, user, applyFilters]);
+  }, [filters.search]);
 
   useEffect(() => {
     if (!initializedFromUrlRef.current) return;

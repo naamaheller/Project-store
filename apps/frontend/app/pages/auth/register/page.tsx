@@ -10,6 +10,7 @@ import { Button } from "../../../components/ui/Button";
 import { Alert } from "../../../components/ui/Alert";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { BackgroundBubbles } from "@/app/components/state/loading/Bubbles";
+import { ROUTES } from "@/app/config/routes.config";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -55,7 +56,7 @@ export default function RegisterPage() {
 
     if (ok) {
       clearError();
-      router.push("/pages/auth/login");
+      router.push(ROUTES.auth.login);
     }
   }
 
@@ -135,7 +136,7 @@ export default function RegisterPage() {
                 Already have an account?{" "}
                 <button
                   type="button"
-                  onClick={() => router.push("/pages/auth/login")}
+                  onClick={() => router.push(ROUTES.auth.login)}
                   className="text-primary font-medium hover:underline"
                 >
                   Login

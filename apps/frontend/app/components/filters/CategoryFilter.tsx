@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { CheckboxGroup } from "../ui/CheckboxGroup";
 
 type Category = {

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { ROUTES } from "./app/config/routes.config";
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -14,21 +15,21 @@ export function middleware(req: NextRequest) {
 
   if (
     !token &&
-    (pathname.startsWith("/pages/public/product") ||
-      pathname.startsWith("/admin"))
+    (pathname.startsWith(ROUTES.public.products) ||
+      pathname.startsWith(ROUTES.admin.root))
   ) {
-    return redirect("/pages/auth/login");
+    return redirect(ROUTES.auth.login);
   }
 
   if (
     token &&
-    (pathname === "/pages/auth/login" || pathname === "/pages/auth/register")
+    (pathname === ROUTES.auth.login || pathname === ROUTES.auth.register)
   ) {
-    return redirect("/pages/public/product");
+    return redirect(ROUTES.public.products);
   }
 
-  if (pathname.startsWith("/admin") && role !== "admin") {
-    return redirect("/pages/public/product");
+  if (pathname.startsWith(ROUTES.admin.root) && role !== "admin") {
+    return redirect(ROUTES.public.products);
   }
 
   return NextResponse.next();
