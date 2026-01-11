@@ -72,7 +72,7 @@ class ProductService
                 $slug .= '-' . uniqid();
             }
             $data['slug'] = $slug;
-            return Product::create($data);
+            return Product::create($data)->fresh(['category']);
         });
     }
 

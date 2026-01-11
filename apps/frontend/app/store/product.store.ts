@@ -12,6 +12,7 @@ import { Category } from "../models/category.model";
 import { fetchCategories } from "../services/category.service";
 import { uploadProductImage as uploadProductImageService } from "@/app/services/product-image.service";
 import { deleteProductImage as deleteProductImageService } from "@/app/services/product-image.service";
+import { toastRef } from "../components/ui/Toast";
 
 type ProductStore = {
   products: Product[];
@@ -234,15 +235,17 @@ export const useProductStore = create<ProductStore>((set, get) => ({
           );
         }
       }
+      toastRef.success("Product deleted successfully", "Deleted");
       set((state) => ({
         products: state.products.filter((p) => p.id !== id),
         total: Math.max(0, state.total - 1),
         selectedProduct:
           state.selectedProduct?.id === id ? null : state.selectedProduct,
       }));
-      const { products, page } = get();
+      const { products, page, pageSize, total } = get();
       if (products.length === 0 && page > 1) {
         await get().setPage(page - 1);
+        return;
       }
       const shouldHaveMore = total > (page - 1) * pageSize + products.length;
       if (products.length < pageSize && shouldHaveMore) {
@@ -262,6 +265,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     set({ saving: true });
     try {
       const created = await addProductApi(data);
+      toastRef.success("Product created successfully", "Created");
       set((state) => {
         const next = [created, ...state.products];
         const capped = next.slice(0, state.pageSize);
@@ -281,6 +285,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     set({ saving: true });
     try {
       const updated: Product = await updateProductApi(id, data);
+      toastRef.success("Product updated successfully", "Updated");
       set((state) => {
         const exists = state.products.some((p) => p.id === updated.id);
         return {

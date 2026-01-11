@@ -36,6 +36,13 @@ const ToastContext = createContext<ToastContextValue | null>(null);
 function uid() {
     return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
+let toastStyles: ToastContextValue | null = null;
+
+export const toastRef = {
+  show: (input: ToastInput) => toastStyles?.show(input),
+  success: (msg: string, title?: string) => toastStyles?.success(msg, title),
+  error: (msg: string, title?: string) => toastStyles?.error(msg, title),
+};
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
     const [toasts, setToasts] = useState<ToastItem[]>([]);
@@ -79,6 +86,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
         }),
         [show, remove, clear]
     );
+    toastStyles = api;
 
     return (
         <ToastContext.Provider value={api}>
