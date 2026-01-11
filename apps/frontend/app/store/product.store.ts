@@ -141,7 +141,8 @@ export const useProductStore = create<ProductStore>((set, get) => ({
   clearSelectedProduct: () => set({ selectedProduct: null }),
 
   loadProducts: async () => {
-    const { loading, page, pageSize, filters, products, filtersApplied } = get();
+    const { loading, page, pageSize, filters, products, filtersApplied } =
+      get();
     if (loading) return;
     if (!filtersApplied && products.length > 0) return;
 
@@ -196,8 +197,16 @@ export const useProductStore = create<ProductStore>((set, get) => ({
   },
 
   loadFiltersData: async () => {
-    const { loadingCategories, loadingMaxPrice } = get();
-    if (loadingCategories || loadingMaxPrice) return;
+    const { loadingCategories, loadingMaxPrice, categories, absoluteMaxPrice } =
+      get();
+    if (
+      loadingCategories ||
+      loadingMaxPrice ||
+      categories.length > 0 ||
+      absoluteMaxPrice > 0
+    ) {
+      return;
+    }
 
     try {
       set({ loadingCategories: true, loadingMaxPrice: true });
@@ -251,12 +260,8 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       if (products.length < pageSize && shouldHaveMore) {
         await get().applyFilters(); // or await get().loadProducts()
       }
-
-    }
-    catch (e) {
-
-    }
-    finally {
+    } catch (e) {
+    } finally {
       set({ deletingId: null });
     }
   },
@@ -311,19 +316,19 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       const nextSelected =
         state.selectedProduct?.id === productId
           ? {
-            ...state.selectedProduct,
-            img_url: path ?? state.selectedProduct.img_url,
-            image_url: url ?? state.selectedProduct.image_url,
-          }
+              ...state.selectedProduct,
+              img_url: path ?? state.selectedProduct.img_url,
+              image_url: url ?? state.selectedProduct.image_url,
+            }
           : state.selectedProduct;
 
       const nextProducts = state.products.map((p) =>
         p.id === productId
           ? {
-            ...p,
-            img_url: path ?? p.img_url,
-            image_url: url ?? p.image_url,
-          }
+              ...p,
+              img_url: path ?? p.img_url,
+              image_url: url ?? p.image_url,
+            }
           : p
       );
 
