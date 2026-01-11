@@ -33,11 +33,13 @@ export default function AdminProductsPage() {
     setPageSize,
     selectProduct,
     clearSelectedProduct,
+    clearFilters,
   } = useProductStore();
 
   useEffect(() => {
     if (didInitialLoad.current) return;
     didInitialLoad.current = true;
+    clearFilters();
     loadProducts();
   }, [loadProducts]);
 

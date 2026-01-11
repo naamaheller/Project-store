@@ -140,12 +140,9 @@ export const useProductStore = create<ProductStore>((set, get) => ({
   clearSelectedProduct: () => set({ selectedProduct: null }),
 
   loadProducts: async () => {
-    const { loading, page, pageSize, filters, products } = get();
+    const { loading, page, pageSize, filters, products, filtersApplied } = get();
     if (loading) return;
-    if (products.length !== 0) {
-      set({ loading: false });
-      return;
-    }
+    if (!filtersApplied && products.length > 0) return;
 
     try {
       set({ loading: true });
@@ -191,6 +188,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       },
       filtersApplied: false,
       page: 1,
+      products: [],
     });
 
     await get().loadProducts();
@@ -258,10 +256,10 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       }
 
     }
-    catch(e){
-      
+    catch (e) {
+
     }
-     finally {
+    finally {
       set({ deletingId: null });
     }
   },
@@ -314,19 +312,19 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       const nextSelected =
         state.selectedProduct?.id === productId
           ? {
-              ...state.selectedProduct,
-              img_url: path ?? state.selectedProduct.img_url,
-              image_url: url ?? state.selectedProduct.image_url,
-            }
+            ...state.selectedProduct,
+            img_url: path ?? state.selectedProduct.img_url,
+            image_url: url ?? state.selectedProduct.image_url,
+          }
           : state.selectedProduct;
 
       const nextProducts = state.products.map((p) =>
         p.id === productId
           ? {
-              ...p,
-              img_url: path ?? p.img_url,
-              image_url: url ?? p.image_url,
-            }
+            ...p,
+            img_url: path ?? p.img_url,
+            image_url: url ?? p.image_url,
+          }
           : p
       );
 
