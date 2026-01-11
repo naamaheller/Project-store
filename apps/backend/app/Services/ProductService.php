@@ -12,6 +12,13 @@ use Illuminate\Support\Facades\DB;
 
 class ProductService
 {
+    private MinioUploadService $minioUploadService;
+
+    public function __construct(MinioUploadService $minioUploadService)
+    {
+        $this->minioUploadService = $minioUploadService;
+    }
+
     public function getAllProductsForAdmin(Request $request)
     {
         try {
@@ -119,12 +126,15 @@ class ProductService
     }
     public function deleteProductByAdmin(int $productId)
     {
-
         $product = Product::findOrFail($productId);
+
+        if ($product->img_url) {
+            $this->minioUploadService->delete($product->img_url);
+        }
+
         $product->delete();
-
-
     }
+
     public function editProductByAdmin(int $productId, array $data): Product
     {
 
