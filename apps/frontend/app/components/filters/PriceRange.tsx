@@ -3,10 +3,10 @@
 type PriceRangeProps = {
   min: number;
   value: number;
-  max: number; 
+  max: number;
   onChange: (value: number) => void;
 };
-export function RangePrice({ min, max, onChange , value }: PriceRangeProps) {
+export function RangePrice({ min, max, onChange, value }: PriceRangeProps) {
   return (
     <div>
       <p className="font-medium mb-2">price range</p>

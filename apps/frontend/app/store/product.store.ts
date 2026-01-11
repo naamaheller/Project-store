@@ -209,10 +209,6 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       set((state) => ({
         categories,
         absoluteMaxPrice: maxPrice,
-        // filters: {
-        //   ...state.filters,
-        //   maxPrice: state.filters.maxPrice ?? maxPrice,
-        // },
       }));
     } catch (e) {
       console.error("Failed to load filters data", e);
@@ -244,11 +240,9 @@ export const useProductStore = create<ProductStore>((set, get) => ({
         selectedProduct:
           state.selectedProduct?.id === id ? null : state.selectedProduct,
       }));
-      const { products, page, pageSize, total } = get();
+      const { products, page } = get();
       if (products.length === 0 && page > 1) {
         await get().setPage(page - 1);
-        return;
-
       }
       const shouldHaveMore = total > (page - 1) * pageSize + products.length;
       if (products.length < pageSize && shouldHaveMore) {

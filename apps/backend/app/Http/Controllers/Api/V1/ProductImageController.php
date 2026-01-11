@@ -18,7 +18,6 @@ class ProductImageController extends Controller
         $this->minioUploadService = $minioUploadService;
     }
 
-    // POST /api/v1/admin/products/{productId}/image
     public function store(int $productId, Request $request)
     {
         $request->validate([
@@ -57,7 +56,6 @@ class ProductImageController extends Controller
         }
     }
 
-    // DELETE /api/v1/admin/products/{productId}/image
     public function destroy(int $productId)
     {
         try {

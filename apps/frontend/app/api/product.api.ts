@@ -40,7 +40,7 @@ export async function getMaxPrice() {
   } catch (err: any) {
     throw err.apiError;
   }
-  
+
 }
 export async function adminAddProduct(productData: ProductUpsertInput) {
   try {
@@ -56,7 +56,7 @@ export async function adminDeleteProduct(productId: number) {
   } catch (err: any) {
     throw err.apiError;
   }
-  
+
 }
 
 export async function adminEditProduct(

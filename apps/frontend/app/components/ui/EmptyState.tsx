@@ -1,6 +1,4 @@
 'use client';
-// קומפוננטה להצגת מצב "אין נתונים" בצורה ידידותית.
-// כוללת כותרת, תיאור, אייקון וכפתור פעולה אופציונלי.
 
 import type { ReactNode } from 'react';
 import { Button } from './Button';

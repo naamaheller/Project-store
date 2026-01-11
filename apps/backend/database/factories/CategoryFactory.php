@@ -15,19 +15,19 @@ class CategoryFactory extends Factory
      *
      * @return array<string, mixed>
      */
-      public function definition(): array
+    public function definition(): array
     {
-            static $categories = [
-            'Electronics',
-            'Phones',
-            'Laptops',
-            'Accessories',
-            'Home Appliances',
-            'Gaming',
-            'Fashion',
-            'Shoes',
-            'Beauty',
-            'Sports',
+        static $categories = [
+        'Electronics',
+        'Phones',
+        'Laptops',
+        'Accessories',
+        'Home Appliances',
+        'Gaming',
+        'Fashion',
+        'Shoes',
+        'Beauty',
+        'Sports',
         ];
 
         $name = array_shift($categories) ?? $this->faker->unique()->word();

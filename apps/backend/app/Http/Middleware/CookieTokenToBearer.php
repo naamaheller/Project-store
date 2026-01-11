@@ -15,7 +15,7 @@ class CookieTokenToBearer
 
         $token = $request->cookie('access_token');
         if (!$token) {
-            return $next($request); 
+            return $next($request);
         }
 
         $request->headers->set('Authorization', 'Bearer ' . $token);

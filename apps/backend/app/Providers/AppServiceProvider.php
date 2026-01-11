@@ -10,9 +10,6 @@ use Laravel\Passport\Passport;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         $this->app->singleton(ApiErrorFormatter::class);
@@ -27,16 +24,12 @@ class AppServiceProvider extends ServiceProvider
             );
         });
     }
-
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
         Passport::loadKeysFrom(storage_path());
         Passport::tokensCan([
-        'admin' => 'Access administrative operations',
-        'user' => 'Access standard user operations',
-    ]);
+            'admin' => 'Access administrative operations',
+            'user' => 'Access standard user operations',
+        ]);
     }
 }

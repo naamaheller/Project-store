@@ -5,7 +5,7 @@ import { useEffect, useState, useRef } from "react";
 import { Drawer } from "@/app/components/ui/Drawer";
 import { Button } from "@/app/components/ui/Button";
 import { Input } from "@/app/components/ui/Input";
-import { ToggleSwitch } from "@/app/components/ui/ToggleSwitch"; // adjust path if different
+import { ToggleSwitch } from "@/app/components/ui/ToggleSwitch";
 import { useProductStore } from "@/app/store/product.store";
 import { Check } from "lucide-react";
 import { ToastProvider } from "@/app/components/ui/Toast";
@@ -17,7 +17,7 @@ type Props = {
 };
 
 export function EditProductDrawer({ productId, open, onClose }: Props) {
-  const { selectedProduct, saving, uploadProductImage, deleteProductImage,updateProduct } = useProductStore();
+  const { selectedProduct, saving, uploadProductImage, deleteProductImage, updateProduct } = useProductStore();
 
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
@@ -33,8 +33,18 @@ export function EditProductDrawer({ productId, open, onClose }: Props) {
 
   const isCorrect = !!productId && selectedProduct?.id === productId;
 
+  function handleClose() {
+    onClose();
+  }
+
   useEffect(() => {
-    if (!open || !isCorrect || !selectedProduct) return;
+    if (!open) {
+      setImageFile(null);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
+
+    if (!isCorrect || !selectedProduct) return;
 
     setName(selectedProduct.name ?? "");
     setSlug(selectedProduct.slug ?? "");
@@ -43,7 +53,6 @@ export function EditProductDrawer({ productId, open, onClose }: Props) {
     setStock(Number(selectedProduct.stock ?? 0));
     setCategory(selectedProduct.category?.name ?? "");
     setIsActive(Boolean(selectedProduct.is_active));
-    setImageFile(null);
     setError(null);
   }, [open, isCorrect, selectedProduct]);
 
@@ -66,19 +75,15 @@ export function EditProductDrawer({ productId, open, onClose }: Props) {
       if (imageFile) {
         await uploadProductImage(selectedProduct.id, imageFile);
 
-        setImageFile(null);
-        if (fileInputRef.current) fileInputRef.current.value = "";
       }
-
-      onClose();
-
+      handleClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to save");
     }
   }
 
   return (
-    <Drawer open={open} onClose={onClose} title="Edit Product">
+    <Drawer open={open} onClose={handleClose} title="Edit Product">
       {!isCorrect || !selectedProduct ? (
         <div className="text-sm text-muted-foreground">Loading...</div>
       ) : (
@@ -147,12 +152,10 @@ export function EditProductDrawer({ productId, open, onClose }: Props) {
               />
             </div>
 
-            {/* Upload Image */}
             <div className="flex w-full flex-col gap-1.5">
               <label className="text-sm font-medium text-text">Product Image</label>
 
               <div className="flex flex-col items-center gap-2">
-                {/* Preview */}
                 <div className="aspect-[4/3] w-48 overflow-hidden rounded-md border border-border bg-background-muted flex items-center justify-center">
                   {imageFile ? (
                     <img
@@ -173,7 +176,6 @@ export function EditProductDrawer({ productId, open, onClose }: Props) {
 
                 </div>
 
-                {/* Hidden input */}
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -183,7 +185,6 @@ export function EditProductDrawer({ productId, open, onClose }: Props) {
                   onChange={(e) => setImageFile(e.target.files?.[0] ?? null)}
                 />
 
-                {/* Filename */}
                 <div className="text-xs text-text-muted truncate max-w-[180px] text-center">
                   {imageFile
                     ? imageFile.name
@@ -192,8 +193,6 @@ export function EditProductDrawer({ productId, open, onClose }: Props) {
                       : "JPG / PNG / WebP"}
                 </div>
 
-
-                {/* Buttons under image */}
                 <div className="flex items-center justify-center gap-2">
                   <Button
                     type="button"
@@ -231,7 +230,6 @@ export function EditProductDrawer({ productId, open, onClose }: Props) {
               </div>
             </div>
 
-            {/* Toggle for Active */}
             <ToggleSwitch
               name="is_active"
               label="Active"
@@ -244,7 +242,7 @@ export function EditProductDrawer({ productId, open, onClose }: Props) {
           </div>
 
           <div className="mt-auto flex justify-end gap-2">
-            <Button variant="outline" onClick={onClose} type="button" disabled={saving}>
+            <Button variant="outline" onClick={handleClose} type="button" disabled={saving}>
               Cancel
             </Button>
 

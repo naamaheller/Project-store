@@ -38,7 +38,6 @@ class AuthService
      */
     public function register(array $data): User
     {
-        // הגנה נוספת על unique (מעבר ל-validation)
         if (User::where('email', $data['email'])->exists()) {
             throw ValidationException::withMessages([
                 'email' => ['Email already exists'],
@@ -65,7 +64,7 @@ class AuthService
             'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
-            'roles' => $user->getRoleNames(),        
+            'roles' => $user->getRoleNames(),
             'permissions' => $user->getAllPermissions()->pluck('name'),
             'created_at' => $user->created_at,
             'updated_at' => $user->updated_at,

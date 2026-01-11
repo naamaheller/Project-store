@@ -4,7 +4,6 @@ import type { ApiError } from "../api/api-error";
 
 type ApiCall = (params: Record<string, any>) => Promise<{ data: any }>;
 
-//check if role is user or admin
 export function fetchProducts(filters?: ProductFilters) {
   return fetchProductsBase(getProducts, filters);
 
@@ -63,30 +62,29 @@ export const sanitizeProduct = (payload: any): Product => {
 
 export const updateProductApi = async (id: number, data: ProductUpsertInput): Promise<Product> => {
   try {
-  const res = await adminEditProduct(id, data);
+    const res = await adminEditProduct(id, data);
 
-  if (res.status !== 200) throw new Error("Update failed");
+    if (res.status !== 200) throw new Error("Update failed");
 
-  return sanitizeProduct(res);
+    return sanitizeProduct(res);
   } catch (error) {
     throw error as ApiError;
   }
 };
 export const addProductApi = async (data: ProductUpsertInput): Promise<Product> => {
   try {
-  const res = await adminAddProduct(data);
+    const res = await adminAddProduct(data);
 
-  if (res.status !== 201) throw new Error("Add product failed");
-  
-  return sanitizeProduct(res);
+    if (res.status !== 201) throw new Error("Add product failed");
+    return sanitizeProduct(res);
   } catch (error) {
     throw error as ApiError;
   }
 };
 export const deleteProductApi = async (id: number): Promise<void> => {
   try {
-  const res = await adminDeleteProduct(id);
-  return;
+    const res = await adminDeleteProduct(id);
+    return;
   } catch (error) {
     throw error as ApiError;
   }

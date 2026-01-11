@@ -115,7 +115,6 @@ export function Pagination({
             ].join(" ")}
             dir="ltr"
         >
-            {/* left */}
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 justify-center sm:justify-start text-center sm:text-left">
                 <span className="whitespace-nowrap">
                     Showing <span className="text-text">{from}</span>–<span className="text-text">{to}</span> of{" "}
@@ -148,7 +147,6 @@ export function Pagination({
             </div>
 
 
-            {/* right */}
             <div className="flex items-center gap-2 justify-center sm:justify-end flex-wrap">
                 <Button
                     variant="outline"

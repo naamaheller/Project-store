@@ -12,19 +12,19 @@ class AdminMiddleware
     public function handle(Request $request, Closure $next): Response
     {
 
-            if (!$request->user()) {
+        if (!$request->user()) {
             return response()->json([
                 'message' => 'Unauthenticated'
             ], 401);
         }
 
-            if ($request->user() && $request->user()->role === 'admin' && $request->user()->tokenCan('admin')) {
+        if ($request->user() && $request->user()->role === 'admin' && $request->user()->tokenCan('admin')) {
             return $next($request);
-        }   else {
+        } else {
             return response()->json([
                 'message' => 'Forbidden - Admins only'
             ], 403);
         }
     }
-    
+
 }
