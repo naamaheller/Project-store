@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\ProductExportController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
@@ -64,9 +65,16 @@ Route::prefix('v1')->group(function () {
                 [ProductImageController::class, 'destroy']
             );
 
+            Route::post(
+                '/admin/products/export',
+                [ProductExportController::class, 'export']
+            );
+
         });
     });
 });
+
+
 Route::get('/test/401', fn() => abort(401, 'Unauthenticated'));
 Route::get('/test/403', fn() => abort(403, 'Forbidden'));
 Route::get('/test/404', fn() => abort(404, 'Not Found'));
