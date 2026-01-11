@@ -124,12 +124,14 @@ export const useProductStore = create<ProductStore>((set, get) => ({
 
   setPage: async (page) => {
     set({ page });
-    await get().applyFilters();
+    set({filtersApplied: true});
+    await get().loadProducts();
   },
 
   setPageSize: async (pageSize) => {
     set({ pageSize, page: 1 });
-    await get().applyFilters();
+    set({filtersApplied: true});
+    await get().loadProducts();
   },
 
   setFilters: (partial) =>
@@ -257,8 +259,11 @@ export const useProductStore = create<ProductStore>((set, get) => ({
         return;
       }
       const shouldHaveMore = total > (page - 1) * pageSize + products.length;
-      if (products.length < pageSize && shouldHaveMore) {
-        await get().applyFilters(); // or await get().loadProducts()
+      console.log({ total, productsLength: (page - 1) * pageSize + products.length });
+      if (shouldHaveMore && products.length < pageSize) {
+        console.log("Loading more products to fill the page...");
+        set({ filtersApplied: true }); 
+        await get().loadProducts();
       }
     } catch (e) {
     } finally {
