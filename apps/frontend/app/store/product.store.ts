@@ -124,13 +124,13 @@ export const useProductStore = create<ProductStore>((set, get) => ({
 
   setPage: async (page) => {
     set({ page });
-    set({filtersApplied: true});
+    set({ filtersApplied: true });
     await get().loadProducts();
   },
 
   setPageSize: async (pageSize) => {
     set({ pageSize, page: 1 });
-    set({filtersApplied: true});
+    set({ filtersApplied: true });
     await get().loadProducts();
   },
 
@@ -232,40 +232,28 @@ export const useProductStore = create<ProductStore>((set, get) => ({
   deleteProduct: async (id: number) => {
     try {
       set({ deletingId: id });
-      await deleteProductApi(id);
-      const product = get().products.find((p) => p.id === id) ?? null;
-      const hasImage = !!(product?.img_url || product?.image_url);
 
-      if (hasImage) {
-        try {
-          await get().deleteProductImage(id);
-        } catch (e) {
-          console.warn(
-            "Image delete failed, continuing to delete product...",
-            e
-          );
-        }
-      }
+      await deleteProductApi(id);
+
       toastRef.success("Product deleted successfully", "Deleted");
+
       set((state) => ({
         products: state.products.filter((p) => p.id !== id),
         total: Math.max(0, state.total - 1),
         selectedProduct:
           state.selectedProduct?.id === id ? null : state.selectedProduct,
       }));
+
       const { products, page, pageSize, total } = get();
       if (products.length === 0 && page > 1) {
         await get().setPage(page - 1);
         return;
       }
+
       const shouldHaveMore = total > (page - 1) * pageSize + products.length;
-      console.log({ total, productsLength: (page - 1) * pageSize + products.length });
-      if (shouldHaveMore && products.length < pageSize) {
-        console.log("Loading more products to fill the page...");
-        set({ filtersApplied: true }); 
-        await get().loadProducts();
+      if (products.length < pageSize && shouldHaveMore) {
+        await get().applyFilters();
       }
-    } catch (e) {
     } finally {
       set({ deletingId: null });
     }
@@ -321,19 +309,19 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       const nextSelected =
         state.selectedProduct?.id === productId
           ? {
-              ...state.selectedProduct,
-              img_url: path ?? state.selectedProduct.img_url,
-              image_url: url ?? state.selectedProduct.image_url,
-            }
+            ...state.selectedProduct,
+            img_url: path ?? state.selectedProduct.img_url,
+            image_url: url ?? state.selectedProduct.image_url,
+          }
           : state.selectedProduct;
 
       const nextProducts = state.products.map((p) =>
         p.id === productId
           ? {
-              ...p,
-              img_url: path ?? p.img_url,
-              image_url: url ?? p.image_url,
-            }
+            ...p,
+            img_url: path ?? p.img_url,
+            image_url: url ?? p.image_url,
+          }
           : p
       );
 
