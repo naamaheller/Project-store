@@ -141,35 +141,37 @@ export default function AdminProductsPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <div className="flex items-center justify-between gap-3">
-        <button
-          onClick={() => router.push(ROUTES.public.products)}
-          className="p-1 text-text-muted hover:text-primary transition focus:outline-none"
-          aria-label="Back to products"
-          title="Back to products"
-        >
-          <ArrowLeft className="h-6 w-6" />
-        </button>
-
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={handleExportFile}
-            disabled={exporting}
-            className="flex items-center gap-2"
+      <div className="px-4 pt-4">
+        <div className="flex items-center justify-between gap-3">
+          <button
+            onClick={() => router.push(ROUTES.public.products)}
+            className="p-1 text-text-muted hover:text-primary transition focus:outline-none"
+            aria-label="Back to products"
+            title="Back to products"
           >
-            {exporting ? "Exporting..." : "Export Products"}
-          </Button>
+            <ArrowLeft className="h-6 w-6" />
+          </button>
 
-          <Button
-            variant="outline"
-            onClick={() => setCreateOpen(true)}
-            className="flex items-center gap-2"
-            aria-label="Create product"
-          >
-            <Plus className="h-4 w-4" />
-            <span>Create Product</span>
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={handleExportFile}
+              disabled={exporting}
+              className="flex items-center gap-2"
+            >
+              {exporting ? "Exporting..." : "Export Products"}
+            </Button>
+
+            <Button
+              variant="outline"
+              onClick={() => setCreateOpen(true)}
+              className="flex items-center gap-2"
+              aria-label="Create product"
+            >
+              <Plus className="h-4 w-4" />
+              <span>Create Product</span>
+            </Button>
+          </div>
         </div>
       </div>
 
